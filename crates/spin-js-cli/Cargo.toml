@@ -1,0 +1,16 @@
+[package]
+name = "spin-js-cli"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "spinjs"
+path = "src/main.rs"
+
+[dependencies]
+wizer = "1.4.0"
+structopt = "0.3"
+anyhow = "1.0"
+tempfile = "3.2.0"
+quickjs-wasm-sys = { git = "https://github.com/dicej/javy" }
+binaryen = "0.12.0"

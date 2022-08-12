@@ -1,0 +1,12 @@
+spin_version = "1"
+name = "spin-hello-world"
+trigger = { type = "http", base = "/" }
+version = "1.0.0"
+
+[[component]]
+id = "hello"
+source = "target/spin-http-js.wasm"
+[component.trigger]
+route = "/hello"
+[component.build]
+command = "make"
