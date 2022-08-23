@@ -4,6 +4,6 @@ function handleRequest(request) {
         headers: {
             foo: "bar"
         },
-        body: "Hello, Fermyon!\n"
+        body: `${spin.config.get("message")}\n`
     }
 }
