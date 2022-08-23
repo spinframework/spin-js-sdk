@@ -314,7 +314,7 @@ dependencies = [
 [[package]]
 name = "quickjs-wasm-rs"
 version = "0.1.2"
-source = "git+https://github.com/dicej/javy#b7c8c01a68151ef0730ec3a3ee9167926d1d40e8"
+source = "git+https://github.com/dicej/javy#796275e6f89fd83cea453bb031b95b62442fea41"
 dependencies = [
  "anyhow",
  "convert_case",
@@ -325,7 +325,7 @@ dependencies = [
 [[package]]
 name = "quickjs-wasm-sys"
 version = "0.1.0"
-source = "git+https://github.com/dicej/javy#b7c8c01a68151ef0730ec3a3ee9167926d1d40e8"
+source = "git+https://github.com/dicej/javy#796275e6f89fd83cea453bb031b95b62442fea41"
 dependencies = [
  "bindgen",
  "cc",
