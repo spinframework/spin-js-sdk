@@ -13,4 +13,4 @@ structopt = "0.3"
 anyhow = "1.0"
 tempfile = "3.2.0"
 quickjs-wasm-sys = { git = "https://github.com/dicej/javy" }
-binaryen = "0.12.0"
+binaryen = { git = "https://github.com/dicej/binaryen-rs" }
