@@ -1,3 +1,5 @@
+#![deny(warnings)]
+
 use {
     anyhow::{bail, Context, Result},
     binaryen::{CodegenConfig, Module},

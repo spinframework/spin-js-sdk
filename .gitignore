@@ -1,3 +1,5 @@
 /target
 /crates/spin-js-cli/target
 /crates/spin-js-engine/target
+/node_modules
+/dist
