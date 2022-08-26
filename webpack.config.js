@@ -7,4 +7,7 @@ module.exports = {
         filename: 'spin.js',
         library: 'spin'
     },
+    optimization: {
+        minimize: false
+    },
 };

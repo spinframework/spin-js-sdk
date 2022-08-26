@@ -12,5 +12,4 @@ wizer = "1.4.0"
 structopt = "0.3"
 anyhow = "1.0"
 tempfile = "3.2.0"
-quickjs-wasm-sys = { git = "https://github.com/dicej/javy" }
 binaryen = { git = "https://github.com/dicej/binaryen-rs" }

@@ -4,7 +4,7 @@ use {
     anyhow::{anyhow, Result},
     http::{header::HeaderName, request, HeaderValue},
     once_cell::sync::OnceCell,
-    quickjs_wasm_rs::{Context, Deserializer, Serializer, Value},
+    quickjs_wasm_rs::{Context, Deserializer, Exception, Serializer, Value},
     serde::{Deserialize, Serialize},
     serde_bytes::ByteBuf,
     spin_sdk::{
@@ -13,6 +13,7 @@ use {
         http_component, outbound_http,
     },
     std::{
+        collections::HashMap,
         io::{self, Read},
         ops::Deref,
         str,
@@ -22,22 +23,64 @@ use {
 static mut CONTEXT: OnceCell<Context> = OnceCell::new();
 static mut GLOBAL: OnceCell<Value> = OnceCell::new();
 static mut ENTRYPOINT: OnceCell<Value> = OnceCell::new();
+static mut ON_RESOLVE: OnceCell<Value> = OnceCell::new();
+static mut ON_REJECT: OnceCell<Value> = OnceCell::new();
+static mut RESPONSE: Option<Result<Value>> = None;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 struct HttpRequest {
     method: String,
     uri: String,
     #[serde(default)]
-    headers: Vec<(String, ByteBuf)>,
+    headers: HashMap<String, String>,
     body: Option<ByteBuf>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 struct HttpResponse {
     status: u16,
     #[serde(default)]
-    headers: Vec<(String, ByteBuf)>,
+    headers: HashMap<String, String>,
     body: Option<ByteBuf>,
+}
+
+fn on_resolve(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [response] => {
+            unsafe { RESPONSE = Some(Ok(response.clone())) }
+
+            context.undefined_value()
+        }
+
+        _ => Err(anyhow!("expected 1 argument, got {}", args.len())),
+    }
+}
+
+fn on_reject(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [error] => {
+            unsafe { RESPONSE = Some(Err(Exception::from(error.clone())?.into_error())) }
+
+            context.undefined_value()
+        }
+
+        _ => Err(anyhow!("expected 1 argument, got {}", args.len())),
+    }
+}
+
+fn console_log(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    let mut spaced = false;
+    for arg in args {
+        if spaced {
+            print!(" ");
+        } else {
+            spaced = true;
+        }
+        print!("{}", arg.as_str()?);
+    }
+    println!();
+
+    context.undefined_value()
 }
 
 fn spin_get_config(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
@@ -62,7 +105,7 @@ fn spin_send_http_request(context: &Context, _this: &Value, args: &[Value]) -> R
                 for (key, value) in &request.headers {
                     headers.insert(
                         HeaderName::from_bytes(key.as_bytes())?,
-                        HeaderValue::from_bytes(value)?,
+                        HeaderValue::from_bytes(value.as_bytes())?,
                     );
                 }
             }
@@ -76,8 +119,13 @@ fn spin_send_http_request(context: &Context, _this: &Value, args: &[Value]) -> R
                 headers: response
                     .headers()
                     .iter()
-                    .map(|(key, value)| (key.as_str().to_owned(), ByteBuf::from(value.as_bytes())))
-                    .collect(),
+                    .map(|(key, value)| {
+                        Ok((
+                            key.as_str().to_owned(),
+                            str::from_utf8(value.as_bytes())?.to_owned(),
+                        ))
+                    })
+                    .collect::<Result<_>>()?,
                 body: response
                     .into_body()
                     .map(|bytes| ByteBuf::from(bytes.deref())),
@@ -92,49 +140,56 @@ fn spin_send_http_request(context: &Context, _this: &Value, args: &[Value]) -> R
     }
 }
 
-#[export_name = "wizer.initialize"]
-pub extern "C" fn init() {
-    let mut global = Vec::new();
-    io::stdin().read_to_end(&mut global).unwrap();
+fn do_init() -> Result<()> {
+    let mut script = String::new();
+    io::stdin().read_to_string(&mut script)?;
 
     let context = Context::default();
-    context.eval_binary(&global).unwrap();
+    context.eval_global("sdk.js", include_str!("../sdk.js"))?;
+    context.eval_global("script.js", &script)?;
 
-    let global = context.global_object().unwrap();
+    let global = context.global_object()?;
 
-    let entrypoint = global
-        .get_property("spin")
-        .unwrap()
-        .get_property("handleRequest")
-        .unwrap();
+    let entrypoint = global.get_property("spin")?.get_property("handleRequest")?;
 
     if !entrypoint.is_function() {
         panic!("expected function named \"handleRequest\" in \"spin\"");
     }
 
-    let config = context.object_value().unwrap();
-    config
-        .set_property("get", context.wrap_callback(spin_get_config).unwrap())
-        .unwrap();
+    let console = context.object_value()?;
+    console.set_property("log", context.wrap_callback(console_log)?)?;
 
-    let http = context.object_value().unwrap();
-    http.set_property(
-        "send",
-        context.wrap_callback(spin_send_http_request).unwrap(),
-    )
-    .unwrap();
+    global.set_property("console", console)?;
 
-    let spin_sdk = context.object_value().unwrap();
-    spin_sdk.set_property("config", config).unwrap();
-    spin_sdk.set_property("http", http).unwrap();
+    let config = context.object_value()?;
+    config.set_property("get", context.wrap_callback(spin_get_config)?)?;
 
-    global.set_property("spinSdk", spin_sdk).unwrap();
+    let http = context.object_value()?;
+    http.set_property("send", context.wrap_callback(spin_send_http_request)?)?;
+
+    let spin_sdk = context.object_value()?;
+    spin_sdk.set_property("config", config)?;
+    spin_sdk.set_property("http", http)?;
+
+    global.set_property("spinSdk", spin_sdk)?;
+
+    let on_resolve = context.wrap_callback(on_resolve)?;
+    let on_reject = context.wrap_callback(on_reject)?;
 
     unsafe {
         CONTEXT.set(context).unwrap();
         GLOBAL.set(global).unwrap();
         ENTRYPOINT.set(entrypoint).unwrap();
+        ON_RESOLVE.set(on_resolve).unwrap();
+        ON_REJECT.set(on_reject).unwrap();
     }
+
+    Ok(())
+}
+
+#[export_name = "wizer.initialize"]
+pub extern "C" fn init() {
+    do_init().unwrap()
 }
 
 #[http_component]
@@ -142,11 +197,15 @@ fn handle(request: Request) -> Result<Response> {
     let context;
     let global;
     let entrypoint;
+    let on_resolve;
+    let on_reject;
 
     unsafe {
         context = CONTEXT.get().unwrap();
         global = GLOBAL.get().unwrap();
         entrypoint = ENTRYPOINT.get().unwrap();
+        on_resolve = ON_RESOLVE.get().unwrap();
+        on_reject = ON_REJECT.get().unwrap();
     }
 
     let request = HttpRequest {
@@ -155,8 +214,13 @@ fn handle(request: Request) -> Result<Response> {
         headers: request
             .headers()
             .iter()
-            .map(|(key, value)| (key.as_str().to_owned(), ByteBuf::from(value.as_bytes())))
-            .collect(),
+            .map(|(key, value)| {
+                Ok((
+                    key.as_str().to_owned(),
+                    str::from_utf8(value.as_bytes())?.to_owned(),
+                ))
+            })
+            .collect::<Result<_>>()?,
         body: request
             .into_body()
             .map(|bytes| ByteBuf::from(bytes.deref())),
@@ -166,7 +230,15 @@ fn handle(request: Request) -> Result<Response> {
     request.serialize(&mut serializer)?;
     let request = serializer.value;
 
-    let response = entrypoint.call(global, &[request])?;
+    let promise = entrypoint.call(global, &[request])?;
+
+    promise
+        .get_property("then")?
+        .call(&promise, &[on_resolve.clone(), on_reject.clone()])?;
+
+    context.execute_pending()?;
+
+    let response = unsafe { RESPONSE.take() }.unwrap()?;
 
     let deserializer = &mut Deserializer::from(response);
     let response = HttpResponse::deserialize(deserializer)?;
@@ -175,7 +247,7 @@ fn handle(request: Request) -> Result<Response> {
         for (key, value) in &response.headers {
             headers.insert(
                 HeaderName::try_from(key.deref())?,
-                HeaderValue::from_bytes(value)?,
+                HeaderValue::from_bytes(value.as_bytes())?,
             );
         }
     }
