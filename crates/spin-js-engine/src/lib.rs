@@ -14,6 +14,7 @@ use {
     },
     std::{
         collections::HashMap,
+        env,
         io::{self, Read},
         ops::Deref,
         str,
@@ -207,6 +208,16 @@ fn handle(request: Request) -> Result<Response> {
         on_resolve = ON_RESOLVE.get().unwrap();
         on_reject = ON_REJECT.get().unwrap();
     }
+
+    let env = context.object_value()?;
+    for (key, value) in env::vars() {
+        env.set_property(key, context.value_from_str(&value)?)?;
+    }
+
+    let process = context.object_value()?;
+    process.set_property("env", env)?;
+
+    global.set_property("process", process)?;
 
     let request = HttpRequest {
         method: request.method().as_str().to_owned(),

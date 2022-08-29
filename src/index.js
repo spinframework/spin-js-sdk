@@ -8,9 +8,13 @@ export async function handleRequest(request) {
 
     const dogFactBody = decoder.decode(await dogFact.arrayBuffer() || new Uint8Array())
 
+    const env = JSON.stringify(process.env)
+
+    const body = `${spinSdk.config.get("message")}\nenv: ${env}\nHere's a dog fact: ${dogFactBody}\n`
+
     return {
         status: 200,
         headers: { "foo": "bar" },
-        body: encoder.encode(`${spinSdk.config.get("message")}\nHere's a dog fact: ${dogFactBody}\n`).buffer
+        body: encoder.encode(body).buffer
     }
 }
