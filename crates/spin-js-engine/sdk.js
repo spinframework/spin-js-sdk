@@ -12,7 +12,12 @@ function fetch(uri, options) {
         },
         arrayBuffer: () => Promise.resolve(body),
         ok: (status > 199 && status < 300),
-        statusText: statusTextList[status]
+        statusText: statusTextList[status],
+        text: () => Promise.resolve(new TextDecoder().decode(body || new Uint8Array())),
+        json: () => {
+            let text = new TextDecoder().decode(body || new Uint8Array())
+            return Promise.resolve(JSON.parse(text))
+        }
     })
 }
 
