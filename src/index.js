@@ -1,5 +1,3 @@
-require('fast-text-encoding')
-
 const encoder = new TextEncoder("utf-8")
 const decoder = new TextDecoder("utf-8")
 

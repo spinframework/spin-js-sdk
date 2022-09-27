@@ -1,4 +1,6 @@
-function fetch(uri, options) {
+require('fast-text-encoding')
+
+export function fetch(uri, options) {
     const { status, headers, body } = spinSdk.http.send({
         method: (options && options.method) || "GET",
         uri,
@@ -43,7 +45,7 @@ const statusTextList = {
     "305": "Use Proxy",
     "306": "unused",
     "307": "Temporary Redirect",
-    "308": "Premanent Redirect",
+    "308": "Permanent Redirect",
     "400": "Bad Request",
     "401": "Unauthorized",
     "402": "Payment Required",
