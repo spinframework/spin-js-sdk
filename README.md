@@ -17,6 +17,7 @@ The top level directory contains an example HTTP trigger implemented using NPM, 
 
 ```bash
 npm install
+npm install --prefix crates/spin-js-engine/src/js_sdk 
 make
 spin up --follow-all
 ```
