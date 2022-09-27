@@ -33,7 +33,7 @@ struct HttpRequest {
     method: String,
     uri: String,
     #[serde(default)]
-    headers: HashMap<String, String>,
+    headers: Vec<(String, String)>,
     body: Option<ByteBuf>,
 }
 

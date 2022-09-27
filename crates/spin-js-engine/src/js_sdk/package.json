@@ -9,7 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fast-text-encoding": "^1.0.6"
+    "btoa": "^1.2.1",
+    "buffer": "^6.0.3",
+    "fast-text-encoding": "^1.0.6",
+    "url": "^0.11.0"
   },
   "devDependencies": {
     "webpack": "^5.74.0",

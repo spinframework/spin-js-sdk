@@ -1,10 +1,18 @@
 require('fast-text-encoding')
+const btoa = require('btoa')
+import { Buffer } from 'buffer'
+const url = require('url')
 
-export function fetch(uri, options) {
+function fetch(uri, options) {
+    let reqHeaders = []
+    if (options && options.headers) {
+        reqHeaders = Object.entries(options.headers)
+    }
     const { status, headers, body } = spinSdk.http.send({
         method: (options && options.method) || "GET",
         uri,
-        ...(options || {})
+        ...(options || {}),
+        headers: reqHeaders
     })
 
     return Promise.resolve({
@@ -22,6 +30,29 @@ export function fetch(uri, options) {
         }
     })
 }
+
+function atob(b64) {
+    return Buffer.from(b64, "base64").toString()
+}
+
+class URL {
+    constructor(urlStr, base = undefined) {
+        if (base) {
+            urlStr = url.resolve(base, urlStr)
+        }
+        let urlObj = url.parse(urlStr)
+        if (urlObj.auth) {
+            let auth = urlObj.auth.split(":", 1)
+            urlObj.username = auth[0]
+            urlObj.password = auth[1]
+        }
+        urlObj.toString = () => url.format(urlObj)
+
+        return urlObj
+    }
+}
+
+export { fetch, URL, btoa, atob, Buffer }
 
 const statusTextList = {
     "100": "Continue",
@@ -80,7 +111,7 @@ const statusTextList = {
     "502": "Bad Gateway",
     "503": "Service Unavailable",
     "504": "Gateway Timeout",
-    "505": "Http Version Not Suppprted",
+    "505": "Http Version Not Supported",
     "506": "Variant Also Negotiates",
     "507": "Insufficient Storage",
     "508": "Loop Detected",
