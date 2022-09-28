@@ -10,7 +10,7 @@ object = { default = "teapot" }
 [[component]]
 id = "hello"
 source = "target/spin-http-js.wasm"
-allowed_http_hosts = ["https://some-random-api.ml"]
+allowed_http_hosts = ["https://aws.connect.psdb.cloud"]
 [component.trigger]
 route = "/hello"
 [component.config]

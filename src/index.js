@@ -1,18 +1,31 @@
-const encoder = new TextEncoder("utf-8")
-const decoder = new TextDecoder("utf-8")
-
-export async function handleRequest(request) {
-    const dogFact = await fetch("https://some-random-api.ml/facts/dog")
-
-    const dogFactBody = decoder.decode(await dogFact.arrayBuffer() || new Uint8Array())
-
-    const env = JSON.stringify(process.env)
-
-    const body = `${spinSdk.config.get("message")}\nenv: ${env}\nHere's a dog fact: ${dogFactBody}\n`
-
-    return {
-        status: 200,
-        headers: { "foo": "bar" },
-        body: encoder.encode(body).buffer
-    }
+import { connect } from '@planetscale/database'
+ 
+const config = {
+   host: '<host>',
+   username: '<username>',
+   password: '<password>'
 }
+ 
+const encoder = new TextEncoder("utf-8")
+ 
+export async function handleRequest(request) {
+ 
+   const body = `it works`
+   let text = "Hello world!";
+ 
+   const conn = await connect(config)
+   const results = await conn.execute('SHOW TABLES')
+   console.log(results)
+   for (const k in results) {
+       console.log(k,":", results[k])
+   }
+ 
+  
+   return {
+       status: 200,
+       headers: { "foo": "bar" },
+       body: encoder.encode(body).buffer
+   }
+}
+ 
+
