@@ -10,8 +10,6 @@ export async function handleRequest(request) {
 
     const body = `${spinSdk.config.get("message")}\nenv: ${env}\nHere's a dog fact: ${dogFactBody}\n`
 
-    console.log(dogFact.statusText)
-
     return {
         status: 200,
         headers: { "foo": "bar" },
