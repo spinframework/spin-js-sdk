@@ -1,5 +1,6 @@
 #![deny(warnings)]
 
+use std::path::PathBuf;
 use {
     anyhow::{anyhow, Result},
     http::{header::HeaderName, request, HeaderValue},
@@ -15,6 +16,7 @@ use {
     std::{
         collections::HashMap,
         env,
+        fs,
         io::{self, Read},
         ops::Deref,
         str,
@@ -141,6 +143,21 @@ fn spin_send_http_request(context: &Context, _this: &Value, args: &[Value]) -> R
     }
 }
 
+fn read_file(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>{
+    match args {
+        [filename] => {
+            let  deserializer = &mut Deserializer::from(filename.clone());
+            let filename = PathBuf::deserialize(deserializer)?;
+            let buffer = fs::read(filename)?;
+            let mut serializer = Serializer::from_context(context)?;
+            buffer.serialize(&mut serializer)?;
+            Ok(serializer.value)
+        }
+        _ => Err(anyhow!("expected a single file name argument to read_file, got {} arguments", args.len())),
+    }
+
+}
+
 fn do_init() -> Result<()> {
     let mut script = String::new();
     io::stdin().read_to_string(&mut script)?;
@@ -168,11 +185,17 @@ fn do_init() -> Result<()> {
     let http = context.object_value()?;
     http.set_property("send", context.wrap_callback(spin_send_http_request)?)?;
 
+    let fs_promises = context.object_value()?;
+    fs_promises.set_property("readFile", context.wrap_callback(read_file)?)?;
+
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;
     spin_sdk.set_property("http", http)?;
 
     global.set_property("spinSdk", spin_sdk)?;
+    global.set_property("_fsPromises", fs_promises)?;
+
+
 
     let on_resolve = context.wrap_callback(on_resolve)?;
     let on_reject = context.wrap_callback(on_reject)?;
