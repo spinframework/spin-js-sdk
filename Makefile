@@ -1,12 +1,5 @@
 WASI_SDK ?= /opt/wasi-sdk
 
-target/spin-http-js.wasm: dist/spin.js target/release/spinjs
-	mkdir -p target
-	target/release/spinjs -o $@ $<
-
-dist/spin.js: src/index.js
-	npx webpack --mode=production
-
 target/release/spinjs: target/wasm32-wasi/release/spin-js-engine.wasm
 	cd crates/spin-js-cli && \
 	SPIN_JS_ENGINE_PATH=../../target/wasm32-wasi/release/spin_js_engine.wasm \
@@ -22,4 +15,4 @@ crates/spin-js-engine/sdk.js: crates/spin-js-engine/src/js_sdk/sdk.js
 
 .PHONY: clean
 clean:
-	rm -rf dist target crates/spin-js-engine/sdk.js
+	rm -rf target crates/spin-js-engine/sdk.js

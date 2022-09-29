@@ -1,0 +1,15 @@
+spin_version = "1"
+authors = ["Fermyon Engineering <engineering@fermyon.com>"]
+name = "spin-http-js"
+trigger = { type = "http", base = "/" }
+version = "1.0.0"
+
+[[component]]
+id = "planetscale"
+source = "target/spin-http-js.wasm"
+allowed_http_hosts = ["https://aws.connect.psdb.cloud"]
+files = ["src/index.html"]
+[component.trigger]
+route = "/hello"
+[component.build]
+command = "make"

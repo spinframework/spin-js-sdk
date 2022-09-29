@@ -15,11 +15,12 @@ The top level directory contains an example HTTP trigger implemented using NPM, 
 
 ### Steps
 
+#### Setup SDK
 ```bash
-npm install
 npm install --prefix crates/spin-js-engine/src/js_sdk 
 make
-spin up --follow-all
 ```
 
-Use e.g. `curl -v http://127.0.0.1:3000/hello` to test that it's working.
+#### Build and run the examples
+
+There are some examples provided in the `example/` directory. Each example has a readme on building and running it. 
