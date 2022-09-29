@@ -10,9 +10,13 @@ export async function handleRequest(request) {
 
     const body = `${spinSdk.config.get("message")}\nenv: ${env}\nHere's a dog fact: ${dogFactBody}\n`
 
+    console.log(body)
+
+    let htmlFile = await fsPromises.readFile("./src/index.html")
+
     return {
         status: 200,
         headers: { "foo": "bar" },
-        body: encoder.encode(body).buffer
+        body: htmlFile
     }
 }

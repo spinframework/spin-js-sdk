@@ -52,7 +52,14 @@ class URL {
     }
 }
 
-export { fetch, URL, btoa, atob, Buffer }
+function _readFile(filename) {
+    return Promise.resolve(_fsPromises.readFile(filename))
+}
+
+const fsPromises = {
+    readFile: _readFile
+}
+export { fetch, URL, btoa, atob, Buffer, fsPromises}
 
 const statusTextList = {
     "100": "Continue",
