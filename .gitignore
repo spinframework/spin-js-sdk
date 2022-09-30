@@ -1,5 +1,4 @@
-/target
-/node_modules
-/dist
-/crates/spin-js-engine/src/js_sdk/node_modules
+target/
+node_modules/
+dist/
 /crates/spin-js-engine/sdk.js
