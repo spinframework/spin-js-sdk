@@ -13,7 +13,7 @@ files = [{source = "src/public", destination = "/"} ]
 [component.trigger]
 route = "/hello"
 [component.build]
-command = "make"
+command = "npm run build"
 
 [[component]]
 source = "modules/spin_static_fs.wasm"
