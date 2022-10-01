@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx webpack --mode=production && mkdir -p target && ../../target/release/spinjs -o target/spin-http-js.wasm dist/spin.js",
+    "build": "npx webpack --mode=production && mkdir -p target && ../../../target/release/spinjs -o target/spin-http-js.wasm dist/spin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,8 +13,5 @@
   "devDependencies": {
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0"
-  },
-  "dependencies": {
-    "@planetscale/database": "^1.4.0"
   }
 }

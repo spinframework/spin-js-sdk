@@ -12,4 +12,4 @@ files = ["src/index.html"]
 [component.trigger]
 route = "/hello"
 [component.build]
-command = "make"
+command = "npm run build"

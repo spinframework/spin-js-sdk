@@ -1,7 +1,8 @@
-const encoder = new TextEncoder("utf-8")
+declare const spinSdk: any;
 
-export async function handleRequest(request) {
-    const body = "Hell"
+const encoder = new TextEncoder()
+
+export async function handleRequest(_request: any) {
 
     return {
         status: 200,
