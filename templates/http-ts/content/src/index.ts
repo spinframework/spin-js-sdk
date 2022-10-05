@@ -1,8 +1,10 @@
-declare const spinSdk: any;
+import {HttpRequest, SpinSDK} from "./SpinSDK"
+
+declare const spinSdk: SpinSDK;
 
 const encoder = new TextEncoder()
 
-export async function handleRequest(_request: any) {
+export async function handleRequest(request: HttpRequest) {
 
     return {
         status: 200,

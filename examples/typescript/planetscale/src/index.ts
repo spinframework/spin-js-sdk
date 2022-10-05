@@ -1,4 +1,4 @@
-declare const spinSdk: any;
+import {HttpRequest} from "spin-sdk-types"
 
 import { connect } from '@planetscale/database'
 
@@ -10,7 +10,7 @@ const config = {
 
 const encoder = new TextEncoder()
 
-export async function handleRequest(_request: any) {
+export async function handleRequest(_request: HttpRequest) {
    const body = `Planetscale responded successfully`
    const conn = await connect(config)
    const results = await conn.execute('SHOW TABLES')
