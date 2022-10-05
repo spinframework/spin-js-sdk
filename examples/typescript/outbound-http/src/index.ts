@@ -1,9 +1,11 @@
-declare const spinSdk: any;
+import {HttpRequest, SpinSDK} from "spin-sdk-types"
+
+declare const spinSdk: SpinSDK;
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
-export async function handleRequest(_request: any) {
+export async function handleRequest(_request: HttpRequest) {
     const dogFact = await fetch("https://some-random-api.ml/facts/dog")
 
     const dogFactBody = decoder.decode(await dogFact.arrayBuffer() || new Uint8Array())
