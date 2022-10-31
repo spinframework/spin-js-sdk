@@ -13,8 +13,6 @@ interface SpinSDK {
   config: SpinConfig
 }
 
-declare const spinSdk: SpinSDK
-
 interface HttpResponse {
   status: number
   headers: Map<string, string>
@@ -37,6 +35,6 @@ interface FetchResult {
   json: () => Promise<object>
 }
 
-declare function fetch(uri: string, options?: object): Promise<FetchResult>
+type Fetch = (uri: string, options?: object) => Promise<FetchResult>
 
-export {HttpRequest, SpinSDK, HandleRequest, HttpResponse, fetch, spinSdk}
+export {HttpRequest, SpinSDK, HandleRequest, HttpResponse, Fetch,}
