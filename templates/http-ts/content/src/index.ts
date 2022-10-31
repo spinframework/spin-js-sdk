@@ -1,14 +1,11 @@
-import {HttpRequest, SpinSDK} from "./SpinSDK"
-
-declare const spinSdk: SpinSDK;
+import {spinSdk, fetch, HandleRequest, HttpResponse} from "spin-sdk-types"
 
 const encoder = new TextEncoder()
 
-export async function handleRequest(request: HttpRequest) {
-
+export const handleRequest: HandleRequest = async function(request): Promise<HttpResponse> {
     return {
-        status: 200,
-        headers: { "foo": "bar" },
-        body: encoder.encode("Hello from JS-SDK").buffer
+      status: 200,
+      headers: new Map([[ "foo", "bar" ]]),
+      body: encoder.encode("Hello from JS-SDK").buffer
     }
 }

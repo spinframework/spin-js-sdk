@@ -1,7 +1,7 @@
 require('fast-text-encoding')
 const btoa = require('btoa')
 import { Buffer } from 'buffer'
-const url = require('url')
+const Url= require('url-parse')
 
 function fetch(uri, options) {
     let reqHeaders = []
@@ -37,16 +37,7 @@ function atob(b64) {
 
 class URL {
     constructor(urlStr, base = undefined) {
-        if (base) {
-            urlStr = url.resolve(base, urlStr)
-        }
-        let urlObj = url.parse(urlStr)
-        if (urlObj.auth) {
-            let auth = urlObj.auth.split(":", 1)
-            urlObj.username = auth[0]
-            urlObj.password = auth[1]
-        }
-        urlObj.toString = () => url.format(urlObj)
+        let urlObj = Url(urlStr, base)
 
         return urlObj
     }
