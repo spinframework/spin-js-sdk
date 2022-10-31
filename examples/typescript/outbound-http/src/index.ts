@@ -1,14 +1,11 @@
-import {SpinSDK, HandleRequest, HttpResponse, Fetch} from "spin-sdk-types"
-
-declare const spinSdk: SpinSDK
-declare const fetch: Fetch
+import {HandleRequest, HttpResponse} from "spin-sdk-types"
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
 export const handleRequest: HandleRequest = async function(request): Promise<HttpResponse> {
     const dogFact = await fetch("https://some-random-api.ml/facts/dog")
-    
+
     const dogFactBody = decoder.decode(await dogFact.arrayBuffer() || new Uint8Array())
 
     const env = JSON.stringify(process.env)

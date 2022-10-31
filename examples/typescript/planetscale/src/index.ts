@@ -1,4 +1,4 @@
-import {HttpRequest} from "spin-sdk-types"
+import {HandleRequest, HttpResponse} from "spin-sdk-types"
 
 import { connect } from '@planetscale/database'
 
@@ -10,7 +10,7 @@ const config = {
 
 const encoder = new TextEncoder()
 
-export async function handleRequest(_request: HttpRequest) {
+export const handleRequest: HandleRequest = async function(request): Promise<HttpResponse> {
    const body = `Planetscale responded successfully`
    const conn = await connect(config)
    const results = await conn.execute('SHOW TABLES')
@@ -21,8 +21,8 @@ export async function handleRequest(_request: HttpRequest) {
    }
 
    return {
-       status: 200,
-       headers: { "foo": "bar" },
-       body: encoder.encode(body).buffer
+        status: 200,
+        headers: new Map([[ "foo", "bar" ]]),
+        body: encoder.encode(body).buffer
    }
 }
