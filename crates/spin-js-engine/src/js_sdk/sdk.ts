@@ -1,6 +1,8 @@
+/** @internal */
 require('fast-text-encoding')
-const btoa = require('btoa')
+/** @internal */
 import { Buffer } from 'buffer'
+/** @internal */
 const Url = require('url-parse')
 
 interface SpinConfig {
@@ -20,20 +22,28 @@ interface HttpResponse {
     body?: ArrayBuffer
 }
 
+type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>
 
 interface SpinSDK {
     config: SpinConfig
+    /** @internal */
     http: {
         send: (arg0: HttpRequest) => HttpResponse
     }
 }
 
+declare const _fsPromises: {
+    readFile: (arg0: string) => ArrayBuffer
+}
+
 declare global {
     const spinSdk: SpinSDK
-    const _fsPromises: {
-        readFile: (arg0: string) => ArrayBuffer
+    function fetch(uri: string, options?: object) : Promise<FetchResult>
+    function atob(data:string): string
+    function btoa(data:string): string
+    const fsPromises: {
+        readFile: (filename: string) => Promise<ArrayBuffer>
     }
-    type fetch = (uri: string, options?: object) => Promise<FetchResult>
 }
 
 interface FetchOptions {
@@ -55,6 +65,7 @@ interface FetchResult {
     json: () => Promise<object>
 }
 
+/** @internal */
 function fetch(uri: string, options?: FetchOptions) {
     let reqHeaders: Array<[string, string]> = []
     if (options && options.headers) {
@@ -82,8 +93,14 @@ function fetch(uri: string, options?: FetchOptions) {
     })
 }
 
+/** @internal */
 function atob(b64: string) {
     return Buffer.from(b64, "base64").toString()
+}
+
+/** @internal */
+function btoa(data: string) {
+    return Buffer.from(data).toString('base64')
 }
 
 class URL {
@@ -94,14 +111,18 @@ class URL {
     }
 }
 
-function _readFile(filename: string) {
-    return Promise.resolve(_fsPromises.readFile(filename))
+/** @internal */
+const fsPromises = {
+    readFile: (filename: string) =>  {
+        return Promise.resolve(_fsPromises.readFile(filename))
+    }
 }
 
-const fsPromises = {
-    readFile: _readFile
-}
-export { fetch, URL, btoa, atob, Buffer, fsPromises }
+/** @internal */
+export { atob, btoa, Buffer, fetch, fsPromises, URL}
+
+// Stuff to be exported to the sdk types file
+export { HttpRequest, HttpResponse, HandleRequest }
 
 const statusTextList: { [key: string]: string } = {
     100: "Continue",

@@ -11,7 +11,6 @@ object = { default = "teapot" }
 id = "hello"
 source = "target/spin-http-js.wasm"
 allowed_http_hosts = ["https://some-random-api.ml"]
-files = ["src/index.html"]
 [component.trigger]
 route = "/hello"
 [component.config]
