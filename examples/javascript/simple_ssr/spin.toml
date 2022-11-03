@@ -1,0 +1,23 @@
+spin_version = "1"
+authors = ["Fermyon Engineering <engineering@fermyon.com>"]
+name = "spin-http-js"
+trigger = { type = "http", base = "/" }
+version = "1.0.0"
+
+
+[[component]]
+id = "SSR"
+source = "target/spin-http-js.wasm"
+allowed_http_hosts = ["https://some-random-api.ml"]
+files = [{source = "src/public", destination = "/"} ]
+[component.trigger]
+route = "/hello"
+[component.build]
+command = "npm run build"
+
+[[component]]
+source = "modules/spin_static_fs.wasm"
+id = "fileserver"
+files = [{ source = "dist/static", destination = "/" }, ]
+[component.trigger]
+route = "/static/..."

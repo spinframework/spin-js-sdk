@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    entry: './sdk.ts',
+    entry: './src/index.ts',
     module: {
         rules: [
             {
@@ -15,9 +15,9 @@ module.exports = {
         extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
-        path: path.resolve(__dirname, '../../'),
-        filename: 'sdk.js',
-        libraryTarget: 'this'
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'spin.js',
+        library: 'spin'
     },
     optimization: {
         minimize: false
