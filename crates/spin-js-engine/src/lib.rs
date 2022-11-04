@@ -1,6 +1,9 @@
 #![deny(warnings)]
 
+use anyhow::bail;
 use std::path::PathBuf;
+use std::rc::Rc;
+
 use {
     anyhow::{anyhow, Result},
     http::{header::HeaderName, request, HeaderValue},
@@ -15,8 +18,7 @@ use {
     },
     std::{
         collections::HashMap,
-        env,
-        fs,
+        env, fs,
         io::{self, Read},
         ops::Deref,
         str,
@@ -143,19 +145,90 @@ fn spin_send_http_request(context: &Context, _this: &Value, args: &[Value]) -> R
     }
 }
 
-fn read_file(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>{
+fn read_file(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
         [filename] => {
-            let  deserializer = &mut Deserializer::from(filename.clone());
+            let deserializer = &mut Deserializer::from(filename.clone());
             let filename = PathBuf::deserialize(deserializer)?;
             let buffer = fs::read(filename)?;
             let mut serializer = Serializer::from_context(context)?;
             buffer.serialize(&mut serializer)?;
             Ok(serializer.value)
         }
-        _ => Err(anyhow!("expected a single file name argument to read_file, got {} arguments", args.len())),
+        _ => Err(anyhow!(
+            "expected a single file name argument to read_file, got {} arguments",
+            args.len()
+        )),
     }
+}
+#[derive(Serialize, Deserialize, Debug)]
+struct ReadDirOptions {
+    with_file_types: Option<bool>,
+}
 
+fn read_dir(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    let read_file_types: bool;
+    let num_args = args.len();
+    if num_args == 1 {
+        read_file_types = false;
+    } else if num_args == 2 {
+        let options_deserializer = &mut Deserializer::from(args[1].clone());
+        match (ReadDirOptions::deserialize(options_deserializer)?).with_file_types {
+            Some(true) => read_file_types = true,
+            _ => read_file_types = false,
+        }
+    } else {
+        bail!(
+            "expected a single file name argument to read_file, got {} arguments",
+            args.len()
+        );
+    }
+    let deserializer = &mut Deserializer::from(args[0].clone());
+    let dirname = PathBuf::deserialize(deserializer)?;
+    let dir = fs::read_dir(dirname)?;
+    match read_file_types {
+        true => {
+            let array = context.array_value()?;
+            for e in dir {
+                let e = Rc::new(e?);
+                let entry = context.object_value()?;
+                entry.set_property("name", context.value_from_str(&e.file_name().to_string_lossy())?)?;
+                entry.set_property(
+                    "isFile",
+                    context.wrap_callback({
+                        let e = e.clone();
+                        move |context, _, _| context.value_from_bool(e.file_type()?.is_file())
+                    })?,
+                )?;
+
+                entry.set_property(
+                    "isDirectory",
+                    context.wrap_callback({
+                        let e = e.clone();
+                        move |context, _, _| context.value_from_bool(e.file_type()?.is_dir())
+                    })?,
+                )?;
+
+                entry.set_property(
+                    "isSymbolicLink",
+                    context.wrap_callback({
+                        move |context, _, _| context.value_from_bool(e.file_type()?.is_symlink())
+                    })?,
+                )?;
+
+                array.append_property(entry)?;
+            }
+            Ok(array)
+        }
+        false => {
+            let array = context.array_value()?;
+            for e in dir {
+                let name = context.value_from_str(&e?.file_name().to_string_lossy())?;
+                array.append_property(name)?;
+            }
+            Ok(array)
+        }
+    }
 }
 
 fn do_init() -> Result<()> {
@@ -187,6 +260,7 @@ fn do_init() -> Result<()> {
 
     let fs_promises = context.object_value()?;
     fs_promises.set_property("readFile", context.wrap_callback(read_file)?)?;
+    fs_promises.set_property("readDir", context.wrap_callback(read_dir)?)?;
 
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;
@@ -194,8 +268,6 @@ fn do_init() -> Result<()> {
 
     global.set_property("spinSdk", spin_sdk)?;
     global.set_property("_fsPromises", fs_promises)?;
-
-
 
     let on_resolve = context.wrap_callback(on_resolve)?;
     let on_reject = context.wrap_callback(on_reject)?;
