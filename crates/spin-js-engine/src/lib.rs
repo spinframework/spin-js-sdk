@@ -179,7 +179,7 @@ fn read_dir(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
         }
     } else {
         bail!(
-            "expected a single file name argument to read_file, got {} arguments",
+            "expected a 1 or 2 arguments to read_dir, got {} arguments",
             args.len()
         );
     }
@@ -192,7 +192,10 @@ fn read_dir(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
             for e in dir {
                 let e = Rc::new(e?);
                 let entry = context.object_value()?;
-                entry.set_property("name", context.value_from_str(&e.file_name().to_string_lossy())?)?;
+                entry.set_property(
+                    "name",
+                    context.value_from_str(&e.file_name().to_string_lossy())?,
+                )?;
                 entry.set_property(
                     "isFile",
                     context.wrap_callback({
@@ -231,6 +234,25 @@ fn read_dir(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     }
 }
 
+fn get_glob(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [globstring] => {
+            let array = context.array_value()?;
+            let deserializer = &mut Deserializer::from(globstring.clone());
+            let globstring = &String::deserialize(deserializer)?;
+            let paths = glob::glob(globstring)?;
+            for path in paths {
+                array.append_property(context.value_from_str(&path?.to_string_lossy())?)?;
+            }
+            Ok(array)
+        },
+        _ => bail!(
+            "expected a single file name argument to read_file, got {} arguments",
+            args.len()
+        ),
+    }
+}
+
 fn do_init() -> Result<()> {
     let mut script = String::new();
     io::stdin().read_to_string(&mut script)?;
@@ -266,8 +288,12 @@ fn do_init() -> Result<()> {
     spin_sdk.set_property("config", config)?;
     spin_sdk.set_property("http", http)?;
 
+    let _glob = context.object_value()?;
+    _glob.set_property("get", context.wrap_callback(get_glob)?)?;
+
     global.set_property("spinSdk", spin_sdk)?;
     global.set_property("_fsPromises", fs_promises)?;
+    global.set_property("_glob", _glob)?;
 
     let on_resolve = context.wrap_callback(on_resolve)?;
     let on_reject = context.wrap_callback(on_reject)?;

@@ -1288,6 +1288,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bytes",
+ "glob",
  "http",
  "once_cell",
  "quickjs-wasm-rs",
