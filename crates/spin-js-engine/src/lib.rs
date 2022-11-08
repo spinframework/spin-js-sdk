@@ -1,6 +1,7 @@
 #![deny(warnings)]
 
 use anyhow::bail;
+use rand::{thread_rng, Rng};
 use std::path::PathBuf;
 use std::rc::Rc;
 
@@ -245,12 +246,16 @@ fn get_glob(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
                 array.append_property(context.value_from_str(&path?.to_string_lossy())?)?;
             }
             Ok(array)
-        },
+        }
         _ => bail!(
             "expected a single file name argument to read_file, got {} arguments",
             args.len()
         ),
     }
+}
+
+fn math_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> {
+    return context.value_from_f64(thread_rng().gen_range(0.0_f64..1.0));
 }
 
 fn do_init() -> Result<()> {
@@ -291,6 +296,10 @@ fn do_init() -> Result<()> {
     let _glob = context.object_value()?;
     _glob.set_property("get", context.wrap_callback(get_glob)?)?;
 
+    let _random = context.object_value()?;
+    _random.set_property("get_rand", context.wrap_callback(math_rand)?)?;
+
+    global.set_property("_random", _random)?;
     global.set_property("spinSdk", spin_sdk)?;
     global.set_property("_fsPromises", fs_promises)?;
     global.set_property("_glob", _glob)?;
