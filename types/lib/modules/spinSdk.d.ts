@@ -1,11 +1,15 @@
 interface SpinConfig {
     get(arg0: string): string;
 }
-interface HttpRequest {
+interface SpinHttpRequest {
     method: string;
     uri: string;
     headers: Array<[string, string]>;
     body?: ArrayBuffer;
+}
+interface HttpRequest extends SpinHttpRequest {
+    json: () => object;
+    text: () => string;
 }
 interface HttpResponse {
     status: number;

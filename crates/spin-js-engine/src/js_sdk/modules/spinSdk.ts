@@ -5,11 +5,16 @@ interface SpinConfig {
     get(arg0: string): string
 }
 
-interface HttpRequest {
+interface SpinHttpRequest {
     method: string
     uri: string
     headers: Array<[string, string]>
     body?: ArrayBuffer
+}
+
+interface HttpRequest extends SpinHttpRequest {
+    json:() => object
+    text: () => string
 }
 
 interface HttpResponse {
@@ -24,7 +29,7 @@ interface SpinSDK {
     config: SpinConfig
     /** @internal */
     http: {
-        send: (arg0: HttpRequest) => HttpResponse
+        send: (arg0: SpinHttpRequest) => HttpResponse
     }
 }
 
