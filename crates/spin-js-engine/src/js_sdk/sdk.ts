@@ -18,10 +18,13 @@ import { atob, btoa, Buffer } from "./modules/stringHandling"
 
 import { URL } from "./modules/url"
 
+/** @internal */
 import "./modules/random"
+/** @internal */
+import {crypto} from "./modules/crypto"
 
 /** @internal */
-export { atob, btoa, Buffer, fetch, fsPromises, glob }
+export { atob, btoa, Buffer, fetch, fsPromises, glob, crypto }
 
 // Stuff to be exported to the sdk types file
 export { HttpRequest, HttpResponse, HandleRequest, URL }

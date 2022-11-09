@@ -254,6 +254,10 @@ fn get_glob(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     }
 }
 
+fn get_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> {
+    return context.value_from_u32(thread_rng().gen_range(0..=255));
+}
+
 fn math_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> {
     return context.value_from_f64(thread_rng().gen_range(0.0_f64..1.0));
 }
@@ -297,7 +301,8 @@ fn do_init() -> Result<()> {
     _glob.set_property("get", context.wrap_callback(get_glob)?)?;
 
     let _random = context.object_value()?;
-    _random.set_property("get_rand", context.wrap_callback(math_rand)?)?;
+    _random.set_property("math_rand", context.wrap_callback(math_rand)?)?;
+    _random.set_property("get_rand", context.wrap_callback(get_rand)?)?;
 
     global.set_property("_random", _random)?;
     global.set_property("spinSdk", spin_sdk)?;
