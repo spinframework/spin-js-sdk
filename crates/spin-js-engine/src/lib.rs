@@ -3,7 +3,6 @@
 use anyhow::bail;
 use rand::{thread_rng, Rng};
 use std::path::PathBuf;
-use std::rc::Rc;
 
 use {
     anyhow::{anyhow, Result},
@@ -191,7 +190,8 @@ fn read_dir(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
         true => {
             let array = context.array_value()?;
             for e in dir {
-                let e = Rc::new(e?);
+                let e = e?;
+                let file_type = e.file_type()?;
                 let entry = context.object_value()?;
                 entry.set_property(
                     "name",
@@ -200,23 +200,21 @@ fn read_dir(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
                 entry.set_property(
                     "isFile",
                     context.wrap_callback({
-                        let e = e.clone();
-                        move |context, _, _| context.value_from_bool(e.file_type()?.is_file())
+                        move |context, _, _| context.value_from_bool(file_type.is_file())
                     })?,
                 )?;
 
                 entry.set_property(
                     "isDirectory",
                     context.wrap_callback({
-                        let e = e.clone();
-                        move |context, _, _| context.value_from_bool(e.file_type()?.is_dir())
+                        move |context, _, _| context.value_from_bool(file_type.is_dir())
                     })?,
                 )?;
 
                 entry.set_property(
                     "isSymbolicLink",
                     context.wrap_callback({
-                        move |context, _, _| context.value_from_bool(e.file_type()?.is_symlink())
+                        move |context, _, _| context.value_from_bool(file_type.is_symlink())
                     })?,
                 )?;
 
@@ -379,12 +377,8 @@ fn handle(request: Request) -> Result<Response> {
         "text",
         context.wrap_callback({
             let body = body.clone();
-            println!("body is {:?}", body);
             move |context, _, _| match &body {
-                Some(body) => {
-                    println!("In here with some data {:#?}", body);
-                    context.value_from_str(&str::from_utf8(body)?)
-                }
+                Some(body) => context.value_from_str(&str::from_utf8(body)?),
                 _ => context.value_from_str(""),
             }
         })?,
