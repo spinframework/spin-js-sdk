@@ -3,7 +3,6 @@
 use anyhow::bail;
 use rand::{thread_rng, Rng};
 use std::path::PathBuf;
-use std::rc::Rc;
 
 use {
     anyhow::{anyhow, Result},
@@ -191,7 +190,8 @@ fn read_dir(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
         true => {
             let array = context.array_value()?;
             for e in dir {
-                let e = Rc::new(e?);
+                let e = e?;
+                let file_type = e.file_type()?;
                 let entry = context.object_value()?;
                 entry.set_property(
                     "name",
@@ -200,23 +200,21 @@ fn read_dir(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
                 entry.set_property(
                     "isFile",
                     context.wrap_callback({
-                        let e = e.clone();
-                        move |context, _, _| context.value_from_bool(e.file_type()?.is_file())
+                        move |context, _, _| context.value_from_bool(file_type.is_file())
                     })?,
                 )?;
 
                 entry.set_property(
                     "isDirectory",
                     context.wrap_callback({
-                        let e = e.clone();
-                        move |context, _, _| context.value_from_bool(e.file_type()?.is_dir())
+                        move |context, _, _| context.value_from_bool(file_type.is_dir())
                     })?,
                 )?;
 
                 entry.set_property(
                     "isSymbolicLink",
                     context.wrap_callback({
-                        move |context, _, _| context.value_from_bool(e.file_type()?.is_symlink())
+                        move |context, _, _| context.value_from_bool(file_type.is_symlink())
                     })?,
                 )?;
 
@@ -371,12 +369,35 @@ fn handle(request: Request) -> Result<Response> {
             .into_body()
             .map(|bytes| ByteBuf::from(bytes.deref())),
     };
-
     let mut serializer = Serializer::from_context(context)?;
     request.serialize(&mut serializer)?;
-    let request = serializer.value;
+    let request_value = serializer.value;
+    let body = request.body;
+    request_value.set_property(
+        "text",
+        context.wrap_callback({
+            let body = body.clone();
+            move |context, _, _| match &body {
+                Some(body) => context.value_from_str(&str::from_utf8(body)?),
+                _ => context.value_from_str(""),
+            }
+        })?,
+    )?;
 
-    let promise = entrypoint.call(global, &[request])?;
+    request_value.set_property(
+        "json",
+        context.wrap_callback(move |context, _, _| {
+            if let Some(body) = &body {
+                let mut serializer = Serializer::from_context(context)?;
+                serde_json::from_slice::<serde_json::Value>(body)?.serialize(&mut serializer)?;
+                Ok(serializer.value)
+            } else {
+                context.object_value()
+            }
+        })?,
+    )?;
+
+    let promise = entrypoint.call(global, &[request_value])?;
 
     promise
         .get_property("then")?
