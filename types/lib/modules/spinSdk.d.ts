@@ -13,7 +13,7 @@ interface HttpRequest extends SpinHttpRequest {
 }
 interface HttpResponse {
     status: number;
-    headers: Map<string, string>;
+    headers: Record<string, string>;
     body?: ArrayBuffer;
 }
 declare type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>;

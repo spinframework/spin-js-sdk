@@ -1,9 +1,9 @@
-import {HandleRequest, HttpResponse} from "spin-sdk-types"
+import { HandleRequest, HttpResponse } from "spin-sdk-types"
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
-export const handleRequest: HandleRequest = async function(request): Promise<HttpResponse> {
+export const handleRequest: HandleRequest = async function (request): Promise<HttpResponse> {
 
     const dogFact = await fetch("https://some-random-api.ml/facts/dog")
 
@@ -15,7 +15,7 @@ export const handleRequest: HandleRequest = async function(request): Promise<Htt
 
     return {
         status: 200,
-        headers: new Map([[ "foo", "bar" ]]),
+        headers: { "foo": "bar" },
         body: encoder.encode(body).buffer
     }
 }

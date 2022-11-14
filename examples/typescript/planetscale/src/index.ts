@@ -22,7 +22,7 @@ export const handleRequest: HandleRequest = async function(request): Promise<Htt
 
    return {
         status: 200,
-        headers: new Map([[ "foo", "bar" ]]),
+        headers: { "foo": "bar" },
         body: encoder.encode(body).buffer
    }
 }
