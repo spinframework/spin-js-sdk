@@ -4,7 +4,7 @@ const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
 export const handleRequest: HandleRequest = async function(request): Promise<HttpResponse> {
-    console.log(request.text())
+
     const dogFact = await fetch("https://some-random-api.ml/facts/dog")
 
     const dogFactBody = await dogFact.text()
