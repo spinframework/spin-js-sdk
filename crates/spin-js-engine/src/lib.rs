@@ -1,14 +1,11 @@
 #![deny(warnings)]
 
-use anyhow::bail;
-use rand::{thread_rng, Rng};
-use std::path::PathBuf;
-
 use {
-    anyhow::{anyhow, Result},
+    anyhow::{anyhow, bail, Result},
     http::{header::HeaderName, request, HeaderValue},
     once_cell::sync::{Lazy, OnceCell},
     quickjs_wasm_rs::{Context, Deserializer, Exception, Serializer, Value},
+    rand::{thread_rng, Rng},
     send_wrapper::SendWrapper,
     serde::{Deserialize, Serialize},
     serde_bytes::ByteBuf,
@@ -22,6 +19,7 @@ use {
         env, fs,
         io::{self, Read},
         ops::Deref,
+        path::PathBuf,
         str,
         sync::Mutex,
     },
