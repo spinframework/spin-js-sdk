@@ -396,9 +396,9 @@ fn handle(request: Request) -> Result<Response> {
 
     context.execute_pending()?;
 
-    let response = RESPONSE.lock().unwrap().take().unwrap()?;
+    let response = RESPONSE.lock().unwrap().take().unwrap()?.take();
 
-    let deserializer = &mut Deserializer::from(response.deref().clone());
+    let deserializer = &mut Deserializer::from(response);
     let response = HttpResponse::deserialize(deserializer)?;
     let mut builder = http::Response::builder().status(response.status);
     if let Some(headers) = builder.headers_mut() {
