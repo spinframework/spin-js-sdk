@@ -7,8 +7,9 @@ use std::path::PathBuf;
 use {
     anyhow::{anyhow, Result},
     http::{header::HeaderName, request, HeaderValue},
-    once_cell::sync::OnceCell,
+    once_cell::sync::{Lazy, OnceCell},
     quickjs_wasm_rs::{Context, Deserializer, Exception, Serializer, Value},
+    send_wrapper::SendWrapper,
     serde::{Deserialize, Serialize},
     serde_bytes::ByteBuf,
     spin_sdk::{
@@ -22,15 +23,16 @@ use {
         io::{self, Read},
         ops::Deref,
         str,
+        sync::Mutex,
     },
 };
 
-static mut CONTEXT: OnceCell<Context> = OnceCell::new();
-static mut GLOBAL: OnceCell<Value> = OnceCell::new();
-static mut ENTRYPOINT: OnceCell<Value> = OnceCell::new();
-static mut ON_RESOLVE: OnceCell<Value> = OnceCell::new();
-static mut ON_REJECT: OnceCell<Value> = OnceCell::new();
-static mut RESPONSE: Option<Result<Value>> = None;
+static CONTEXT: OnceCell<SendWrapper<Context>> = OnceCell::new();
+static GLOBAL: OnceCell<SendWrapper<Value>> = OnceCell::new();
+static ENTRYPOINT: OnceCell<SendWrapper<Value>> = OnceCell::new();
+static ON_RESOLVE: OnceCell<SendWrapper<Value>> = OnceCell::new();
+static ON_REJECT: OnceCell<SendWrapper<Value>> = OnceCell::new();
+static RESPONSE: Lazy<Mutex<Option<Result<SendWrapper<Value>>>>> = Lazy::new(|| Mutex::new(None));
 
 #[derive(Serialize, Deserialize, Debug)]
 struct HttpRequest {
@@ -52,7 +54,7 @@ struct HttpResponse {
 fn on_resolve(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
         [response] => {
-            unsafe { RESPONSE = Some(Ok(response.clone())) }
+            *RESPONSE.lock().unwrap() = Some(Ok(SendWrapper::new(response.clone())));
 
             context.undefined_value()
         }
@@ -64,7 +66,7 @@ fn on_resolve(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
 fn on_reject(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
         [error] => {
-            unsafe { RESPONSE = Some(Err(Exception::from(error.clone())?.into_error())) }
+            *RESPONSE.lock().unwrap() = Some(Err(Exception::from(error.clone())?.into_error()));
 
             context.undefined_value()
         }
@@ -253,11 +255,11 @@ fn get_glob(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
 }
 
 fn get_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> {
-    return context.value_from_u32(thread_rng().gen_range(0..=255));
+    context.value_from_u32(thread_rng().gen_range(0..=255))
 }
 
 fn math_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> {
-    return context.value_from_f64(thread_rng().gen_range(0.0_f64..1.0));
+    context.value_from_f64(thread_rng().gen_range(0.0_f64..1.0))
 }
 
 fn do_init() -> Result<()> {
@@ -310,13 +312,11 @@ fn do_init() -> Result<()> {
     let on_resolve = context.wrap_callback(on_resolve)?;
     let on_reject = context.wrap_callback(on_reject)?;
 
-    unsafe {
-        CONTEXT.set(context).unwrap();
-        GLOBAL.set(global).unwrap();
-        ENTRYPOINT.set(entrypoint).unwrap();
-        ON_RESOLVE.set(on_resolve).unwrap();
-        ON_REJECT.set(on_reject).unwrap();
-    }
+    CONTEXT.set(SendWrapper::new(context)).unwrap();
+    GLOBAL.set(SendWrapper::new(global)).unwrap();
+    ENTRYPOINT.set(SendWrapper::new(entrypoint)).unwrap();
+    ON_RESOLVE.set(SendWrapper::new(on_resolve)).unwrap();
+    ON_REJECT.set(SendWrapper::new(on_reject)).unwrap();
 
     Ok(())
 }
@@ -328,19 +328,11 @@ pub extern "C" fn init() {
 
 #[http_component]
 fn handle(request: Request) -> Result<Response> {
-    let context;
-    let global;
-    let entrypoint;
-    let on_resolve;
-    let on_reject;
-
-    unsafe {
-        context = CONTEXT.get().unwrap();
-        global = GLOBAL.get().unwrap();
-        entrypoint = ENTRYPOINT.get().unwrap();
-        on_resolve = ON_RESOLVE.get().unwrap();
-        on_reject = ON_REJECT.get().unwrap();
-    }
+    let context = CONTEXT.get().unwrap();
+    let global = GLOBAL.get().unwrap();
+    let entrypoint = ENTRYPOINT.get().unwrap();
+    let on_resolve = ON_RESOLVE.get().unwrap();
+    let on_reject = ON_REJECT.get().unwrap();
 
     let env = context.object_value()?;
     for (key, value) in env::vars() {
@@ -378,7 +370,7 @@ fn handle(request: Request) -> Result<Response> {
         context.wrap_callback({
             let body = body.clone();
             move |context, _, _| match &body {
-                Some(body) => context.value_from_str(&str::from_utf8(body)?),
+                Some(body) => context.value_from_str(str::from_utf8(body)?),
                 _ => context.value_from_str(""),
             }
         })?,
@@ -399,15 +391,16 @@ fn handle(request: Request) -> Result<Response> {
 
     let promise = entrypoint.call(global, &[request_value])?;
 
-    promise
-        .get_property("then")?
-        .call(&promise, &[on_resolve.clone(), on_reject.clone()])?;
+    promise.get_property("then")?.call(
+        &promise,
+        &[on_resolve.deref().clone(), on_reject.deref().clone()],
+    )?;
 
     context.execute_pending()?;
 
-    let response = unsafe { RESPONSE.take() }.unwrap()?;
+    let response = RESPONSE.lock().unwrap().take().unwrap()?;
 
-    let deserializer = &mut Deserializer::from(response);
+    let deserializer = &mut Deserializer::from(response.deref().clone());
     let response = HttpResponse::deserialize(deserializer)?;
     let mut builder = http::Response::builder().status(response.status);
     if let Some(headers) = builder.headers_mut() {
