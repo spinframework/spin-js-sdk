@@ -20,6 +20,9 @@ import { atob, btoa, Buffer } from "./modules/stringHandling"
 import {crypto} from "./modules/crypto"
 
 /** @internal */
+import "./modules/random"
+
+/** @internal */
 import { URL, URLSearchParams } from "./modules/url"
 import "./modules/url"
 
