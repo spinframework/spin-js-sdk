@@ -4,12 +4,13 @@ This is the simplest example of using the Javascript SDK.
 
 ### Building the example
 
+```console
+spin build
 ```
-npm run build
-```
+
 ### Running the example
 
-```
+```console
 spin up --follow-all
 ```
 
