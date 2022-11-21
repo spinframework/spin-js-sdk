@@ -6,9 +6,12 @@ The top level directory contains an example HTTP trigger implemented using NPM, 
 
 ## Building
 
+You need to build the SDK from source to use it.
+
 ### Prerequisites
 
 - Make
+- CMake
 - NPM
 - Rust (including the wasm32-wasi target)
 - WASI SDK installed at /opt/wasi-sdk
@@ -21,6 +24,8 @@ npm install --prefix crates/spin-js-engine/src/js_sdk
 make
 ```
 
+The build produces the `spinjs` utility, which is used to build wasm modules from Javascript or Typescript source. For convenience you can move `spinjs` to a directory in your path - e.g., `sudo cp target/release/spinjs /usr/local/bin/spinjs`.
+
 #### Build and run the examples
 
-There are some examples provided in the `example/` directory. Each example has a readme on building and running it. 
+There are some examples provided in the `example/` directory. Each example has a readme on building and running it.
