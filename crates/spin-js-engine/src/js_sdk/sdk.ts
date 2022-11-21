@@ -27,8 +27,11 @@ import { URL, URLSearchParams } from "./modules/url"
 import "./modules/url"
 
 /** @internal */
-export { atob, btoa, Buffer, fetch, fsPromises, glob, crypto, URL, URLSearchParams }
+import {utils} from "./modules/utils"
+import "./modules/utils"
 
+/** @internal */
+export { atob, btoa, Buffer, fetch, fsPromises, glob, crypto, URL, URLSearchParams, utils}
 
 // Stuff to be exported to the sdk types file
 export { HttpRequest, HttpResponse, HandleRequest}
