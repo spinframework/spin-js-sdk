@@ -41,6 +41,16 @@ struct HttpRequest {
     body: Option<ByteBuf>,
 }
 
+// Seperate Structure to add headers without having to use serde
+// serde causes issues with headers as it sanitzes keys leading to headers being invalid
+// (eg) content-type becomes contentType.
+#[derive(Serialize, Deserialize, Debug)]
+struct JSHttpRequest {
+    method: String,
+    uri: String,
+    body: Option<ByteBuf>,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 struct HttpResponse {
     status: u16,
@@ -447,20 +457,16 @@ fn handle(request: Request) -> Result<Response> {
     process.set_property("env", env)?;
 
     global.set_property("process", process)?;
+    
+    let headers = context.object_value()?;
+    for (key, value) in request.headers().iter() {
+        let header_value =  context.value_from_str(str::from_utf8(value.as_bytes())?)?;
+        headers.set_property(key.as_str().to_owned(), header_value)?;
+    }
 
-    let request = HttpRequest {
+    let request = JSHttpRequest {
         method: request.method().as_str().to_owned(),
         uri: request.uri().to_string(),
-        headers: request
-            .headers()
-            .iter()
-            .map(|(key, value)| {
-                Ok((
-                    key.as_str().to_owned(),
-                    str::from_utf8(value.as_bytes())?.to_owned(),
-                ))
-            })
-            .collect::<Result<_>>()?,
         body: request
             .into_body()
             .map(|bytes| ByteBuf::from(bytes.deref())),
@@ -469,6 +475,7 @@ fn handle(request: Request) -> Result<Response> {
     request.serialize(&mut serializer)?;
     let request_value = serializer.value;
     let body = request.body;
+    request_value.set_property("headers", headers)?;
     request_value.set_property(
         "text",
         context.wrap_callback({
