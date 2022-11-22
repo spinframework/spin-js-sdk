@@ -31,6 +31,17 @@ interface SpinSDK {
     http: {
         send: (arg0: SpinHttpRequest) => HttpResponse
     }
+    redis: {
+        get: (address: string, key: string) => ArrayBuffer
+        incr: (address: string, key: string) => bigint
+        publish: (address: string, channel: string, value: ArrayBuffer) => undefined
+        set: (address: string, key: string, value: ArrayBuffer) => undefined
+        /* 
+            Redis::del interface does not exist on cloud, leading to broken deploys
+            uncomment after ready on cloud.
+        */
+        // del: (address: string, key: string) => bigint
+    }
 }
 
 interface FetchOptions {
@@ -83,6 +94,7 @@ function fetch(uri: string, options?: FetchOptions) {
 declare global {
     const spinSdk: SpinSDK
     function fetch(uri: string, options?: object) : Promise<FetchResult>
+    
 }
 
 /** @internal */

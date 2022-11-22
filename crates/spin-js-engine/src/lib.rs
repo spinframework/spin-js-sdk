@@ -12,7 +12,7 @@ use {
     spin_sdk::{
         config,
         http::{Request, Response},
-        http_component, outbound_http,
+        http_component, outbound_http, redis,
     },
     std::{
         collections::HashMap,
@@ -260,6 +260,103 @@ fn math_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value>
     context.value_from_f64(thread_rng().gen_range(0.0_f64..1.0))
 }
 
+fn redis_get(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [address, key] => {
+            let address = &deserialize_helper(address)?;
+            let key = &deserialize_helper(key)?;
+            let buffer = redis::get(address, key)
+                .map_err(|_| anyhow!("Error executing Redis get command"))?;
+            let mut serializer = Serializer::from_context(context)?;
+            buffer.serialize(&mut serializer)?;
+            Ok(serializer.value)
+        }
+        _ => bail!(
+            "expected a two arguments (address, key), got {} arguments",
+            args.len()
+        ),
+    }
+}
+fn redis_incr(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [address, key] => {
+            let address = &deserialize_helper(address)?;
+            let key = &deserialize_helper(key)?;
+            let value = redis::incr(address, key)
+                .map_err(|_| anyhow!("Error executing Redis incr command"))?;
+            let mut serializer = Serializer::from_context(context)?;
+            value.serialize(&mut serializer)?;
+            Ok(serializer.value)
+        }
+        _ => bail!(
+            "expected a two arguments (address, key), got {} arguments",
+            args.len()
+        ),
+    }
+}
+
+/*
+    REDIS:DEL interface does not exist in cloud which leads to deploys breaking, uncomment after ready on cloud.
+*/
+/*
+fn redis_del(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [address, key] => {
+            let addr_deseriallet address = &deserialize_helper(address)?;
+            let key = &deserialize_helper(key)?;izer = &mut Deserializer::from(address.clone());
+            let mut keys = Vec::new();
+            for i in &key {
+                keys.push(i.as_str());
+            }
+            let value = redis::del(address, keys.as_slice())
+                .map_err(|_| anyhow!("Error executing Redis del command"))?;
+            let mut serializer = Serializer::from_context(context)?;
+            value.serialize(&mut serializer)?;
+            Ok(serializer.value)
+        }
+        _ => bail!(
+            "expected a two arguments (address, key), got {} arguments",
+            args.len()
+        ),
+    }
+}
+*/
+
+fn redis_set(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [address, key, value] => {
+            let address = &deserialize_helper(address)?;
+            let key = &deserialize_helper(key)?;
+            let value_deserializer = &mut Deserializer::from(value.clone());
+            let value = ByteBuf::deserialize(value_deserializer)?;
+            redis::set(address, key, &value)
+                .map_err(|_| anyhow!("Error executing Redis set command"))?;
+            context.undefined_value()
+        }
+        _ => bail!(
+            "expected a three arguments (address, key, value), got {} arguments",
+            args.len()
+        ),
+    }
+}
+
+fn redis_publish(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [address, channel, value] => {
+            let address = &deserialize_helper(address)?;
+            let channel = &deserialize_helper(channel)?;
+            let value_deserializer = &mut Deserializer::from(value.clone());
+            let value = ByteBuf::deserialize(value_deserializer)?;
+            redis::publish(address, channel, &value)
+                .map_err(|_| anyhow!("Error executing Redis publish command"))?;
+            context.undefined_value()
+        }
+        _ => bail!(
+            "expected a three arguments (address, key, value), got {} arguments",
+            args.len()
+        ),
+    }
+}
 fn do_init() -> Result<()> {
     let mut script = String::new();
     io::stdin().read_to_string(&mut script)?;
@@ -291,9 +388,18 @@ fn do_init() -> Result<()> {
     fs_promises.set_property("readFile", context.wrap_callback(read_file)?)?;
     fs_promises.set_property("readDir", context.wrap_callback(read_dir)?)?;
 
+    let redis = context.object_value()?;
+    redis.set_property("get", context.wrap_callback(redis_get)?)?;
+    redis.set_property("set", context.wrap_callback(redis_set)?)?;
+    redis.set_property("incr", context.wrap_callback(redis_incr)?)?;
+    redis.set_property("publish", context.wrap_callback(redis_publish)?)?;
+    /*  REDIS:DEL interface does not exist in cloud which leads to deploys breaking, uncomment after ready on cloud. */
+    // redis.set_property("del", context.wrap_callback(redis_del)?)?;
+
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;
     spin_sdk.set_property("http", http)?;
+    spin_sdk.set_property("redis", redis)?;
 
     let _glob = context.object_value()?;
     _glob.set_property("get", context.wrap_callback(get_glob)?)?;
@@ -411,4 +517,14 @@ fn handle(request: Request) -> Result<Response> {
     }
 
     Ok(builder.body(response.body.map(|buffer| buffer.into_vec().into()))?)
+}
+
+
+fn deserialize_helper(value: &Value) -> Result<String> {
+    let deserializer = &mut Deserializer::from(value.clone());
+    let result = String::deserialize(deserializer);
+    match result {
+        Ok(value) => Ok(value),
+        _ => bail!("failed to deserialize string")
+    }
 }

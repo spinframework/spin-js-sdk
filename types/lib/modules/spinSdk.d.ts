@@ -19,6 +19,12 @@ interface HttpResponse {
 declare type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>;
 interface SpinSDK {
     config: SpinConfig;
+    redis: {
+        get: (address: string, key: string) => ArrayBuffer;
+        incr: (address: string, key: string) => bigint;
+        publish: (address: string, channel: string, value: ArrayBuffer) => undefined;
+        set: (address: string, key: string, value: ArrayBuffer) => undefined;
+    };
 }
 interface FetchHeaders {
     entries: () => Iterator<[string, string]>;

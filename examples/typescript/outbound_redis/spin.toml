@@ -1,0 +1,13 @@
+spin_version = "1"
+authors = ["Fermyon Engineering <engineering@fermyon.com>"]
+name = "outbound-redis"
+trigger = { type = "http", base = "/" }
+version = "1.0.0"
+
+[[component]]
+id = "hello"
+source = "target/spin-http-js.wasm"
+[component.trigger]
+route = "/hello"
+[component.build]
+command = "npm run build"
