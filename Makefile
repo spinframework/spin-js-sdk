@@ -4,6 +4,7 @@ target/release/spinjs: target/wasm32-wasi/release/spin-js-engine.wasm
 	cd crates/spin-js-cli && \
 	SPIN_JS_ENGINE_PATH=../../target/wasm32-wasi/release/spin_js_engine.wasm \
 	cargo build --release
+	echo "import \"./modules/overrides\"" >> crates/spin-js-engine/src/js_sdk/dist/sdk.d.ts
 	cp crates/spin-js-engine/src/js_sdk/dist/sdk.d.ts types/lib/index.d.ts
 	cp -r crates/spin-js-engine/src/js_sdk/dist/modules types/lib/
 
