@@ -12,6 +12,7 @@
     "buffer": "^6.0.3",
     "fast-text-encoding": "^1.0.6",
     "query-string": "^7.1.1",
+    "typedarray-to-buffer": "^4.0.0",
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
