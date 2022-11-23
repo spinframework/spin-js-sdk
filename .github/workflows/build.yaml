@@ -1,0 +1,58 @@
+name: Build
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build spinjs
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install latest Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          components: clippy, rustfmt
+
+      - name: "Install Wasm Rust target"
+        run: rustup target add wasm32-wasi
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "${{ runner.os }}-lint-${{ hashFiles('./Cargo.lock') }}"
+
+      - name: Install nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1.13
+        with:
+          cmake-version: '3.16.x'
+
+      - name: Setup WASI-SDK
+        run: |
+          cd /tmp
+          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-16/wasi-sdk-16.0-linux.tar.gz
+          tar -xvf wasi-sdk-16.0-linux.tar.gz
+          cp -r wasi-sdk-16.0 /opt/wasi-sdk
+
+      - name: Install NPM dependancies for SDK
+        run: 
+          npm install --prefix crates/spin-js-engine/src/js_sdk         
+      
+      - name: Build spinjs
+        run: make
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+            name: spinjs
+            path: ./target/release/spinjs
