@@ -10,7 +10,35 @@ env:
 jobs:
   build:
     name: Build spinjs
-    runs-on: "ubuntu-latest"
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              os: "ubuntu-latest",
+              arch: "amd64",
+              wasiSDK: "linux",
+              buildArgs: "",
+              target: "",
+              targetDir: "target/release",
+            }
+          - {
+              os: "macos-latest",
+              arch: "amd64",
+              wasiSDK: "macos",
+              buildArgs: "",
+              target: "",
+              targetDir: "target/release",
+            }
+          - {
+              os: "macos-latest",
+              arch: "aarch64",
+              wasiSDK: "macos",
+              buildArgs: "\"--target aarch64-apple-darwin\"",
+              target: "aarch64-apple-darwin",
+              targetDir: "target/aarch64-apple-darwin/release/",
+            }
     steps:
       - uses: actions/checkout@v3
       - name: Install latest Rust stable toolchain
@@ -18,14 +46,14 @@ jobs:
         with:
           toolchain: stable
           default: true
-          components: clippy, rustfmt
+          target: ${{ matrix.config.target }}
 
       - name: "Install Wasm Rust target"
         run: rustup target add wasm32-wasi
 
       - uses: Swatinem/rust-cache@v2
         with:
-          shared-key: "${{ runner.os }}-lint-${{ hashFiles('./Cargo.lock') }}"
+          shared-key: "${{ runner.os }}-${{ matrix.config.arch }}-lint-${{ hashFiles('./Cargo.lock') }}"
 
       - name: Install nodejs
         uses: actions/setup-node@v3
@@ -37,22 +65,22 @@ jobs:
         with:
           cmake-version: '3.16.x'
 
-      - name: Setup WASI-SDK
+      - name: Download WASI-SDK
         run: |
           cd /tmp
-          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-16/wasi-sdk-16.0-linux.tar.gz
-          tar -xvf wasi-sdk-16.0-linux.tar.gz
-          cp -r wasi-sdk-16.0 /opt/wasi-sdk
+          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-16/wasi-sdk-16.0-${{ matrix.config.wasiSDK }}.tar.gz
+          tar -xvf wasi-sdk-16.0-${{ matrix.config.wasiSDK }}.tar.gz
+          sudo cp -v -r wasi-sdk-16.0 /opt/wasi-sdk
 
       - name: Install NPM dependancies for SDK
         run: 
           npm install --prefix crates/spin-js-engine/src/js_sdk         
       
       - name: Build spinjs
-        run: make
+        run: make BUILD_TARGET=${{ matrix.config.buildArgs  }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
-            name: spinjs
-            path: ./target/release/spinjs
+            name: spinjs-${{ runner.os }}-${{ matrix.config.arch }}
+            path: ${{ matrix.config.targetDir }}/spinjs
