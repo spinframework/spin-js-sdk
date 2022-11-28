@@ -1016,7 +1016,7 @@ dependencies = [
 [[package]]
 name = "quickjs-wasm-rs"
 version = "0.1.2"
-source = "git+https://github.com/Shopify/javy#26370af0b57caabaaa41453fa62aca061714593e"
+source = "git+https://github.com/dicej/javy#f70f0ed78ec754b2021ad56048344bf8617a02e1"
 dependencies = [
  "anyhow",
  "convert_case",
@@ -1028,7 +1028,7 @@ dependencies = [
 [[package]]
 name = "quickjs-wasm-sys"
 version = "0.1.0"
-source = "git+https://github.com/Shopify/javy#26370af0b57caabaaa41453fa62aca061714593e"
+source = "git+https://github.com/dicej/javy#f70f0ed78ec754b2021ad56048344bf8617a02e1"
 dependencies = [
  "bindgen",
  "cc",
