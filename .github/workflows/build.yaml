@@ -19,6 +19,7 @@ jobs:
               os: "ubuntu-latest",
               arch: "amd64",
               wasiSDK: "linux",
+              extension: "",
               buildArgs: "",
               target: "",
               targetDir: "target/release",
@@ -27,6 +28,7 @@ jobs:
               os: "macos-latest",
               arch: "amd64",
               wasiSDK: "macos",
+              extension: "",
               buildArgs: "",
               target: "",
               targetDir: "target/release",
@@ -35,9 +37,19 @@ jobs:
               os: "macos-latest",
               arch: "aarch64",
               wasiSDK: "macos",
+              extension: "",
               buildArgs: "\"--target aarch64-apple-darwin\"",
               target: "aarch64-apple-darwin",
               targetDir: "target/aarch64-apple-darwin/release/",
+            }
+          - {
+              os: "windows-latest",
+              arch: "amd64",
+              wasiSDK: "",
+              extension: ".exe",
+              buildArgs: "",
+              target: "",
+              targetDir: "target/release",
             }
     steps:
       - uses: actions/checkout@v3
@@ -49,6 +61,7 @@ jobs:
           target: ${{ matrix.config.target }}
 
       - name: "Install Wasm Rust target"
+        shell: bash
         run: rustup target add wasm32-wasi
 
       - uses: Swatinem/rust-cache@v2
@@ -63,24 +76,44 @@ jobs:
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v1.13
         with:
-          cmake-version: '3.16.x'
+          cmake-version: '3.25.x'
 
-      - name: Download WASI-SDK
+      - name: Setup WASI-SDK
+        if: runner.os != 'Windows'
+        shell: bash
         run: |
           cd /tmp
           wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-16/wasi-sdk-16.0-${{ matrix.config.wasiSDK }}.tar.gz
           tar -xvf wasi-sdk-16.0-${{ matrix.config.wasiSDK }}.tar.gz
           sudo cp -v -r wasi-sdk-16.0 /opt/wasi-sdk
 
+      - name: Setup WASI-SDK on Windows
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          curl -kLSs https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-16/wasi-sdk-16.0-mingw.tar.gz -o wasi-sdk-16.0-mingw.tar.gz 
+          tar -xvf wasi-sdk-16.0-mingw.tar.gz 
+          export WASI_SDK=./wasi-sdk-16.0
+
       - name: Install NPM dependancies for SDK
-        run: 
-          npm install --prefix crates/spin-js-engine/src/js_sdk         
+        shell: bash
+        run: |
+          cd crates/spin-js-engine/src/js_sdk         
+          npm install -
       
       - name: Build spinjs
-        run: make BUILD_TARGET=${{ matrix.config.buildArgs  }}
+        shell: bash
+        run: |
+          if [ "${{ runner.os}}" == "Windows" ]; then 
+          mv wasi-sdk-16.0 wasi-sdk
+          export WASI_SDK=$(pwd)/wasi-sdk
+          fi
+          echo $WASI_SDK 
+          make BUILD_TARGET=${{ matrix.config.buildArgs  }}
+
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
             name: spinjs-${{ runner.os }}-${{ matrix.config.arch }}
-            path: ${{ matrix.config.targetDir }}/spinjs
+            path: ${{ matrix.config.targetDir }}/spinjs${{ matrix.config.extension }}
