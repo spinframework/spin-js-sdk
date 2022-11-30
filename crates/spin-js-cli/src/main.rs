@@ -1,8 +1,9 @@
 #![deny(warnings)]
 
+#[cfg(not(target_os = "windows"))]
+use binaryen::{CodegenConfig, Module};
 use {
     anyhow::{bail, Context, Result},
-    binaryen::{CodegenConfig, Module},
     std::{
         env,
         fs::{self, File},
@@ -31,28 +32,40 @@ fn main() -> Result<()> {
 
         let wasm: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/engine.wasm"));
 
-        let mut wasm = Wizer::new()
-            .allow_wasi(true)?
-            .inherit_stdio(true)
-            .run(wasm)?;
-
-        let codegen_cfg = CodegenConfig {
-            optimization_level: 3,
-            shrink_level: 0,
-            debug_info: false,
-        };
-
-        if let Ok(mut module) = Module::read(&wasm) {
-            module.optimize(&codegen_cfg);
-            module
-                .run_optimization_passes(vec!["strip"], &codegen_cfg)
-                .unwrap();
-            wasm = module.write();
-        } else {
-            bail!("Unable to read wasm binary for wasm-opt optimizations");
+        // using binaryen on windows causes spinjs to silently generate malformed wasm
+        #[cfg(target_os = "windows")]
+        {
+            let wasm = Wizer::new()
+                .allow_wasi(true)?
+                .inherit_stdio(true)
+                .run(wasm)?;
+            fs::write(&opts.output, wasm)?;
         }
+        #[cfg(not(target_os = "windows"))]
+        {
+            let mut wasm = Wizer::new()
+                .allow_wasi(true)?
+                .inherit_stdio(true)
+                .run(wasm)?;
 
-        fs::write(&opts.output, wasm)?;
+            let codegen_cfg = CodegenConfig {
+                optimization_level: 3,
+                shrink_level: 0,
+                debug_info: false,
+            };
+
+            if let Ok(mut module) = Module::read(&wasm) {
+                module.optimize(&codegen_cfg);
+                module
+                    .run_optimization_passes(vec!["strip"], &codegen_cfg)
+                    .unwrap();
+                wasm = module.write();
+            } else {
+                bail!("Unable to read wasm binary for wasm-opt optimizations");
+            }
+
+            fs::write(&opts.output, wasm)?;
+        }
 
         return Ok(());
     }
