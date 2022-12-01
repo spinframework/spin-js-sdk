@@ -1,8 +1,29 @@
 {
-  "name": "spin-sdk-types",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@fermyon/spin-sdk-types",
+  "version": "0.1.0",
+  "description": "Type definitions for the Spin TypeScript SDK",
   "types": "./lib/index.d.ts",
-  "author": "",
-  "license": "ISC"
+  "author": {
+    "name": "fermyon",
+    "email": "engineering@fermyon.com",
+    "url": "https://fermyon.com"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "fermyon",
+    "spin",
+    "sdk",
+    "spin-js-sdk",
+    "spin-ts-sdk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fermyon/spin-js-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fermyon/spin-js-sdk/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
