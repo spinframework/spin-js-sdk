@@ -2,7 +2,12 @@ name: Build
 on:
   push:
     branches: [main]
-    paths: [crates]
+    paths-ignore: 
+      - "examples/**"
+      - "templates/**"
+      - "README.md"
+      - "types/**"
+      - LICENSE
   workflow_dispatch:
 
 env:
