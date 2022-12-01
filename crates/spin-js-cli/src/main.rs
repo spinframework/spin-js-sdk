@@ -15,7 +15,7 @@ use {
 };
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "spin-js-cli", about = "JavaScript to Spin module utility")]
+#[structopt(name = "js2wasm", about = "A spin plugin to convert javascript files to Spin compatible modules")]
 pub struct Options {
     #[structopt(parse(from_os_str))]
     pub input: PathBuf,
