@@ -1,4 +1,4 @@
-import { HandleRequest, HttpResponse } from "spin-sdk-types"
+import { HandleRequest, HttpResponse } from "@fermyon/spin-sdk-types"
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
@@ -10,11 +10,11 @@ export const handleRequest: HandleRequest = async function (request): Promise<Ht
     spinSdk.redis.incr(redisAddress, "test")
     spinSdk.redis.incr(redisAddress, "test")
 
-    console.log(decoder.decode(spinSdk.redis.get(redisAddress, "test")))
+    console.log(decoder.decode(new Uint8Array(spinSdk.redis.get(redisAddress, "test"))))
 
     spinSdk.redis.set(redisAddress, "test-set", encoder.encode("This is a test").buffer)
 
-    console.log(decoder.decode(spinSdk.redis.get(redisAddress, "test-set")))
+    console.log(decoder.decode(new Uint8Array(spinSdk.redis.get(redisAddress, "test-set"))))
 
     spinSdk.redis.publish(redisAddress, "test", encoder.encode("This is a test").buffer)
 

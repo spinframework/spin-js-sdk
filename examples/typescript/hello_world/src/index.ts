@@ -1,4 +1,4 @@
-import { HandleRequest, HttpResponse } from "spin-sdk-types"
+import { HandleRequest, HttpResponse } from "@fermyon/spin-sdk-types"
 
 const encoder = new TextEncoder()
 
