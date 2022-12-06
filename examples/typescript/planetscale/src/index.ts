@@ -1,4 +1,4 @@
-import {HandleRequest, HttpResponse} from "@fermyon/spin-sdk-types"
+import {HandleRequest, HttpResponse} from "@fermyon/spin-sdk"
 
 import { connect } from '@planetscale/database'
 

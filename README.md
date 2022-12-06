@@ -4,6 +4,76 @@ This is an experimental SDK for building Spin apps using JavaScript (and TypeScr
 
 The top level directory contains an example HTTP trigger implemented using NPM, Webpack, etc.  See [src/index.js](src/index.js) for details
 
+## Using the SDK
+
+To build spin components from js, the Spin plugin `js2wasm` needs to be installed. It can be installed with the following commands:
+
+```bash
+spin plugin update
+spin plugin install js2wasm
+```
+
+When prompted, choose "y" after reviewing the license and the source of the package.
+
+Once the plugin is installed, it can be invoked as:
+
+```bash
+$ spin js2wasm --help
+js2wasm 0.1.0
+A spin plugin to convert JavaScript files to Spin compatible modules
+
+USAGE:
+    js2wasm [OPTIONS] <input>
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -o <output>         [default: index.wasm]
+
+ARGS:
+    <input>
+```
+
+This plugin takes in a JavaScript file and converts it into a Spin compatible `.wasm` modules
+
+## Installing the templates
+
+The JavaScript and TypeScript templates can be installed using the following command:
+
+```bash
+$ spin templates install --git https://github.com/fermyon/spin-js-sdk
+
+Copying remote template source
+Installing template http-ts...
+Installing template http-js...
+Installed 2 template(s)
+
++-------------------------------------------------+
+| Name      Description                           |
++=================================================+
+| http-js   HTTP request handler using JavaScript |
+| http-ts   HTTP request handler using TypeScript |
++-------------------------------------------------+
+```
+
+Once the templates are installed, a new TypeScript project can be instantiated using:
+
+```bash
+spin new http-ts hello_world --accept-defaults
+```
+
+To run the created template:
+
+```bash
+cd hello-world
+npm install
+spin build
+spin up
+```
+
+
 ## Building
 
 You need to build the SDK from source to use it.
@@ -24,7 +94,7 @@ npm install --prefix crates/spin-js-engine/src/js_sdk
 make
 ```
 
-The build produces the `spinjs` utility, which is used to build wasm modules from Javascript or Typescript source. For convenience you can move `spinjs` to a directory in your path - e.g., `sudo cp target/release/spinjs /usr/local/bin/spinjs`.
+The build produces the `spinjs` utility, which is used to build wasm modules from JavaScript or TypeScript source. For convenience you can move `spinjs` to a directory in your path - e.g., `sudo cp target/release/spinjs /usr/local/bin/spinjs`.
 
 #### Build and run the examples
 
