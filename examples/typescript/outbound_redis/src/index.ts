@@ -1,11 +1,11 @@
-import { HandleRequest, HttpResponse } from "@fermyon/spin-sdk"
+import { HandleRequest, HttpRequest, HttpResponse } from "@fermyon/spin-sdk"
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
 const redisAddress = "redis://localhost:6379/"
 
-export const handleRequest: HandleRequest = async function (request): Promise<HttpResponse> {
+export const handleRequest: HandleRequest = async function (request: HttpRequest): Promise<HttpResponse> {
 
     spinSdk.redis.incr(redisAddress, "test")
     spinSdk.redis.incr(redisAddress, "test")

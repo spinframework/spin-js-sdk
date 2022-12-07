@@ -1,9 +1,9 @@
-import { HandleRequest, HttpResponse } from "@fermyon/spin-sdk"
+import { HandleRequest, HttpRequest, HttpResponse } from "@fermyon/spin-sdk"
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
-export const handleRequest: HandleRequest = async function (request): Promise<HttpResponse> {
+export const handleRequest: HandleRequest = async function (request: HttpRequest): Promise<HttpResponse> {
 
     const dogFact = await fetch("https://some-random-api.ml/facts/dog")
 
