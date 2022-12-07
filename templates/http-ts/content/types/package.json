@@ -1,8 +1,0 @@
-{
-  "name": "spin-sdk-types",
-  "version": "1.0.0",
-  "description": "",
-  "types": "./lib/index.d.ts",
-  "author": "",
-  "license": "ISC"
-}
