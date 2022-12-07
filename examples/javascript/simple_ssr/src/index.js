@@ -3,7 +3,6 @@ import ReactDOMServer from "react-dom/server"
 
 import App from "./client/App.js"
 
-const encoder = new TextEncoder("utf-8")
 const decoder = new TextDecoder("utf-8")
 
 export async function handleRequest(request) {

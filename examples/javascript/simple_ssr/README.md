@@ -14,4 +14,4 @@ npm run build
 spin up --follow-all
 ```
 
-Use e.g. `curl -v http://127.0.0.1:3000/hello` to test that it's working.
+Use e.g. `curl -v http://127.0.0.1:3000/hello` to test the endpoint.

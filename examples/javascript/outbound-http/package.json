@@ -1,10 +1,10 @@
 {
-  "name": "hello_world",
+  "name": "outbound-http",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx webpack --mode=production && mkdir -p target && ../../../target/release/spinjs -o target/spin-http-js.wasm dist/spin.js",
+    "build": "npx webpack --mode=production && mkdir -p target && spin js2wasm -o target/spin-http-js.wasm dist/spin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

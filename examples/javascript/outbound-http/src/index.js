@@ -8,7 +8,7 @@ export async function handleRequest(request) {
 
     const env = JSON.stringify(process.env)
 
-    const body = `${spinSdk.config.get("message")}\nenv: ${env}\nHere's a dog fact: ${dogFactBody}\n`
+    const body = `Here's a dog fact: ${dogFactBody}\n`
 
     return {
         status: 200,
