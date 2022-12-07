@@ -1,4 +1,4 @@
-import {HandleRequest, HttpResponse} from "@fermyon/spin-sdk"
+import {HandleRequest, HttpRequest, HttpResponse} from "@fermyon/spin-sdk"
 
 import { connect } from '@planetscale/database'
 
@@ -10,7 +10,7 @@ const config = {
 
 const encoder = new TextEncoder()
 
-export const handleRequest: HandleRequest = async function(request): Promise<HttpResponse> {
+export const handleRequest: HandleRequest = async function(request: HttpRequest): Promise<HttpResponse> {
    const body = `Planetscale responded successfully`
    const conn = await connect(config)
    const results = await conn.execute('SHOW TABLES')
