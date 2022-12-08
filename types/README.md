@@ -5,14 +5,14 @@ This package provides the type definitions for building apps with TypeScript usi
 ### Adding the package to your project
 
 ```
-npm install --save-dev @fermyon/spin-sdk-types
+npm install --save-dev @fermyon/spin-sdk
 ```
 ### Importing the types into TypeScript
 
 Add the following import to your source file:
 
 ```
-import { HandleRequest, HttpResponse } from "@fermyon/spin-sdk-types"
+import { HandleRequest, HttpResponse } from "@fermyon/spin-sdk"
 ``` 
 
 ### Reporting bugs
