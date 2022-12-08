@@ -1,6 +1,6 @@
 {
   "name": "@fermyon/spin-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Type definitions for the Spin TypeScript SDK",
   "types": "./lib/index.d.ts",
   "author": {
