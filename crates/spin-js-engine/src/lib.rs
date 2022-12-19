@@ -109,7 +109,7 @@ fn spin_get_config(context: &Context, _this: &Value, args: &[Value]) -> Result<V
 fn spin_send_http_request(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
         [request] => {
-            let deserializer = &mut Deserializer::new_case_preserving(request.clone());
+            let deserializer = &mut Deserializer::from(request.clone());
             let request = HttpRequest::deserialize(deserializer)?;
 
             let mut builder = request::Builder::new()
@@ -146,7 +146,7 @@ fn spin_send_http_request(context: &Context, _this: &Value, args: &[Value]) -> R
                     .map(|bytes| ByteBuf::from(bytes.deref())),
             };
 
-            let mut serializer = Serializer::from_context_case_preserving(context)?;
+            let mut serializer = Serializer::from_context(context)?;
             response.serialize(&mut serializer)?;
             Ok(serializer.value)
         }
@@ -158,10 +158,10 @@ fn spin_send_http_request(context: &Context, _this: &Value, args: &[Value]) -> R
 fn read_file(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
         [filename] => {
-            let deserializer = &mut Deserializer::new_case_preserving(filename.clone());
+            let deserializer = &mut Deserializer::from(filename.clone());
             let filename = PathBuf::deserialize(deserializer)?;
             let buffer = fs::read(filename)?;
-            let mut serializer = Serializer::from_context_case_preserving(context)?;
+            let mut serializer = Serializer::from_context(context)?;
             buffer.serialize(&mut serializer)?;
             Ok(serializer.value)
         }
@@ -182,7 +182,7 @@ fn read_dir(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     if num_args == 1 {
         read_file_types = false;
     } else if num_args == 2 {
-        let options_deserializer = &mut Deserializer::new_case_preserving(args[1].clone());
+        let options_deserializer = &mut Deserializer::from(args[1].clone());
         match (ReadDirOptions::deserialize(options_deserializer)?).with_file_types {
             Some(true) => read_file_types = true,
             _ => read_file_types = false,
@@ -193,7 +193,7 @@ fn read_dir(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
             args.len()
         );
     }
-    let deserializer = &mut Deserializer::new_case_preserving(args[0].clone());
+    let deserializer = &mut Deserializer::from(args[0].clone());
     let dirname = PathBuf::deserialize(deserializer)?;
     let dir = fs::read_dir(dirname)?;
     match read_file_types {
@@ -247,7 +247,7 @@ fn get_glob(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
         [globstring] => {
             let array = context.array_value()?;
-            let deserializer = &mut Deserializer::new_case_preserving(globstring.clone());
+            let deserializer = &mut Deserializer::from(globstring.clone());
             let globstring = &String::deserialize(deserializer)?;
             let paths = glob::glob(globstring)?;
             for path in paths {
@@ -277,7 +277,7 @@ fn redis_get(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> 
             let key = &deserialize_helper(key)?;
             let buffer = redis::get(address, key)
                 .map_err(|_| anyhow!("Error executing Redis get command"))?;
-            let mut serializer = Serializer::from_context_case_preserving(context)?;
+            let mut serializer = Serializer::from_context(context)?;
             buffer.serialize(&mut serializer)?;
             Ok(serializer.value)
         }
@@ -294,7 +294,7 @@ fn redis_incr(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
             let key = &deserialize_helper(key)?;
             let value = redis::incr(address, key)
                 .map_err(|_| anyhow!("Error executing Redis incr command"))?;
-            let mut serializer = Serializer::from_context_case_preserving(context)?;
+            let mut serializer = Serializer::from_context(context)?;
             value.serialize(&mut serializer)?;
             Ok(serializer.value)
         }
@@ -313,14 +313,14 @@ fn redis_del(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> 
     match args {
         [address, key] => {
             let addr_deseriallet address = &deserialize_helper(address)?;
-            let key = &deserialize_helper(key)?;izer = &mut Deserializer::new_case_preserving(address.clone());
+            let key = &deserialize_helper(key)?;izer = &mut Deserializer::from(address.clone());
             let mut keys = Vec::new();
             for i in &key {
                 keys.push(i.as_str());
             }
             let value = redis::del(address, keys.as_slice())
                 .map_err(|_| anyhow!("Error executing Redis del command"))?;
-            let mut serializer = Serializer::from_context_case_preserving(context)?;
+            let mut serializer = Serializer::from_context(context)?;
             value.serialize(&mut serializer)?;
             Ok(serializer.value)
         }
@@ -337,7 +337,7 @@ fn redis_set(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> 
         [address, key, value] => {
             let address = &deserialize_helper(address)?;
             let key = &deserialize_helper(key)?;
-            let value_deserializer = &mut Deserializer::new_case_preserving(value.clone());
+            let value_deserializer = &mut Deserializer::from(value.clone());
             let value = ByteBuf::deserialize(value_deserializer)?;
             redis::set(address, key, &value)
                 .map_err(|_| anyhow!("Error executing Redis set command"))?;
@@ -355,7 +355,7 @@ fn redis_publish(context: &Context, _this: &Value, args: &[Value]) -> Result<Val
         [address, channel, value] => {
             let address = &deserialize_helper(address)?;
             let channel = &deserialize_helper(channel)?;
-            let value_deserializer = &mut Deserializer::new_case_preserving(value.clone());
+            let value_deserializer = &mut Deserializer::from(value.clone());
             let value = ByteBuf::deserialize(value_deserializer)?;
             redis::publish(address, channel, &value)
                 .map_err(|_| anyhow!("Error executing Redis publish command"))?;
@@ -471,7 +471,7 @@ fn handle(request: Request) -> Result<Response> {
             .into_body()
             .map(|bytes| ByteBuf::from(bytes.deref())),
     };
-    let mut serializer = Serializer::from_context_case_preserving(context)?;
+    let mut serializer = Serializer::from_context(context)?;
     request.serialize(&mut serializer)?;
     let request_value = serializer.value;
     let body = request.body;
@@ -491,7 +491,7 @@ fn handle(request: Request) -> Result<Response> {
         "json",
         context.wrap_callback(move |context, _, _| {
             if let Some(body) = &body {
-                let mut serializer = Serializer::from_context_case_preserving(context)?;
+                let mut serializer = Serializer::from_context(context)?;
                 serde_json::from_slice::<serde_json::Value>(body)?.serialize(&mut serializer)?;
                 Ok(serializer.value)
             } else {
@@ -511,7 +511,7 @@ fn handle(request: Request) -> Result<Response> {
 
     let response = RESPONSE.lock().unwrap().take().unwrap()?.take();
 
-    let deserializer = &mut Deserializer::new_case_preserving(response);
+    let deserializer = &mut Deserializer::from(response);
     let response = HttpResponse::deserialize(deserializer)?;
     let mut builder = http::Response::builder().status(response.status);
     if let Some(headers) = builder.headers_mut() {
@@ -527,7 +527,7 @@ fn handle(request: Request) -> Result<Response> {
 }
 
 fn deserialize_helper(value: &Value) -> Result<String> {
-    let deserializer = &mut Deserializer::new_case_preserving(value.clone());
+    let deserializer = &mut Deserializer::from(value.clone());
     let result = String::deserialize(deserializer);
     match result {
         Ok(value) => Ok(value),

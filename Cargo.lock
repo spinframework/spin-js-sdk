@@ -297,12 +297,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "convert_case"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
-
-[[package]]
 name = "cpp_demangle"
 version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1025,10 +1019,9 @@ dependencies = [
 [[package]]
 name = "quickjs-wasm-rs"
 version = "0.1.2"
-source = "git+https://github.com/dicej/javy#13fd5bafb171d53457f658e948c803dbdb5a23b7"
+source = "git+https://github.com/shopify/javy#eb3a933d40f0d705ebd5746a6e63a825bd31fd5b"
 dependencies = [
  "anyhow",
- "convert_case",
  "once_cell",
  "quickjs-wasm-sys",
  "serde",
@@ -1037,7 +1030,7 @@ dependencies = [
 [[package]]
 name = "quickjs-wasm-sys"
 version = "0.1.0"
-source = "git+https://github.com/dicej/javy#13fd5bafb171d53457f658e948c803dbdb5a23b7"
+source = "git+https://github.com/shopify/javy#eb3a933d40f0d705ebd5746a6e63a825bd31fd5b"
 dependencies = [
  "bindgen",
  "cc",
