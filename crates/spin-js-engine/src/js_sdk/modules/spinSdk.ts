@@ -40,7 +40,7 @@ interface SpinSDK {
         incr: (address: string, key: string) => bigint
         publish: (address: string, channel: string, value: ArrayBuffer) => undefined
         set: (address: string, key: string, value: ArrayBuffer) => undefined
-        del: (address: string, key: string) => bigint
+        del: (address: string, key: Array<String>) => bigint
     }
 }
 

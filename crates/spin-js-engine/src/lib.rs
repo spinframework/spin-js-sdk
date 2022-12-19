@@ -310,7 +310,8 @@ fn redis_del(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> 
     match args {
         [address, key] => {
             let address = &deserialize_helper(address)?;
-            let key = &deserialize_helper(key)?;izer = &mut Deserializer::from(address.clone());
+            let deserializer = &mut Deserializer::from(key.clone());
+            let key = Vec::<String>::deserialize(deserializer)?;
             let mut keys = Vec::new();
             for i in &key {
                 keys.push(i.as_str());
