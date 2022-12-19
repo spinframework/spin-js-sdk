@@ -40,11 +40,7 @@ interface SpinSDK {
         incr: (address: string, key: string) => bigint
         publish: (address: string, channel: string, value: ArrayBuffer) => undefined
         set: (address: string, key: string, value: ArrayBuffer) => undefined
-        /* 
-            Redis::del interface does not exist on cloud, leading to broken deploys
-            uncomment after ready on cloud.
-        */
-        // del: (address: string, key: string) => bigint
+        del: (address: string, key: string) => bigint
     }
 }
 
