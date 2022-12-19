@@ -305,14 +305,11 @@ fn redis_incr(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
     }
 }
 
-/*
-    REDIS:DEL interface does not exist in cloud which leads to deploys breaking, uncomment after ready on cloud.
-*/
-/*
+
 fn redis_del(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
         [address, key] => {
-            let addr_deseriallet address = &deserialize_helper(address)?;
+            let address = &deserialize_helper(address)?;
             let key = &deserialize_helper(key)?;izer = &mut Deserializer::from(address.clone());
             let mut keys = Vec::new();
             for i in &key {
@@ -330,7 +327,7 @@ fn redis_del(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> 
         ),
     }
 }
-*/
+
 
 fn redis_set(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
@@ -403,8 +400,7 @@ fn do_init() -> Result<()> {
     redis.set_property("set", context.wrap_callback(redis_set)?)?;
     redis.set_property("incr", context.wrap_callback(redis_incr)?)?;
     redis.set_property("publish", context.wrap_callback(redis_publish)?)?;
-    /*  REDIS:DEL interface does not exist in cloud which leads to deploys breaking, uncomment after ready on cloud. */
-    // redis.set_property("del", context.wrap_callback(redis_del)?)?;
+    redis.set_property("del", context.wrap_callback(redis_del)?)?;
 
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;
