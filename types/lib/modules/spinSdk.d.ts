@@ -24,7 +24,10 @@ interface SpinSDK {
         incr: (address: string, key: string) => bigint;
         publish: (address: string, channel: string, value: ArrayBuffer) => undefined;
         set: (address: string, key: string, value: ArrayBuffer) => undefined;
-        del: (address: string, key: Array<String>) => bigint;
+        del: (address: string, key: Array<string>) => bigint;
+        sadd: (address: string, key: string, values: Array<string>) => bigint;
+        smembers: (address: string, key: string) => Array<string>;
+        srem: (address: string, key: string, values: Array<string>) => bigint;
     };
 }
 interface FetchHeaders {

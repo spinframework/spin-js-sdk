@@ -305,17 +305,13 @@ fn redis_incr(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
     }
 }
 
-
 fn redis_del(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
         [address, key] => {
             let address = &deserialize_helper(address)?;
             let deserializer = &mut Deserializer::from(key.clone());
             let key = Vec::<String>::deserialize(deserializer)?;
-            let mut keys = Vec::new();
-            for i in &key {
-                keys.push(i.as_str());
-            }
+            let keys = key.iter().map(|s| s.as_str()).collect::<Vec<_>>();
             let value = redis::del(address, keys.as_slice())
                 .map_err(|_| anyhow!("Error executing Redis del command"))?;
             let mut serializer = Serializer::from_context(context)?;
@@ -323,12 +319,11 @@ fn redis_del(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> 
             Ok(serializer.value)
         }
         _ => bail!(
-            "expected a two arguments (address, key), got {} arguments",
+            "expected a two arguments (address, [keys]), got {} arguments",
             args.len()
         ),
     }
 }
-
 
 fn redis_set(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
@@ -343,6 +338,66 @@ fn redis_set(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> 
         }
         _ => bail!(
             "expected a three arguments (address, key, value), got {} arguments",
+            args.len()
+        ),
+    }
+}
+
+fn redis_sadd(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [address, key, values] => {
+            let address = &deserialize_helper(address)?;
+            let key = &deserialize_helper(key)?;
+            let deserializer = &mut Deserializer::from(values.clone());
+            let value_array = Vec::<String>::deserialize(deserializer)?;
+            let values = value_array.iter().map(|s| s.as_str()).collect::<Vec<_>>();
+            let value = redis::sadd(address, key, values.as_slice())
+                .map_err(|_| anyhow!("Error executing Redis sadd command"))?;
+            let mut serializer = Serializer::from_context(context)?;
+            value.serialize(&mut serializer)?;
+            Ok(serializer.value)
+        }
+        _ => bail!(
+            "expected a two arguments (address, key, [values..]), got {} arguments",
+            args.len()
+        ),
+    }
+}
+
+fn redis_smembers(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [address, key, ] => {
+            let address = &deserialize_helper(address)?;
+            let key = &deserialize_helper(key)?;
+            let value = redis::smembers(address, key)
+                .map_err(|_| anyhow!("Error executing Redis smembers command"))?;
+            let mut serializer = Serializer::from_context(context)?;
+            value.serialize(&mut serializer)?;
+            Ok(serializer.value)
+        }
+        _ => bail!(
+            "expected a two arguments (address, key), got {} arguments",
+            args.len()
+        ),
+    }
+}
+
+fn redis_srem(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [address, key, values] => {
+            let address = &deserialize_helper(address)?;
+            let key = &deserialize_helper(key)?;
+            let deserializer = &mut Deserializer::from(values.clone());
+            let value_array = Vec::<String>::deserialize(deserializer)?;
+            let values = value_array.iter().map(|s| s.as_str()).collect::<Vec<_>>();
+            let value = redis::srem(address, key, values.as_slice())
+                .map_err(|_| anyhow!("Error executing Redis sadd command"))?;
+            let mut serializer = Serializer::from_context(context)?;
+            value.serialize(&mut serializer)?;
+            Ok(serializer.value)
+        }
+        _ => bail!(
+            "expected a two arguments (address, key, [values..]), got {} arguments",
             args.len()
         ),
     }
@@ -402,6 +457,9 @@ fn do_init() -> Result<()> {
     redis.set_property("incr", context.wrap_callback(redis_incr)?)?;
     redis.set_property("publish", context.wrap_callback(redis_publish)?)?;
     redis.set_property("del", context.wrap_callback(redis_del)?)?;
+    redis.set_property("sadd", context.wrap_callback(redis_sadd)?)?;
+    redis.set_property("smembers", context.wrap_callback(redis_smembers)?)?;
+    redis.set_property("srem", context.wrap_callback(redis_srem)?)?;
 
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;
