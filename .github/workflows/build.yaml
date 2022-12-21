@@ -33,6 +33,15 @@ jobs:
               targetDir: "target/release",
             }
           - {
+            os: "ubuntu-latest",
+            arch: "aarch64",
+            wasiSDK: "linux",
+            extension: "",
+            buildArgs: "\"--target aarch64-unknown-linux-gnu\"",
+            target: "aarch64-unknown-linux-gnu",
+            targetDir: "target/aarch64-unknown-linux-gnu/release",
+          }
+          - {
               os: "macos-latest",
               arch: "amd64",
               wasiSDK: "macos",
@@ -124,6 +133,14 @@ jobs:
           cd crates/spin-js-engine/src/js_sdk         
           npm install -
       
+      - name: setup for cross-compiled linux aarch64 build
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo apt update
+          sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          echo '[target.aarch64-unknown-linux-gnu]' >> ${HOME}/.cargo/config.toml
+          echo 'linker = "aarch64-linux-gnu-gcc"' >> ${HOME}/.cargo/config.toml
+
       - name: Build spinjs
         shell: bash
         run: |
