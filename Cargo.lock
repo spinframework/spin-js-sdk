@@ -306,12 +306,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "convert_case"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6245d59a3e82a7fc217c5828a6692dbc6dfb63a0c8c90495621f7b9d79704a0e"
-
-[[package]]
 name = "cpp_demangle"
 version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -822,9 +816,9 @@ checksum = "884e2677b40cc8c339eaefcb701c32ef1fd2493d71118dc0ca4b6a736c93bd67"
 
 [[package]]
 name = "libc"
-version = "0.2.138"
+version = "0.2.139"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "db6d7e329c562c5dfab7a46a2afabc8b987ab9a4834c9d1ca04dc54c1546cef8"
+checksum = "201de327520df007757c1f0adce6e827fe8562fbc28bfd9c15571c66ca1f5f79"
 
 [[package]]
 name = "libloading"
@@ -922,9 +916,9 @@ checksum = "7843ec2de400bcbc6a6328c958dc38e5359da6e93e72e37bc5246bf1ae776389"
 
 [[package]]
 name = "nom"
-version = "7.1.1"
+version = "7.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a8903e5a29a317527874d0402f867152a3d21c908bb0b933e416c65e301d4c36"
+checksum = "e5507769c4919c998e69e49c839d9dc6e693ede4cc4290d6ad8b41d4f09c548c"
 dependencies = [
  "memchr",
  "minimal-lexical",
@@ -932,11 +926,11 @@ dependencies = [
 
 [[package]]
 name = "num_cpus"
-version = "1.14.0"
+version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f6058e64324c71e02bc2b150e4f3bc8286db6c83092132ffa3f6b1eab0f9def5"
+checksum = "0fac9e2da13b5eb447a6ce3d392f23a29d8694bff781bf03a16cd9ac8697593b"
 dependencies = [
- "hermit-abi 0.1.19",
+ "hermit-abi 0.2.6",
  "libc",
 ]
 
@@ -962,9 +956,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.16.0"
+version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86f0b0d4bf799edbc74508c1e8bf170ff5f41238e5f8225603ca7caaae2b7860"
+checksum = "6f61fba1741ea2b3d6a1e3178721804bb716a68a6aeba1149b5d52e3d464ea66"
 
 [[package]]
 name = "opaque-debug"
@@ -1058,10 +1052,9 @@ dependencies = [
 [[package]]
 name = "quickjs-wasm-rs"
 version = "0.1.2"
-source = "git+https://github.com/shopify/javy#20e25121c66b9e7ae7014c190b3266e4affcd18c"
+source = "git+https://github.com/shopify/javy#e9d662adac01e9f23eb1e3a907c518b1f4d3aec8"
 dependencies = [
  "anyhow",
- "convert_case",
  "once_cell",
  "quickjs-wasm-sys",
  "serde",
@@ -1070,7 +1063,7 @@ dependencies = [
 [[package]]
 name = "quickjs-wasm-sys"
 version = "0.1.0"
-source = "git+https://github.com/shopify/javy#20e25121c66b9e7ae7014c190b3266e4affcd18c"
+source = "git+https://github.com/shopify/javy#e9d662adac01e9f23eb1e3a907c518b1f4d3aec8"
 dependencies = [
  "bindgen",
  "cc",
@@ -1254,9 +1247,9 @@ checksum = "cd0b0ec5f1c1ca621c432a25813d8d60c88abe6d3e08a3eb9cf37d97a0fe3d73"
 
 [[package]]
 name = "serde"
-version = "1.0.151"
+version = "1.0.152"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97fed41fc1a24994d044e6db6935e69511a1153b52c15eb42493b26fa87feba0"
+checksum = "bb7d1f0d3021d347a83e556fc4683dea2ea09d87bccdf88ff5c12545d89d5efb"
 dependencies = [
  "serde_derive",
 ]
@@ -1272,9 +1265,9 @@ dependencies = [
 
 [[package]]
 name = "serde_derive"
-version = "1.0.151"
+version = "1.0.152"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "255abe9a125a985c05190d687b320c12f9b1f0b99445e608c21ba0782c719ad8"
+checksum = "af487d118eecd09402d70a5d72551860e788df87b464af30e5ea6a38c75c541e"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1361,7 +1354,7 @@ dependencies = [
 [[package]]
 name = "spin-macro"
 version = "0.1.0"
-source = "git+https://github.com/fermyon/spin#1439b95fea89a4863c05ae489f1a9c0de17f27b9"
+source = "git+https://github.com/fermyon/spin#04d67d5fd5882aafe028a2d03c56095d8d364ece"
 dependencies = [
  "anyhow",
  "bytes",
@@ -1376,8 +1369,8 @@ dependencies = [
 
 [[package]]
 name = "spin-sdk"
-version = "0.7.0"
-source = "git+https://github.com/fermyon/spin#1439b95fea89a4863c05ae489f1a9c0de17f27b9"
+version = "0.7.1"
+source = "git+https://github.com/fermyon/spin#04d67d5fd5882aafe028a2d03c56095d8d364ece"
 dependencies = [
  "anyhow",
  "bytes",

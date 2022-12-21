@@ -5,9 +5,9 @@ interface BaseHttpRequest {
     method: string;
     uri: string;
     body?: ArrayBuffer;
+    headers: Record<string, string>;
 }
 interface HttpRequest extends BaseHttpRequest {
-    headers: Record<string, string>;
     json: () => object;
     text: () => string;
 }

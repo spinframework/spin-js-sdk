@@ -37,17 +37,7 @@ struct HttpRequest {
     method: String,
     uri: String,
     #[serde(default)]
-    headers: Vec<(String, String)>,
-    body: Option<ByteBuf>,
-}
-
-// Seperate Structure to add headers without having to use serde
-// serde causes issues with headers as it sanitzes keys leading to headers being invalid
-// (eg) content-type becomes contentType.
-#[derive(Serialize, Deserialize, Debug)]
-struct JSHttpRequest {
-    method: String,
-    uri: String,
+    headers: HashMap<String, String>,
     body: Option<ByteBuf>,
 }
 
@@ -366,7 +356,7 @@ fn redis_sadd(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
 
 fn redis_smembers(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
-        [address, key, ] => {
+        [address, key] => {
             let address = &deserialize_helper(address)?;
             let key = &deserialize_helper(key)?;
             let value = redis::smembers(address, key)
@@ -513,15 +503,19 @@ fn handle(request: Request) -> Result<Response> {
 
     global.set_property("process", process)?;
 
-    let headers = context.object_value()?;
-    for (key, value) in request.headers().iter() {
-        let header_value = context.value_from_str(str::from_utf8(value.as_bytes())?)?;
-        headers.set_property(key.as_str().to_owned(), header_value)?;
-    }
-
-    let request = JSHttpRequest {
+    let request = HttpRequest {
         method: request.method().as_str().to_owned(),
         uri: request.uri().to_string(),
+        headers: request
+            .headers()
+            .iter()
+            .map(|(k, v)| {
+                Ok((
+                    k.as_str().to_owned(),
+                    str::from_utf8(v.as_bytes())?.to_owned(),
+                ))
+            })
+            .collect::<Result<_>>()?,
         body: request
             .into_body()
             .map(|bytes| ByteBuf::from(bytes.deref())),
@@ -530,7 +524,7 @@ fn handle(request: Request) -> Result<Response> {
     request.serialize(&mut serializer)?;
     let request_value = serializer.value;
     let body = request.body;
-    request_value.set_property("headers", headers)?;
+
     request_value.set_property(
         "text",
         context.wrap_callback({
@@ -578,7 +572,7 @@ fn handle(request: Request) -> Result<Response> {
         }
     }
 
-    Ok(builder.body(response.body.map(|buffer| buffer.into_vec().into()))?)
+    Ok(builder.body(response.body.map(|buffer| buffer.to_vec().into()))?)
 }
 
 fn deserialize_helper(value: &Value) -> Result<String> {
