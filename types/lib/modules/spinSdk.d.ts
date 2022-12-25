@@ -13,7 +13,7 @@ interface HttpRequest extends BaseHttpRequest {
 }
 interface HttpResponse {
     status: number;
-    headers: Record<string, string>;
+    headers?: Record<string, string>;
     body?: ArrayBuffer;
 }
 declare type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>;
