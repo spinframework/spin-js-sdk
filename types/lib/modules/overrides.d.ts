@@ -28,6 +28,7 @@ declare global {
         constructor(queryParamsString: string);
         append(key: string, val: string | Array<string>): void
         delete(key: string): void
+        entries(): Array<[string, string | Array<string>]>
         get(key: string): string
         getAll(key: string): string[]
         has(key: string): boolean

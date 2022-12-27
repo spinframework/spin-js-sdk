@@ -80,6 +80,9 @@ class URLSearchParams {
     delete(key: string) {
         delete this.queryParams[key]
     }
+    entries() {
+        return Object.entries(this.queryParams)
+    }
     get(key: string) {
         let val = this.queryParams[key]
         if (val) {
