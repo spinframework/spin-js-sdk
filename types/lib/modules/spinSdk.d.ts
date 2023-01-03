@@ -30,6 +30,11 @@ interface SpinSDK {
         srem: (address: string, key: string, values: Array<string>) => bigint;
     };
 }
+interface FetchOptions {
+    method?: string;
+    headers?: Record<string, string>;
+    body?: ArrayBuffer;
+}
 interface FetchHeaders {
     entries: () => Iterator<[string, string]>;
 }
@@ -44,6 +49,6 @@ interface FetchResult {
 }
 declare global {
     const spinSdk: SpinSDK;
-    function fetch(uri: string, options?: object): Promise<FetchResult>;
+    function fetch(uri: string, options?: FetchOptions): Promise<FetchResult>;
 }
 export { HttpRequest, HttpResponse, HandleRequest };
