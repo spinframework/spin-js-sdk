@@ -9,14 +9,10 @@ interface BaseHttpRequest {
     method: string
     uri: string
     body?: ArrayBuffer
-}
-
-interface SpinHttpRequest extends BaseHttpRequest {
-    headers: Array<[string, string]>
+    headers: Record<string, string>
 }
 
 interface HttpRequest extends BaseHttpRequest {
-    headers: Record<string, string>
     json:() => object
     text: () => string
 }
@@ -33,7 +29,7 @@ interface SpinSDK {
     config: SpinConfig
     /** @internal */
     http: {
-        send: (arg0: SpinHttpRequest) => HttpResponse
+        send: (arg0: BaseHttpRequest) => HttpResponse
     }
     redis: {
         get: (address: string, key: string) => ArrayBuffer
@@ -48,8 +44,9 @@ interface SpinSDK {
 }
 
 interface FetchOptions {
-    method: string
-    headers: object
+    method?: string
+    headers?: Record<string, string>
+    body?: ArrayBuffer
 }
 
 interface FetchHeaders {
@@ -68,15 +65,11 @@ interface FetchResult {
 
 /** @internal */
 function fetch(uri: string, options?: FetchOptions) {
-    let reqHeaders: Array<[string, string]> = []
-    if (options && options.headers) {
-        reqHeaders = Object.entries(options.headers)
-    }
     const { status, headers, body } = spinSdk.http.send({
         method: (options && options.method) || "GET",
         uri,
-        ...(options || {}),
-        headers: reqHeaders
+        headers: (options && options.headers) || {},
+        body: options && options.body,
     })
     return Promise.resolve({
         status,
@@ -97,7 +90,7 @@ function fetch(uri: string, options?: FetchOptions) {
 declare global {
     const spinSdk: SpinSDK
     function fetch(uri: string, options?: object) : Promise<FetchResult>
-    
+
 }
 
 /** @internal */
