@@ -19,7 +19,7 @@ interface HttpRequest extends BaseHttpRequest {
 
 interface HttpResponse {
     status: number
-    headers: Record<string, string>
+    headers?: Record<string, string>
     body?: ArrayBuffer
 }
 
@@ -74,7 +74,7 @@ function fetch(uri: string, options?: FetchOptions) {
     return Promise.resolve({
         status,
         headers: {
-            entries: () => Object.entries(headers)
+            entries: () => Object.entries(headers || {})
         },
         arrayBuffer: () => Promise.resolve(body),
         ok: (status > 199 && status < 300),
