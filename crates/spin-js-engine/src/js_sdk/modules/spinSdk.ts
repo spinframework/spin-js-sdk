@@ -89,8 +89,7 @@ function fetch(uri: string, options?: FetchOptions) {
 
 declare global {
     const spinSdk: SpinSDK
-    function fetch(uri: string, options?: object) : Promise<FetchResult>
-
+    function fetch(uri: string, options?: FetchOptions) : Promise<FetchResult>
 }
 
 /** @internal */
