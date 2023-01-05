@@ -81,7 +81,25 @@ class URLSearchParams {
         delete this.queryParams[key]
     }
     entries() {
-        return Object.entries(this.queryParams)
+        let arr: Array<[string, string]> = []
+        Object.entries(this.queryParams).map(o => {
+            if (Array.isArray(o[1])) {
+                o[1].map(k => {
+                    arr.push([o[0], k])
+                })
+            } else {
+                arr.push([o[0], o[1]])
+            }
+        })
+        let iterLength = arr.length
+        let iterIndex = 0
+        return {
+            next: function() {
+                return iterIndex < iterLength ?
+               {value: arr[iterIndex++], done: false} :
+               {done: true};
+            }
+        }
     }
     get(key: string) {
         let val = this.queryParams[key]
@@ -114,6 +132,9 @@ class URLSearchParams {
     }
     values() {
         return Object.keys(this.queryParams).map(k => this.queryParams[k])
+    }
+    [Symbol.iterator]() { 
+        return this.entries()
     }
 }
 
