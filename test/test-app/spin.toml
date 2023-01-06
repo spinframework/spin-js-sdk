@@ -1,0 +1,16 @@
+spin_version = "1"
+authors = ["karthik Ganeshram <karthik.ganeshram@fermyon.com>"]
+description = "App that exercises the functionality of the SDK"
+name = "test-app"
+trigger = { type = "http", base = "/" }
+version = "0.1.0"
+
+[[component]]
+id = "test-app"
+source = "target/spin-http-js.wasm"
+files = [{ source = "src/", destination = "/" }, ]
+allowed_http_hosts = ["http://localhost:3000"]
+[component.trigger]
+route = "/..."
+[component.build]
+command = "npm run build"

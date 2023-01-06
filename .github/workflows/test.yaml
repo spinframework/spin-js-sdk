@@ -1,0 +1,81 @@
+name: Test
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "examples/**"
+      - "README.md"
+      - "release-process.md"
+      - "templates/**"
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build spinjs
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install latest Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          components: clippy, rustfmt
+      
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "${{ runner.os }}-lint-${{ hashFiles('./Cargo.lock') }}"
+          cache-on-failure: "true"
+
+      - name: "Install Wasm Rust target"
+        shell: bash
+        run: rustup target add wasm32-wasi
+
+      - name: Install nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v1.13
+        with:
+          cmake-version: '3.25.x'
+
+      - name: Setup WASI-SDK
+        shell: bash
+        run: |
+          cd /tmp
+          wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-16/wasi-sdk-16.0-linux.tar.gz
+          tar -xvf wasi-sdk-16.0-linux.tar.gz
+          cp -v -r wasi-sdk-16.0 /opt/wasi-sdk
+
+      - name: Install NPM dependancies for SDK
+        shell: bash
+        run: |
+          cd crates/spin-js-engine/src/js_sdk         
+          npm install -
+
+      - name: Build spinjs
+        shell: bash
+        run: make
+      
+      - name: Install spin
+        uses: engineerd/configurator@v0.0.8
+        with:
+          name: "spin"
+          url: "https://github.com/fermyon/spin/releases/download/v0.7.0/spin-v0.7.0-linux-amd64.tar.gz"
+          pathInArchive: "spin"
+
+      - name: Run Test
+        shell: bash
+        run: |
+          cd test
+          ./test.sh
+
+
+ 
