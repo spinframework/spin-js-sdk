@@ -29,6 +29,8 @@ fn main() -> Result<()> {
 
     if env::var("SPIN_JS_WIZEN").eq(&Ok("1".into())) {
         env::remove_var("SPIN_JS_WIZEN");
+        
+        println!("\nStarting to build Spin compatible module");
 
         let wasm: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/engine.wasm"));
 
@@ -43,6 +45,8 @@ fn main() -> Result<()> {
         }
         #[cfg(not(target_os = "windows"))]
         {
+            println!("Preinitiating using Wizer");
+
             let mut wasm = Wizer::new()
                 .allow_wasi(true)?
                 .inherit_stdio(true)
@@ -53,6 +57,8 @@ fn main() -> Result<()> {
                 shrink_level: 0,
                 debug_info: false,
             };
+
+            println!("Optimizing wasm binary using wasm-opt");
 
             if let Ok(mut module) = Module::read(&wasm) {
                 module.optimize(&codegen_cfg);
@@ -86,6 +92,8 @@ fn main() -> Result<()> {
     if !status.success() {
         bail!("Couldn't create wasm from input");
     }
+
+    println!("Spin compatible module built successfully");
 
     Ok(())
 }
