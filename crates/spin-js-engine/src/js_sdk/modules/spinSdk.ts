@@ -51,6 +51,8 @@ interface FetchOptions {
 
 interface FetchHeaders {
     entries: () => Iterator<[string, string]>
+    get: (key: string) => string | null
+    has: (key: string) => boolean
 }
 
 interface FetchResult {
@@ -74,7 +76,9 @@ function fetch(uri: string, options?: FetchOptions) {
     return Promise.resolve({
         status,
         headers: {
-            entries: () => Object.entries(headers || {})
+            entries: () => Object.entries(headers || {}),
+            get:(key: string) => (headers && headers[key]) || null,
+            has:(key: string) => (headers && headers[key]) ? true : false
         },
         arrayBuffer: () => Promise.resolve(body),
         ok: (status > 199 && status < 300),

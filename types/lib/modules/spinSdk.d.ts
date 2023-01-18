@@ -37,6 +37,8 @@ interface FetchOptions {
 }
 interface FetchHeaders {
     entries: () => Iterator<[string, string]>;
+    get: (key: string) => string | null;
+    has: (key: string) => boolean;
 }
 interface FetchResult {
     status: number;
