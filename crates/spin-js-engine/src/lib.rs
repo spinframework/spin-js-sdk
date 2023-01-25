@@ -2,6 +2,7 @@
 
 use {
     anyhow::{anyhow, bail, Result},
+    hmac::{Hmac, Mac},
     http::{header::HeaderName, request, HeaderValue},
     once_cell::sync::{Lazy, OnceCell},
     quickjs_wasm_rs::{Context, Deserializer, Exception, Serializer, Value},
@@ -9,7 +10,7 @@ use {
     send_wrapper::SendWrapper,
     serde::{Deserialize, Serialize},
     serde_bytes::ByteBuf,
-    sha2::Digest,
+    sha2::{Digest, Sha256, Sha512},
     spin_sdk::{
         config,
         http::{Request, Response},
@@ -281,6 +282,45 @@ fn get_hash(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     }
 }
 
+
+fn get_hmac(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [algorithm, key, content] => {
+            let algorithm = &deserialize_helper(algorithm)?;
+            let key_deserializer = &mut Deserializer::from(key.clone());
+            let key = ByteBuf::deserialize(key_deserializer)?;
+            let content_deserializer = &mut Deserializer::from(content.clone());
+            let content = ByteBuf::deserialize(content_deserializer)?;
+            
+            if algorithm == "sha256" {
+                let mut mac = Hmac::<Sha256>::new_from_slice(&key).expect("HMAC can take key of any size");
+                mac.update(&content);
+                let result = mac.finalize();
+                let code_bytes = result.into_bytes();
+                let mut serializer = Serializer::from_context(context)?;
+                code_bytes.serialize(&mut serializer)?;
+                Ok(serializer.value)
+            } else if algorithm == "sha512" {
+                let mut mac = Hmac::<Sha512>::new_from_slice(&key).expect("HMAC can take key of any size");
+                mac.update(&content);
+                let result = mac.finalize();
+                let code_bytes = result.into_bytes();
+                let mut serializer = Serializer::from_context(context)?;
+                code_bytes.serialize(&mut serializer)?;
+                Ok(serializer.value)
+            } else {
+                bail!("Invalid algorithm, only sha256 and sha512 are supported")
+            }
+        }
+        _ => {
+            bail!(
+                "expected a three arguments (algorithm, key, content), got {} arguments",
+                args.len()
+            )
+        }
+    }
+}
+
 fn math_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> {
     context.value_from_f64(thread_rng().gen_range(0.0_f64..1.0))
 }
@@ -488,6 +528,7 @@ fn do_init() -> Result<()> {
     _random.set_property("math_rand", context.wrap_callback(math_rand)?)?;
     _random.set_property("get_rand", context.wrap_callback(get_rand)?)?;
     _random.set_property("get_hash", context.wrap_callback(get_hash)?)?;
+    _random.set_property("get_hmac", context.wrap_callback(get_hmac)?)?;
 
     global.set_property("_random", _random)?;
     global.set_property("spinSdk", spin_sdk)?;
