@@ -37,8 +37,16 @@ declare global {
         toString(): string
         values(): string[]
     }
+    interface Hash {
+        update(content: string | Uint8Array, inputEncoding?: string): void
+        digest(): ArrayBuffer
+    }
     const crypto:  {
         getRandomValues<T extends ArrayBufferView | null>(array: T): T
+        subtle: {
+            digest(algorithm: string, content: ArrayBuffer): Promise<ArrayBuffer>
+        }
+        createHash(algorithm: string): Hash
     }
 }
 
