@@ -9,6 +9,7 @@ use {
     send_wrapper::SendWrapper,
     serde::{Deserialize, Serialize},
     serde_bytes::ByteBuf,
+    sha2::Digest,
     spin_sdk::{
         config,
         http::{Request, Response},
@@ -256,6 +257,30 @@ fn get_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> 
     context.value_from_u32(thread_rng().gen_range(0..=255))
 }
 
+fn get_hash(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [algorithm, content] => {
+            let algorithm = &deserialize_helper(algorithm)?;
+            let content_deserializer = &mut Deserializer::from(content.clone());
+            let content = ByteBuf::deserialize(content_deserializer)?;
+            if algorithm == "sha256" {
+                let hashvalue = sha2::Sha256::digest(content);
+                let mut serializer = Serializer::from_context(context)?;
+                hashvalue.serialize(&mut serializer)?;
+                Ok(serializer.value)
+            } else if algorithm == "sha512" {
+                let hashvalue = sha2::Sha512::digest(content);
+                let mut serializer = Serializer::from_context(context)?;
+                hashvalue.serialize(&mut serializer)?;
+                Ok(serializer.value)
+            } else {
+                bail!("Invalid algorithm, only sha256 and sha512 are supported")
+            }
+        }
+        _ => bail!("invalid"),
+    }
+}
+
 fn math_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> {
     context.value_from_f64(thread_rng().gen_range(0.0_f64..1.0))
 }
@@ -462,6 +487,7 @@ fn do_init() -> Result<()> {
     let _random = context.object_value()?;
     _random.set_property("math_rand", context.wrap_callback(math_rand)?)?;
     _random.set_property("get_rand", context.wrap_callback(get_rand)?)?;
+    _random.set_property("get_hash", context.wrap_callback(get_hash)?)?;
 
     global.set_property("_random", _random)?;
     global.set_property("spinSdk", spin_sdk)?;
