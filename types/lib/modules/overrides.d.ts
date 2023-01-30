@@ -37,7 +37,7 @@ declare global {
         toString(): string
         values(): string[]
     }
-    interface Hash {
+    interface HashAndHmac {
         update(content: string | Uint8Array, inputEncoding?: string): void
         digest(): ArrayBuffer
     }
@@ -46,7 +46,8 @@ declare global {
         subtle: {
             digest(algorithm: string, content: ArrayBuffer): Promise<ArrayBuffer>
         }
-        createHash(algorithm: string): Hash
+        createHash(algorithm: string): HashAndHmac
+        createHmac(algorithm: string, key: ArrayBuffer): HashAndHmac
     }
 }
 
