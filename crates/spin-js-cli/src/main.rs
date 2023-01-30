@@ -15,7 +15,10 @@ use {
 };
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "js2wasm", about = "A spin plugin to convert javascript files to Spin compatible modules")]
+#[structopt(
+    name = "js2wasm",
+    about = "A spin plugin to convert javascript files to Spin compatible modules"
+)]
 pub struct Options {
     #[structopt(parse(from_os_str))]
     pub input: PathBuf,
@@ -29,7 +32,7 @@ fn main() -> Result<()> {
 
     if env::var("SPIN_JS_WIZEN").eq(&Ok("1".into())) {
         env::remove_var("SPIN_JS_WIZEN");
-        
+
         println!("\nStarting to build Spin compatible module");
 
         let wasm: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/engine.wasm"));
@@ -40,6 +43,7 @@ fn main() -> Result<()> {
             let wasm = Wizer::new()
                 .allow_wasi(true)?
                 .inherit_stdio(true)
+                .wasm_bulk_memory(true)
                 .run(wasm)?;
             fs::write(&opts.output, wasm)?;
         }
@@ -50,6 +54,7 @@ fn main() -> Result<()> {
             let mut wasm = Wizer::new()
                 .allow_wasi(true)?
                 .inherit_stdio(true)
+                .wasm_bulk_memory(true)
                 .run(wasm)?;
 
             let codegen_cfg = CodegenConfig {
