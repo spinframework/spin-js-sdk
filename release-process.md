@@ -8,7 +8,7 @@ To cut a new release for the sdk, you will need to do the following,
 
 1. Push the update NPM package to the NPM registry.
 
-1. Update `package.json` in the examples to point at the new NPM package.
+1. Update `package.json` in the examples and templates to point at the new NPM package.
 
 2. Create a new tag with a `v` and then the version number.
 
