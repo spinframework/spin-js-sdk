@@ -20,7 +20,8 @@ use {
         collections::HashMap,
         env, fs,
         io::{self, Read},
-        ops::Deref,
+        mem,
+        ops::{Deref, DerefMut},
         path::PathBuf,
         str,
         sync::Mutex,
@@ -33,6 +34,7 @@ static ENTRYPOINT: OnceCell<SendWrapper<Value>> = OnceCell::new();
 static ON_RESOLVE: OnceCell<SendWrapper<Value>> = OnceCell::new();
 static ON_REJECT: OnceCell<SendWrapper<Value>> = OnceCell::new();
 static RESPONSE: Lazy<Mutex<Option<Result<SendWrapper<Value>>>>> = Lazy::new(|| Mutex::new(None));
+static TASKS: Lazy<Mutex<Vec<SendWrapper<Value>>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 #[derive(Serialize, Deserialize, Debug)]
 struct HttpRequest {
@@ -282,7 +284,6 @@ fn get_hash(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     }
 }
 
-
 fn get_hmac(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
         [algorithm, key, content] => {
@@ -291,9 +292,10 @@ fn get_hmac(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
             let key = ByteBuf::deserialize(key_deserializer)?;
             let content_deserializer = &mut Deserializer::from(content.clone());
             let content = ByteBuf::deserialize(content_deserializer)?;
-            
+
             if algorithm == "sha256" {
-                let mut mac = Hmac::<Sha256>::new_from_slice(&key).expect("HMAC can take key of any size");
+                let mut mac =
+                    Hmac::<Sha256>::new_from_slice(&key).expect("HMAC can take key of any size");
                 mac.update(&content);
                 let result = mac.finalize();
                 let code_bytes = result.into_bytes();
@@ -301,7 +303,8 @@ fn get_hmac(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
                 code_bytes.serialize(&mut serializer)?;
                 Ok(serializer.value)
             } else if algorithm == "sha512" {
-                let mut mac = Hmac::<Sha512>::new_from_slice(&key).expect("HMAC can take key of any size");
+                let mut mac =
+                    Hmac::<Sha512>::new_from_slice(&key).expect("HMAC can take key of any size");
                 mac.update(&content);
                 let result = mac.finalize();
                 let code_bytes = result.into_bytes();
@@ -475,6 +478,25 @@ fn redis_publish(context: &Context, _this: &Value, args: &[Value]) -> Result<Val
         ),
     }
 }
+
+fn set_timeout(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [function] => {
+            TASKS
+                .lock()
+                .unwrap()
+                .push(SendWrapper::new(function.clone()));
+
+            // TODO: If we ever add support for `clearTimeout`, we'll need to produce a unique ID here:
+            context.value_from_u32(0)
+        }
+        _ => bail!(
+            "expected one argument (function), got {} arguments",
+            args.len()
+        ),
+    }
+}
+
 fn do_init() -> Result<()> {
     let mut script = String::new();
     io::stdin().read_to_string(&mut script)?;
@@ -534,6 +556,8 @@ fn do_init() -> Result<()> {
     global.set_property("spinSdk", spin_sdk)?;
     global.set_property("_fsPromises", fs_promises)?;
     global.set_property("_glob", _glob)?;
+
+    global.set_property("setTimeout", context.wrap_callback(set_timeout)?)?;
 
     let on_resolve = context.wrap_callback(on_resolve)?;
     let on_reject = context.wrap_callback(on_reject)?;
@@ -624,6 +648,19 @@ fn handle(request: Request) -> Result<Response> {
     )?;
 
     context.execute_pending()?;
+
+    // Execute pending `setTimeout` tasks repeatedly until none remain:
+    loop {
+        let tasks = mem::take(TASKS.lock().unwrap().deref_mut());
+
+        if tasks.is_empty() {
+            break;
+        } else {
+            for task in tasks {
+                task.call(global, &[])?;
+            }
+        }
+    }
 
     let response = RESPONSE.lock().unwrap().take().unwrap()?.take();
 
