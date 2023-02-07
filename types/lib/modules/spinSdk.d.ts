@@ -33,7 +33,7 @@ interface SpinSDK {
 interface FetchOptions {
     method?: string;
     headers?: Record<string, string>;
-    body?: ArrayBuffer;
+    body?: ArrayBuffer | Uint8Array | string;
 }
 interface FetchHeaders {
     entries: () => Iterator<[string, string]>;
