@@ -1,3 +1,7 @@
+require('fast-text-encoding')
+
+let encoder = new TextEncoder()
+
 /** @internal */
 import {statusTextList} from "./statusTextList"
 
@@ -46,7 +50,7 @@ interface SpinSDK {
 interface FetchOptions {
     method?: string
     headers?: Record<string, string>
-    body?: ArrayBuffer
+    body?: ArrayBuffer | Uint8Array | string
 }
 
 interface FetchHeaders {
@@ -67,11 +71,21 @@ interface FetchResult {
 
 /** @internal */
 function fetch(uri: string, options?: FetchOptions) {
+    let encodedBodyData
+    if (options && options.body) {
+        if(typeof (options.body) == "string"){
+            encodedBodyData = encoder.encode(options.body).buffer
+        } else if (ArrayBuffer.isView(options.body)) {
+            encodedBodyData = options.body.buffer
+        } else {
+            encodedBodyData = options.body
+        }
+    }
     const { status, headers, body } = spinSdk.http.send({
         method: (options && options.method) || "GET",
         uri,
         headers: (options && options.headers) || {},
-        body: options && options.body,
+        body: encodedBodyData,
     })
     return Promise.resolve({
         status,
