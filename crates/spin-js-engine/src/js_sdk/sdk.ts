@@ -3,7 +3,7 @@ require('fast-text-encoding')
 
 /** @internal */
 import { fetch, spinInternal } from "./modules/spinSdk"
-import { HttpRequest, HttpResponse, HandleRequest } from "./modules/spinSdk"
+import { EventHandler, HttpRequest, HttpResponse, HandleRequest } from "./modules/spinSdk"
 
 /** @internal */
 import { fsPromises } from "./modules/fsPromises"
@@ -35,4 +35,4 @@ import "./modules/utils"
 export { atob, btoa, Buffer, fetch, fsPromises, glob, crypto, URL, URLSearchParams, utils, spinInternal }
 
 // Stuff to be exported to the sdk types file
-export { HttpRequest, HttpResponse, HandleRequest }
+export { EventHandler, HttpRequest, HttpResponse, HandleRequest }

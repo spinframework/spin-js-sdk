@@ -49,8 +49,18 @@ interface FetchResult {
     text: () => Promise<string>;
     json: () => Promise<object>;
 }
+declare class ResponseBuilder {
+    response: HttpResponse;
+    statusCode: number;
+    constructor();
+    getHeader(key: string): string | null;
+    header(key: string, value: string): this;
+    status(status: number): this;
+    body(data: ArrayBuffer | Uint8Array | string): this;
+}
+declare type EventHandler = (request: HttpRequest, response: ResponseBuilder) => Promise<void>;
 declare global {
     const spinSdk: SpinSDK;
     function fetch(uri: string | URL, options?: FetchOptions): Promise<FetchResult>;
 }
-export { HttpRequest, HttpResponse, HandleRequest };
+export { EventHandler, HttpRequest, HttpResponse, HandleRequest };
