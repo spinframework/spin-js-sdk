@@ -23,6 +23,7 @@ declare global {
         origin: string
         set(key: string, value: string | boolean): void
         toString(): string
+        toJson(): string
     }
     class URLSearchParams {
         constructor(queryParamsString: string);
