@@ -108,10 +108,40 @@ function fetch(uri: string, options?: FetchOptions) {
     })
 }
 
+class ResponseBuilder {
+    response: HttpResponse
+    statusCode: number
+    constructor() {
+        this.response = {
+            status: 200,
+            headers: {}
+        }
+        this.statusCode = this.response.status
+    }
+    getHeader(key: string) {
+        return this.response.headers![key] || null
+    }
+    header(key: string, value: string) {
+        this.response.headers![key] = value
+        return this
+    }
+    status(status: number) {
+        this.response.status! = status
+        this.statusCode = this.response.status
+        return this
+    }
+    body(data: ArrayBuffer | Uint8Array | string) {
+        this.response.body = encodeBody(data)
+        return this
+    }
+ }
+ 
+
 /** @internal */
 declare global {
     const spin: {
         handleRequest(request: HttpRequest): Promise<HttpResponse>
+        eventHandler(request: HttpRequest, response: ResponseBuilder): Promise<HttpResponse>
     }
 }
 
@@ -127,8 +157,21 @@ const spinInternal = {
             headers: data.headers || {},
             body: encodedBodyData || new Uint8Array().buffer
         }
+    },
+    _eventHandler: async function (request: HttpRequest): Promise<HttpResponse> {
+
+        let response = new ResponseBuilder()
+        await spin.eventHandler(request, response)
+
+        return {
+            status: response.response.status,
+            headers: response.response.headers || {},
+            body: response.response.body || new Uint8Array().buffer
+        }
     }
 }
+
+type EventHandler = (request: HttpRequest, response: ResponseBuilder) => Promise<void>
 
 
 declare global {
@@ -139,4 +182,4 @@ declare global {
 /** @internal */
 export { fetch, spinInternal }
 
-export { HttpRequest, HttpResponse, HandleRequest }
+export { EventHandler, HttpRequest, HttpResponse, HandleRequest }

@@ -508,19 +508,26 @@ fn do_init() -> Result<()> {
     let global = context.global_object()?;
 
     let entrypoint;
-    match global
+    if global
+        .get_property("spin")?
+        .get_property("eventHandler")?
+        .is_function()
+    {
+        // handler(req, res) signature exists
+        entrypoint = global
+            .get_property("spinInternal")?
+            .get_property("_eventHandler")?;
+    } else if global
         .get_property("spin")?
         .get_property("handleRequest")?
         .is_function()
     {
-        // handler(req, res) signature exists
-        true => {
-            println!("choopsing new sig");
-            entrypoint = global
-                .get_property("spinInternal")?
-                .get_property("_handleRequest")?;
-        },
-        _ =>  panic!("expected function named \"handleRequest\" in \"spin\"")
+        // Fall back to handler(req) signature
+        entrypoint = global
+            .get_property("spinInternal")?
+            .get_property("_handleRequest")?;
+    } else {
+        panic!("expected function named \"handleRequest\" or \"eventHandler\"  in \"spin\"")
     }
 
     let console = context.object_value()?;

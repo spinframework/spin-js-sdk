@@ -49,6 +49,15 @@ declare global {
         createHash(algorithm: string): HashAndHmac
         createHmac(algorithm: string, key: ArrayBuffer): HashAndHmac
     }
+    class ResponseBuilder {
+        constructor()
+        getHeader(key: string): string | null
+        header(key: string, value: string): ThisType
+        status(status: number): ThisType
+        statusCode: number
+        body(data: ArrayBuffer | Uint8Array | string): ThisType
+     }
+     
 }
 
 export { }
