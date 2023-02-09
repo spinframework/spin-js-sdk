@@ -51,6 +51,6 @@ interface FetchResult {
 }
 declare global {
     const spinSdk: SpinSDK;
-    function fetch(uri: string, options?: FetchOptions): Promise<FetchResult>;
+    function fetch(uri: string | URL, options?: FetchOptions): Promise<FetchResult>;
 }
 export { HttpRequest, HttpResponse, HandleRequest };
