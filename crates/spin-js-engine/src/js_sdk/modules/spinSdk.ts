@@ -3,7 +3,7 @@ require('fast-text-encoding')
 let encoder = new TextEncoder()
 
 /** @internal */
-import {statusTextList} from "./statusTextList"
+import { statusTextList } from "./statusTextList"
 
 interface SpinConfig {
     get(arg0: string): string
@@ -17,7 +17,7 @@ interface BaseHttpRequest {
 }
 
 interface HttpRequest extends BaseHttpRequest {
-    json:() => object
+    json: () => object
     text: () => string
 }
 
@@ -70,17 +70,20 @@ interface FetchResult {
 }
 
 /** @internal */
-function fetch(uri: string, options?: FetchOptions) {
-    let encodedBodyData
-    if (options && options.body) {
-        if(typeof (options.body) == "string"){
-            encodedBodyData = encoder.encode(options.body).buffer
-        } else if (ArrayBuffer.isView(options.body)) {
-            encodedBodyData = options.body.buffer
-        } else {
-            encodedBodyData = options.body
-        }
+function encodeBody(body: ArrayBuffer | Uint8Array | string) {
+    if (typeof (body) == "string") {
+        return encoder.encode(body).buffer
+    } else if (ArrayBuffer.isView(body)) {
+        return body.buffer
+    } else {
+        return body
     }
+}
+
+
+/** @internal */
+function fetch(uri: string, options?: FetchOptions) {
+    let encodedBodyData = (options && options.body) ? encodeBody(options.body) : new Uint8Array().buffer
     const { status, headers, body } = spinSdk.http.send({
         method: (options && options.method) || "GET",
         uri,
@@ -91,8 +94,8 @@ function fetch(uri: string, options?: FetchOptions) {
         status,
         headers: {
             entries: () => Object.entries(headers || {}),
-            get:(key: string) => (headers && headers[key]) || null,
-            has:(key: string) => (headers && headers[key]) ? true : false
+            get: (key: string) => (headers && headers[key]) || null,
+            has: (key: string) => (headers && headers[key]) ? true : false
         },
         arrayBuffer: () => Promise.resolve(body),
         ok: (status > 199 && status < 300),
@@ -105,12 +108,35 @@ function fetch(uri: string, options?: FetchOptions) {
     })
 }
 
+/** @internal */
 declare global {
-    const spinSdk: SpinSDK
-    function fetch(uri: string, options?: FetchOptions) : Promise<FetchResult>
+    const spin: {
+        handleRequest(request: HttpRequest): Promise<HttpResponse>
+    }
 }
 
 /** @internal */
-export {fetch}
+const spinInternal = {
+    _handleRequest: async function (request: HttpRequest): Promise<HttpResponse> {
+
+        let data = await spin.handleRequest(request)
+        let encodedBodyData = (data && data.body) ? encodeBody(data.body) : undefined
+
+        return {
+            status: data.status,
+            headers: data.headers || {},
+            body: encodedBodyData || new Uint8Array().buffer
+        }
+    }
+}
+
+
+declare global {
+    const spinSdk: SpinSDK
+    function fetch(uri: string, options?: FetchOptions): Promise<FetchResult>
+}
+
+/** @internal */
+export { fetch, spinInternal }
 
 export { HttpRequest, HttpResponse, HandleRequest }
