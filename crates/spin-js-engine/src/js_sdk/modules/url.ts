@@ -63,6 +63,10 @@ class URL implements UrlObject {
         return this.url.toString()
     }
 
+    toJson() {
+        return this.url.toString()
+    }
+
 }
 
 /** @internal */
