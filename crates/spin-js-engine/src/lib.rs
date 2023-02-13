@@ -16,6 +16,7 @@ use {
         http::{Request, Response},
         http_component, outbound_http, redis,
     },
+    subtle::ConstantTimeEq,
     std::{
         collections::HashMap,
         env, fs,
@@ -497,6 +498,22 @@ fn set_timeout(context: &Context, _this: &Value, args: &[Value]) -> Result<Value
     }
 }
 
+fn timing_safe_equals(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [value1, value2] => {
+            let value1_deserializer = &mut Deserializer::from(value1.clone());
+            let value1 = ByteBuf::deserialize(value1_deserializer)?;
+            let value2_deserializer = &mut Deserializer::from(value2.clone());
+            let value2 = ByteBuf::deserialize(value2_deserializer)?;
+            context.value_from_bool(bool::from(value1.ct_eq(&value2)))
+        }
+        _ => bail!(
+            "expected a two arguments (value1, value2), got {} arguments",
+            args.len()
+        ),
+    }
+}
+
 fn do_init() -> Result<()> {
     let mut script = String::new();
     io::stdin().read_to_string(&mut script)?;
@@ -561,6 +578,7 @@ fn do_init() -> Result<()> {
     _random.set_property("get_rand", context.wrap_callback(get_rand)?)?;
     _random.set_property("get_hash", context.wrap_callback(get_hash)?)?;
     _random.set_property("get_hmac", context.wrap_callback(get_hmac)?)?;
+    _random.set_property("timing_safe_equals", context.wrap_callback(timing_safe_equals)?)?;
 
     global.set_property("_random", _random)?;
     global.set_property("spinSdk", spin_sdk)?;
