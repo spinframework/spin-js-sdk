@@ -1400,6 +1400,7 @@ dependencies = [
  "serde_json",
  "sha2 0.10.6",
  "spin-sdk",
+ "subtle",
  "wit-bindgen-rust 0.1.0",
 ]
 
