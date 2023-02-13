@@ -8,6 +8,7 @@ declare var _random: {
     get_rand: () => number
     get_hash: (algorithm: string, content: ArrayBuffer) => ArrayBuffer
     get_hmac: (algorithm: string, key: ArrayBuffer, content: ArrayBuffer) => ArrayBuffer
+    timing_safe_equals: (value1: ArrayBuffer, value2: ArrayBuffer) => boolean
 }
 
 /** @internal */
@@ -33,6 +34,9 @@ export const crypto = {
             } else {
                 throw new Error("SHA-256 and SHA-512 are the only supported algorithms");
             }
+        },
+        verify: function(algorithm: string, key: ArrayBuffer, signature: ArrayBuffer, data: ArrayBuffer): boolean {
+            return crypto.verify(algorithm, data, key, signature)
         }
     },
     createHash: function (algorithm: string) {
@@ -86,5 +90,21 @@ export const crypto = {
                     throw new Error("sha256 and sha512 are the only supported algorithms");
             }
         }
+    },
+    timingSafeEqual: function(value1: ArrayBuffer, value2: ArrayBuffer): boolean {
+        if (value1.byteLength != value2.byteLength) {
+            throw new Error("buffers must be of the same length")
+        } 
+        return _random.timing_safe_equals(value1, value2)
+    },
+    verify: function(algorithm: string, data: ArrayBuffer, key: ArrayBuffer, signature: ArrayBuffer): boolean {
+        if (algorithm != "HMAC") {
+            throw new Error("only HMAC is currently supported")
+        }
+        let hmac = _random.get_hmac("sha256", key, data)
+        if (hmac.byteLength != signature.byteLength) {
+            return false
+        }
+        return crypto.timingSafeEqual(hmac, signature)
     }
 }
