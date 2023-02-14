@@ -17,6 +17,13 @@ interface HttpResponse {
     body?: ArrayBuffer;
 }
 declare type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>;
+interface KvObject {
+    delete: (key: string) => void;
+    exists: (key: string) => boolean;
+    get: (key: string) => ArrayBuffer;
+    getKeys: () => Array<string>;
+    set: (key: string, value: ArrayBuffer) => void;
+}
 interface SpinSDK {
     config: SpinConfig;
     redis: {
@@ -28,6 +35,9 @@ interface SpinSDK {
         sadd: (address: string, key: string, values: Array<string>) => bigint;
         smembers: (address: string, key: string) => Array<string>;
         srem: (address: string, key: string, values: Array<string>) => bigint;
+    };
+    kv: {
+        open: (name: string) => KvObject;
     };
 }
 interface FetchOptions {

@@ -14,9 +14,10 @@ use {
     spin_sdk::{
         config,
         http::{Request, Response},
-        http_component, outbound_http, redis,
+        http_component,
+        key_value::Store,
+        outbound_http, redis,
     },
-    subtle::ConstantTimeEq,
     std::{
         collections::HashMap,
         env, fs,
@@ -27,6 +28,7 @@ use {
         str,
         sync::Mutex,
     },
+    subtle::ConstantTimeEq,
 };
 
 static CONTEXT: OnceCell<SendWrapper<Context>> = OnceCell::new();
@@ -514,6 +516,100 @@ fn timing_safe_equals(context: &Context, _this: &Value, args: &[Value]) -> Resul
     }
 }
 
+fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [name] => {
+            let name = deserialize_helper(name)?;
+            let store = Store::open(name)?;
+            let kv_store = context.object_value()?;
+
+            kv_store.set_property(
+                "delete",
+                context.wrap_callback({
+                    let store = store.clone();
+                    move |context, _this: &Value, args: &[Value]| match args {
+                        [key] => {
+                            let key = deserialize_helper(key)?;
+                            let value = store.delete(key)?;
+                            let mut serializer = Serializer::from_context(context)?;
+                            value.serialize(&mut serializer)?;
+                            Ok(serializer.value)
+                        }
+                        _ => bail!("expected one argument (key) got {} arguments", args.len()),
+                    }
+                })?,
+            )?;
+            
+            kv_store.set_property(
+                "exists",
+                context.wrap_callback({
+                    let store = store.clone();
+                    move |context, _this: &Value, args: &[Value]| match args {
+                        [key] => {
+                            let key = deserialize_helper(key)?;
+                            context.value_from_bool(store.exists(key)?)
+                        }
+                        _ => bail!("expected one argument (key) got {} arguments", args.len()),
+                    }
+                })?,
+            )?;
+
+            kv_store.set_property(
+                "get",
+                context.wrap_callback({
+                    let store = store.clone();
+                    move |context, _this: &Value, args: &[Value]| match args {
+                        [key] => {
+                            let key = deserialize_helper(key)?;
+                            let value = store.get(key)?;
+                            let mut serializer = Serializer::from_context(context)?;
+                            value.serialize(&mut serializer)?;
+                            Ok(serializer.value)
+                        }
+                        _ => bail!("expected one argument (key) got {} arguments", args.len()),
+                    }
+                })?,
+            )?;
+
+            kv_store.set_property(
+                "getKeys",
+                context.wrap_callback({
+                    let store = store.clone();
+                    move |context, _this: &Value, _args: &[Value]| {
+                            let value = store.get_keys()?;
+                            let mut serializer = Serializer::from_context(context)?;
+                            value.serialize(&mut serializer)?;
+                            Ok(serializer.value)
+                        }
+                })?,
+            )?;
+
+            kv_store.set_property(
+                "set",
+                context.wrap_callback({
+                    move |context, _this: &Value, args: &[Value]| match args {
+                        [key, value] => {
+                            let key = deserialize_helper(key)?;
+                            let deserializer = &mut Deserializer::from(value.clone());
+                            let value = ByteBuf::deserialize(deserializer)?;
+                            let value = store.set(key, &value)?;
+                            let mut serializer = Serializer::from_context(context)?;
+                            value.serialize(&mut serializer)?;
+                            Ok(serializer.value)
+                        }
+                        _ => bail!("expected two arguments (key, value) got {} arguments", args.len()),
+                    }
+                })?,
+            )?;
+
+            Ok(kv_store)
+        }
+        _ => {
+            bail!("expected one argument (name) got {} arguments", args.len())
+        }
+    }
+}
+
 fn do_init() -> Result<()> {
     let mut script = String::new();
     io::stdin().read_to_string(&mut script)?;
@@ -572,10 +668,14 @@ fn do_init() -> Result<()> {
     redis.set_property("smembers", context.wrap_callback(redis_smembers)?)?;
     redis.set_property("srem", context.wrap_callback(redis_srem)?)?;
 
+    let kv = context.object_value()?;
+    kv.set_property("open", context.wrap_callback(open_kv)?)?;
+
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;
     spin_sdk.set_property("http", http)?;
     spin_sdk.set_property("redis", redis)?;
+    spin_sdk.set_property("kv", kv)?;
 
     let _glob = context.object_value()?;
     _glob.set_property("get", context.wrap_callback(get_glob)?)?;
@@ -585,7 +685,10 @@ fn do_init() -> Result<()> {
     _random.set_property("get_rand", context.wrap_callback(get_rand)?)?;
     _random.set_property("get_hash", context.wrap_callback(get_hash)?)?;
     _random.set_property("get_hmac", context.wrap_callback(get_hmac)?)?;
-    _random.set_property("timing_safe_equals", context.wrap_callback(timing_safe_equals)?)?;
+    _random.set_property(
+        "timing_safe_equals",
+        context.wrap_callback(timing_safe_equals)?,
+    )?;
 
     global.set_property("_random", _random)?;
     global.set_property("spinSdk", spin_sdk)?;
