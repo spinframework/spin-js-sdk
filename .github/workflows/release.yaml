@@ -145,6 +145,12 @@ jobs:
           cd _dist 
           tar czf js2wasm-${{ env.RELEASE_VERSION }}-${{ env.RUNNER_OS }}-${{ matrix.config.arch }}.tar.gz js2wasm.license js2wasm${{ matrix.config.extension }}
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+            name: js2wasm-${{ env.RELEASE_VERSION }}-${{ env.RUNNER_OS }}-${{ matrix.config.arch }}.tar.gz
+            path: _dist/js2wasm-${{ env.RELEASE_VERSION }}-${{ env.RUNNER_OS }}-${{ matrix.config.arch }}.tar.gz
+            
       - name: upload binary to Github release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: svenstaro/upload-release-action@v2
