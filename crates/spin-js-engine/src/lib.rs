@@ -14,9 +14,14 @@ use {
     spin_sdk::{
         config,
         http::{Request, Response},
+<<<<<<< HEAD
         http_component,
         key_value::Store,
         outbound_http, redis,
+=======
+        http_component, outbound_http, redis,
+        redis::RedisResult,
+>>>>>>> 0081caf (initial commit)
     },
     std::{
         collections::HashMap,
@@ -329,6 +334,60 @@ fn get_hmac(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
 
 fn math_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> {
     context.value_from_f64(thread_rng().gen_range(0.0_f64..1.0))
+}
+
+fn redis_exec(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    println!("execcuting exec");
+    match args {
+        [address, command, arguments] => {
+            let address = &deserialize_helper(address)?;
+            let command = &deserialize_helper(command)?;
+            let mut arg: Vec<redis::RedisParameter> = vec![];
+            if arguments.is_array() {
+                let mut props = arguments.properties()?;
+                while let Some(ref _x) = props.next_key()? {
+                    let val = props.next_value()?;
+                    if val.is_big_int() {
+                        let deserializer = &mut Deserializer::from(val.clone());
+                        let temp = i64::deserialize(deserializer)?;
+                        arg.push(redis::RedisParameter::Int64(temp));
+                    } else if val.is_array_buffer() {
+                        let deserializer = &mut Deserializer::from(val.clone());
+                        let temp = ByteBuf::deserialize(deserializer)?;
+                        arg.push(redis::RedisParameter::Binary(&temp));
+                    } else {
+                        bail!("invalid argument type, must be bigint or arraybuffer")
+                    }
+                }
+            } else {
+                bail!("invalid argument type, must be array")
+            }
+            let results = redis::execute(address, command, &arg)
+                .map_err(|_| anyhow!("Error executing Redis execute command"))?;
+            let arr = context.array_value()?;
+            for result in results.iter() {
+                match result {
+                    RedisResult::Nil => arr.append_property(context.undefined_value()?)?,
+                    RedisResult::Status(val) => {
+                        arr.append_property(context.value_from_str(&val)?)?
+                    }
+                    RedisResult::Int64(val) => {
+                        arr.append_property(context.value_from_i64(val.to_owned())?)?
+                    }
+                    RedisResult::Binary(val) => {
+                        let mut serializer = Serializer::from_context(context)?;
+                        val.serialize(&mut serializer)?;
+                        arr.append_property(serializer.value)?;
+                    }
+                }
+            }
+            return Ok(arr);
+        }
+        _ => bail!(
+            "expected a two arguments (address, key), got {} arguments",
+            args.len()
+        ),
+    }
 }
 
 fn redis_get(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
@@ -680,6 +739,7 @@ fn do_init() -> Result<()> {
     redis.set_property("sadd", context.wrap_callback(redis_sadd)?)?;
     redis.set_property("smembers", context.wrap_callback(redis_smembers)?)?;
     redis.set_property("srem", context.wrap_callback(redis_srem)?)?;
+    redis.set_property("execute", context.wrap_callback(redis_exec)?)?;
 
     let kv = context.object_value()?;
     kv.set_property("open", context.wrap_callback(open_kv)?)?;

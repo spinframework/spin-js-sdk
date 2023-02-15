@@ -17,7 +17,11 @@ version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a76fd60b23679b7d19bd066031410fb7e458ccc5e958eb5c325888ce4baedc97"
 dependencies = [
+<<<<<<< HEAD
  "gimli 0.27.2",
+=======
+ "gimli 0.27.1",
+>>>>>>> 0081caf (initial commit)
 ]
 
 [[package]]
@@ -682,9 +686,15 @@ dependencies = [
 
 [[package]]
 name = "gimli"
+<<<<<<< HEAD
 version = "0.27.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ad0a93d233ebf96623465aad4046a8d3aa4da22d4f4beba5388838c8a434bbb4"
+=======
+version = "0.27.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "221996f774192f0f718773def8201c4ae31f02616a54ccfc2d358bb0e5cefdec"
+>>>>>>> 0081caf (initial commit)
 
 [[package]]
 name = "glob"
@@ -1478,7 +1488,11 @@ dependencies = [
 [[package]]
 name = "spin-macro"
 version = "0.1.0"
+<<<<<<< HEAD
 source = "git+https://github.com/fermyon/spin#e5c9b435a183e722ed6a0e8425c5285076620e65"
+=======
+source = "git+https://github.com/fermyon/spin#3c811c67d9b1ea9aac514764111a34930dc7f26a"
+>>>>>>> 0081caf (initial commit)
 dependencies = [
  "anyhow",
  "bytes",
@@ -1494,7 +1508,11 @@ dependencies = [
 [[package]]
 name = "spin-sdk"
 version = "0.8.0"
+<<<<<<< HEAD
 source = "git+https://github.com/fermyon/spin#e5c9b435a183e722ed6a0e8425c5285076620e65"
+=======
+source = "git+https://github.com/fermyon/spin#3c811c67d9b1ea9aac514764111a34930dc7f26a"
+>>>>>>> 0081caf (initial commit)
 dependencies = [
  "anyhow",
  "bytes",
