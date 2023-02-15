@@ -337,12 +337,17 @@ fn math_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value>
 }
 
 fn redis_exec(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    enum Parameter {
+        Int64(i64),
+        Binary(ByteBuf),
+    }
+
     println!("execcuting exec");
     match args {
         [address, command, arguments] => {
             let address = &deserialize_helper(address)?;
             let command = &deserialize_helper(command)?;
-            let mut arg: Vec<redis::RedisParameter> = vec![];
+            let mut arg = vec![];
             if arguments.is_array() {
                 let mut props = arguments.properties()?;
                 while let Some(ref _x) = props.next_key()? {
@@ -350,11 +355,11 @@ fn redis_exec(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
                     if val.is_big_int() {
                         let deserializer = &mut Deserializer::from(val.clone());
                         let temp = i64::deserialize(deserializer)?;
-                        arg.push(redis::RedisParameter::Int64(temp));
+                        arg.push(Parameter::Int64(temp));
                     } else if val.is_array_buffer() {
                         let deserializer = &mut Deserializer::from(val.clone());
                         let temp = ByteBuf::deserialize(deserializer)?;
-                        arg.push(redis::RedisParameter::Binary(&temp));
+                        arg.push(Parameter::Binary(temp));
                     } else {
                         bail!("invalid argument type, must be bigint or arraybuffer")
                     }
@@ -362,8 +367,17 @@ fn redis_exec(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
             } else {
                 bail!("invalid argument type, must be array")
             }
-            let results = redis::execute(address, command, &arg)
-                .map_err(|_| anyhow!("Error executing Redis execute command"))?;
+            let results = redis::execute(
+                address,
+                command,
+                &arg.iter()
+                    .map(|arg| match arg {
+                        Parameter::Int64(v) => redis::RedisParameter::Int64(*v),
+                        Parameter::Binary(v) => redis::RedisParameter::Binary(v.deref()),
+                    })
+                    .collect::<Vec<_>>(),
+            )
+            .map_err(|_| anyhow!("Error executing Redis execute command"))?;
             let arr = context.array_value()?;
             for result in results.iter() {
                 match result {
