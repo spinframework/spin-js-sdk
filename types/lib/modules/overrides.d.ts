@@ -53,6 +53,15 @@ declare global {
         timingSafeEqual(value1: ArrayBuffer, value2: ArrayBuffer): boolean
         verify(algorithm: string, data: ArrayBuffer, key: ArrayBuffer, signature: ArrayBuffer): boolean
     }
+    class ResponseBuilder {
+        constructor()
+        getHeader(key: string): string | null
+        header(key: string, value: string): ThisType
+        status(status: number): ThisType
+        statusCode: number
+        body(data: ArrayBuffer | Uint8Array | string): ThisType
+     }
+     
 }
 
 export { }
