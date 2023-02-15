@@ -29,7 +29,7 @@ interface HttpResponse {
 
 type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>
 
-interface KvObject {
+interface KvStore {
     delete: (key: string) => void
     exists: (key: string) => boolean
     get: (key: string) => ArrayBuffer
@@ -54,7 +54,8 @@ interface SpinSDK {
         srem: (address: string, key: string, values: Array<string>) => bigint
     }
     kv: {
-        open: (name: string) => KvObject
+        open: (name: string) => KvStore
+        openDefault: () => KvStore
     }
 }
 

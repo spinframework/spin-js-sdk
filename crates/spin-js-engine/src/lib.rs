@@ -517,10 +517,16 @@ fn timing_safe_equals(context: &Context, _this: &Value, args: &[Value]) -> Resul
 }
 
 fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
-    match args {
-        [name] => {
-            let name = deserialize_helper(name)?;
-            let store = Store::open(name)?;
+    match args.len() {
+        0 | 1 => {
+            let store; 
+            match args {
+                [name] => {
+                    let name = deserialize_helper(name)?;
+                    store = Store::open(name)?;
+                },
+                _ =>  {store = Store::open_default()?;}
+            }
             let kv_store = context.object_value()?;
 
             kv_store.set_property(
@@ -677,6 +683,7 @@ fn do_init() -> Result<()> {
 
     let kv = context.object_value()?;
     kv.set_property("open", context.wrap_callback(open_kv)?)?;
+    kv.set_property("openDefault", context.wrap_callback(open_kv)?)?;
 
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;
