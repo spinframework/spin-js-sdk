@@ -22,7 +22,7 @@ interface KvObject {
     exists: (key: string) => boolean;
     get: (key: string) => ArrayBuffer;
     getKeys: () => Array<string>;
-    set: (key: string, value: ArrayBuffer) => void;
+    set: (key: string, value: ArrayBuffer | string) => void;
 }
 interface SpinSDK {
     config: SpinConfig;

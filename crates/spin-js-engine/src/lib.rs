@@ -590,9 +590,16 @@ fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
                     move |context, _this: &Value, args: &[Value]| match args {
                         [key, value] => {
                             let key = deserialize_helper(key)?;
-                            let deserializer = &mut Deserializer::from(value.clone());
-                            let value = ByteBuf::deserialize(deserializer)?;
-                            let value = store.set(key, &value)?;
+                            let buf;
+                            if value.is_str() {
+                                buf = deserialize_helper(value)?.into_bytes();
+                            } else if value.is_array_buffer() {
+                                let deserializer = &mut Deserializer::from(value.clone());
+                                buf = ByteBuf::deserialize(deserializer)?.to_vec();
+                            } else {
+                                bail!("invalid value type, accepted types are strings and arrayBuffers")
+                            }
+                            let value = store.set(key, &buf)?;
                             let mut serializer = Serializer::from_context(context)?;
                             value.serialize(&mut serializer)?;
                             Ok(serializer.value)
