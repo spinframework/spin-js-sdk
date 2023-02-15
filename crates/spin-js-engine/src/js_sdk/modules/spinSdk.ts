@@ -141,7 +141,7 @@ class ResponseBuilder {
 declare global {
     const spin: {
         handleRequest(request: HttpRequest): Promise<HttpResponse>
-        eventHandler(request: HttpRequest, response: ResponseBuilder): Promise<HttpResponse>
+        handler(request: HttpRequest, response: ResponseBuilder): Promise<HttpResponse>
     }
 }
 
@@ -158,10 +158,10 @@ const spinInternal = {
             body: encodedBodyData || new Uint8Array().buffer
         }
     },
-    _eventHandler: async function (request: HttpRequest): Promise<HttpResponse> {
+    _handler: async function (request: HttpRequest): Promise<HttpResponse> {
 
         let response = new ResponseBuilder()
-        await spin.eventHandler(request, response)
+        await spin.handler(request, response)
 
         return {
             status: response.response.status,
@@ -171,7 +171,7 @@ const spinInternal = {
     }
 }
 
-type EventHandler = (request: HttpRequest, response: ResponseBuilder) => Promise<void>
+type Handler = (request: HttpRequest, response: ResponseBuilder) => Promise<void>
 
 
 declare global {
@@ -182,4 +182,4 @@ declare global {
 /** @internal */
 export { fetch, spinInternal }
 
-export { EventHandler, HttpRequest, HttpResponse, HandleRequest }
+export { Handler, HttpRequest, HttpResponse, HandleRequest }

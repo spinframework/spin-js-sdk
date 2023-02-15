@@ -58,9 +58,9 @@ declare class ResponseBuilder {
     status(status: number): this;
     body(data: ArrayBuffer | Uint8Array | string): this;
 }
-declare type EventHandler = (request: HttpRequest, response: ResponseBuilder) => Promise<void>;
+declare type Handler = (request: HttpRequest, response: ResponseBuilder) => Promise<void>;
 declare global {
     const spinSdk: SpinSDK;
     function fetch(uri: string, options?: FetchOptions): Promise<FetchResult>;
 }
-export { EventHandler, HttpRequest, HttpResponse, HandleRequest };
+export { Handler, HttpRequest, HttpResponse, HandleRequest };

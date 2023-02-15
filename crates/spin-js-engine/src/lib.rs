@@ -510,13 +510,13 @@ fn do_init() -> Result<()> {
     let entrypoint;
     if global
         .get_property("spin")?
-        .get_property("eventHandler")?
+        .get_property("handler")?
         .is_function()
     {
         // handler(req, res) signature exists
         entrypoint = global
             .get_property("spinInternal")?
-            .get_property("_eventHandler")?;
+            .get_property("_handler")?;
     } else if global
         .get_property("spin")?
         .get_property("handleRequest")?
@@ -527,7 +527,7 @@ fn do_init() -> Result<()> {
             .get_property("spinInternal")?
             .get_property("_handleRequest")?;
     } else {
-        panic!("expected function named \"handleRequest\" or \"eventHandler\"  in \"spin\"")
+        panic!("expected function named \"handleRequest\" or \"handler\"  in \"spin\"")
     }
 
     let console = context.object_value()?;
