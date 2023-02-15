@@ -14,14 +14,10 @@ use {
     spin_sdk::{
         config,
         http::{Request, Response},
-<<<<<<< HEAD
         http_component,
         key_value::Store,
         outbound_http, redis,
-=======
-        http_component, outbound_http, redis,
         redis::RedisResult,
->>>>>>> 0081caf (initial commit)
     },
     std::{
         collections::HashMap,
@@ -342,7 +338,6 @@ fn redis_exec(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
         Binary(ByteBuf),
     }
 
-    println!("execcuting exec");
     match args {
         [address, command, arguments] => {
             let address = &deserialize_helper(address)?;
@@ -398,7 +393,7 @@ fn redis_exec(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
             return Ok(arr);
         }
         _ => bail!(
-            "expected a two arguments (address, key), got {} arguments",
+            "expected a three arguments (address, command, arguments), got {} arguments",
             args.len()
         ),
     }

@@ -18,9 +18,6 @@ export const handleRequest: HandleRequest = async function (request: HttpRequest
 
     spinSdk.redis.publish(redisAddress, "test", encoder.encode("This is a test").buffer)
 
-    //@ts-ignore
-    spinSdk.redis.execute(redisAddress, "sadd", [BigInt(64), BigInt(617124)])
-
     return {
         status: 200,
         headers: {"foo": "bar"},
