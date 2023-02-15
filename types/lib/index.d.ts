@@ -1,7 +1,7 @@
-import { EventHandler, HttpRequest, HttpResponse, HandleRequest } from "./modules/spinSdk";
+import { Handler, HttpRequest, HttpResponse, HandleRequest } from "./modules/spinSdk";
 import "./modules/fsPromises";
 import "./modules/glob";
 import "./modules/url";
 import "./modules/utils";
-export { EventHandler, HttpRequest, HttpResponse, HandleRequest };
+export { Handler, HttpRequest, HttpResponse, HandleRequest };
 import "./modules/overrides"
