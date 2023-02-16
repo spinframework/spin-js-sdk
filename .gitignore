@@ -2,3 +2,4 @@ target/
 node_modules/
 dist/
 /crates/spin-js-engine/sdk.js
+.spin./
