@@ -11,10 +11,12 @@ interface HttpRequest extends BaseHttpRequest {
     json: () => object;
     text: () => string;
 }
-interface HttpResponse {
+interface BaseHttpResponse {
     status: number;
     headers?: Record<string, string>;
-    body?: ArrayBuffer;
+}
+interface HttpResponse extends BaseHttpResponse {
+    body?: ArrayBuffer | string | Uint8Array;
 }
 declare type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>;
 interface KvStore {
