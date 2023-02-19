@@ -21,10 +21,17 @@ interface HttpRequest extends BaseHttpRequest {
     text: () => string
 }
 
-interface HttpResponse {
+interface BaseHttpResponse {
     status: number
     headers?: Record<string, string>
+}
+
+interface InternalHttpResponse extends BaseHttpResponse {
     body?: ArrayBuffer
+}
+
+interface HttpResponse extends BaseHttpResponse {
+    body?: ArrayBuffer | string | Uint8Array
 }
 
 type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>
@@ -41,7 +48,7 @@ interface SpinSDK {
     config: SpinConfig
     /** @internal */
     http: {
-        send: (arg0: BaseHttpRequest) => HttpResponse
+        send: (arg0: BaseHttpRequest) => InternalHttpResponse
     }
     redis: {
         execute: (address: string, args: Array< ArrayBuffer | bigint>) => undefined | string | bigint | ArrayBuffer
