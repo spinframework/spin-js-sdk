@@ -42,7 +42,7 @@ declare global {
         update(content: string | Uint8Array, inputEncoding?: string): void
         digest(): ArrayBuffer
     }
-    const crypto:  {
+    const crypto: {
         getRandomValues<T extends ArrayBufferView | null>(array: T): T
         subtle: {
             digest(algorithm: string, content: ArrayBuffer): Promise<ArrayBuffer>
@@ -56,12 +56,12 @@ declare global {
     class ResponseBuilder {
         constructor()
         getHeader(key: string): string | null
-        header(key: string, value: string): ThisType
-        status(status: number): ThisType
+        header(key: string, value: string): ResponseBuilder
+        status(status: number): ResponseBuilder
         statusCode: number
-        body(data: ArrayBuffer | Uint8Array | string): ThisType
-     }
-     
+        body(data: ArrayBuffer | Uint8Array | string): ResponseBuilder
+    }
+
 }
 
 export { }
