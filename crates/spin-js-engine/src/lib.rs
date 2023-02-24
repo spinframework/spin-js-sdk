@@ -26,6 +26,7 @@ use {
         mem,
         ops::{Deref, DerefMut},
         path::PathBuf,
+        rc::Rc,
         str,
         sync::Mutex,
     },
@@ -378,7 +379,7 @@ fn redis_exec(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
                 match result {
                     RedisResult::Nil => arr.append_property(context.undefined_value()?)?,
                     RedisResult::Status(val) => {
-                        arr.append_property(context.value_from_str(&val)?)?
+                        arr.append_property(context.value_from_str(val)?)?
                     }
                     RedisResult::Int64(val) => {
                         arr.append_property(context.value_from_i64(val.to_owned())?)?
@@ -390,7 +391,7 @@ fn redis_exec(context: &Context, _this: &Value, args: &[Value]) -> Result<Value>
                     }
                 }
             }
-            return Ok(arr);
+            Ok(arr)
         }
         _ => bail!(
             "expected a three arguments (address, command, arguments), got {} arguments",
@@ -587,16 +588,13 @@ fn timing_safe_equals(context: &Context, _this: &Value, args: &[Value]) -> Resul
 fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args.len() {
         0 | 1 => {
-            let store;
-            match args {
+            let store = Rc::new(match args {
                 [name] => {
                     let name = deserialize_helper(name)?;
-                    store = Store::open(name)?;
+                    Store::open(name)?
                 }
-                _ => {
-                    store = Store::open_default()?;
-                }
-            }
+                _ => Store::open_default()?,
+            });
             let kv_store = context.object_value()?;
 
             kv_store.set_property(
@@ -606,10 +604,8 @@ fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
                     move |context, _this: &Value, args: &[Value]| match args {
                         [key] => {
                             let key = deserialize_helper(key)?;
-                            let value = store.delete(key)?;
-                            let mut serializer = Serializer::from_context(context)?;
-                            value.serialize(&mut serializer)?;
-                            Ok(serializer.value)
+                            store.delete(key)?;
+                            context.undefined_value()
                         }
                         _ => bail!("expected one argument (key) got {} arguments", args.len()),
                     }
@@ -645,7 +641,7 @@ fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
                                     Ok(serializer.value)
                                 }
                                 Err(key_value::Error::NoSuchKey) => context.null_value(),
-                                Err(e) => return Err(e.into()),
+                                Err(e) => Err(e.into()),
                             }
                         }
                         _ => bail!("expected one argument (key) got {} arguments", args.len()),
@@ -681,10 +677,8 @@ fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
                             } else {
                                 bail!("invalid value type, accepted types are strings and arrayBuffers")
                             }
-                            let value = store.set(key, &buf)?;
-                            let mut serializer = Serializer::from_context(context)?;
-                            value.serialize(&mut serializer)?;
-                            Ok(serializer.value)
+                            store.set(key, buf)?;
+                            context.undefined_value()
                         }
                         _ => bail!("expected two arguments (key, value) got {} arguments", args.len()),
                     }
