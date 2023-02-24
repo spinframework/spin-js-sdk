@@ -13,7 +13,7 @@ echo "built the test app successfully"
 
 # Start the spin app in the background
 echo "Starting Spin app"
-spin up --follow-all &
+spin up &
 
 # wait for app to be up and running
 echo "Waiting for Spin app to be ready"
