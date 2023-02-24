@@ -14,7 +14,7 @@ use {
     spin_sdk::{
         config,
         http::{Request, Response},
-        http_component,
+        http_component, key_value,
         key_value::Store,
         outbound_http, redis,
         redis::RedisResult,
@@ -587,13 +587,15 @@ fn timing_safe_equals(context: &Context, _this: &Value, args: &[Value]) -> Resul
 fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args.len() {
         0 | 1 => {
-            let store; 
+            let store;
             match args {
                 [name] => {
                     let name = deserialize_helper(name)?;
                     store = Store::open(name)?;
-                },
-                _ =>  {store = Store::open_default()?;}
+                }
+                _ => {
+                    store = Store::open_default()?;
+                }
             }
             let kv_store = context.object_value()?;
 
@@ -635,10 +637,16 @@ fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
                     move |context, _this: &Value, args: &[Value]| match args {
                         [key] => {
                             let key = deserialize_helper(key)?;
-                            let value = store.get(key)?;
-                            let mut serializer = Serializer::from_context(context)?;
-                            value.serialize(&mut serializer)?;
-                            Ok(serializer.value)
+                            let result = store.get(key);
+                            match result {
+                                Ok(val) => {
+                                    let mut serializer = Serializer::from_context(context)?;
+                                    val.serialize(&mut serializer)?;
+                                    Ok(serializer.value)
+                                }
+                                Err(key_value::Error::NoSuchKey) => context.null_value(),
+                                Err(e) => return Err(e.into()),
+                            }
                         }
                         _ => bail!("expected one argument (key) got {} arguments", args.len()),
                     }
@@ -650,11 +658,11 @@ fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
                 context.wrap_callback({
                     let store = store.clone();
                     move |context, _this: &Value, _args: &[Value]| {
-                            let value = store.get_keys()?;
-                            let mut serializer = Serializer::from_context(context)?;
-                            value.serialize(&mut serializer)?;
-                            Ok(serializer.value)
-                        }
+                        let value = store.get_keys()?;
+                        let mut serializer = Serializer::from_context(context)?;
+                        value.serialize(&mut serializer)?;
+                        Ok(serializer.value)
+                    }
                 })?,
             )?;
 
@@ -753,7 +761,6 @@ fn do_init() -> Result<()> {
     let kv = context.object_value()?;
     kv.set_property("open", context.wrap_callback(open_kv)?)?;
     kv.set_property("openDefault", context.wrap_callback(open_kv)?)?;
-    
 
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;

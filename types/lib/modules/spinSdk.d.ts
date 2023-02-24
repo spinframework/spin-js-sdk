@@ -22,7 +22,7 @@ declare type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>;
 interface KvStore {
     delete: (key: string) => void;
     exists: (key: string) => boolean;
-    get: (key: string) => ArrayBuffer;
+    get: (key: string) => ArrayBuffer | null;
     getKeys: () => Array<string>;
     set: (key: string, value: ArrayBuffer | string) => void;
 }
