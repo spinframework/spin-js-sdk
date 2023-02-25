@@ -26,7 +26,7 @@ jobs:
           toolchain: stable
           default: true
           components: clippy, rustfmt
-      
+
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: "${{ runner.os }}-lint-${{ hashFiles('./Cargo.lock') }}"
@@ -57,13 +57,20 @@ jobs:
       - name: Install NPM dependancies for SDK
         shell: bash
         run: |
-          cd crates/spin-js-engine/src/js_sdk         
-          npm install -
+          cd crates/spin-js-engine/src/js_sdk
+          npm install
+
+      - name: Lint
+        shell: bash
+        run: |
+          cargo fmt --all -- --check
+          make crates/spin-js-engine/sdk.ts
+          QUICKJS_WASM_SYS_WASI_SDK_PATH=/opt/wasi-sdk cargo clippy --all-targets --all-features
 
       - name: Build spinjs
         shell: bash
         run: make
-      
+
       - name: Install spin
         uses: engineerd/configurator@v0.0.8
         with:
@@ -76,6 +83,3 @@ jobs:
         run: |
           cd test
           ./test.sh
-
-
- 
