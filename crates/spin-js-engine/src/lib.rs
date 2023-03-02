@@ -33,6 +33,9 @@ use {
     subtle::ConstantTimeEq,
 };
 
+#[export_name = "spin-sdk-language-javascript"]
+extern "C" fn __spin_sdk_language() {}
+
 static CONTEXT: OnceCell<SendWrapper<Context>> = OnceCell::new();
 static GLOBAL: OnceCell<SendWrapper<Value>> = OnceCell::new();
 static ENTRYPOINT: OnceCell<SendWrapper<Value>> = OnceCell::new();
