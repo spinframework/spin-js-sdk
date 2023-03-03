@@ -36,14 +36,6 @@ interface HttpResponse extends BaseHttpResponse {
 
 type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>
 
-interface KvStore {
-    delete: (key: string) => void
-    exists: (key: string) => boolean
-    get: (key: string) => ArrayBuffer | null
-    getKeys: () => Array<string>
-    set: (key: string, value: ArrayBuffer | string) => void
-}
-
 interface SpinSDK {
     config: SpinConfig
     /** @internal */
@@ -197,6 +189,13 @@ type Handler = (request: HttpRequest, response: ResponseBuilder) => Promise<void
 declare global {
     const spinSdk: SpinSDK
     function fetch(uri: string | URL, options?: FetchOptions): Promise<FetchResult>
+    interface KvStore {
+        delete: (key: string) => void
+        exists: (key: string) => boolean
+        get: (key: string) => ArrayBuffer | null
+        getKeys: () => Array<string>
+        set: (key: string, value: ArrayBuffer | string) => void
+    }
 }
 
 /** @internal */
