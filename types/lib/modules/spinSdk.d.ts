@@ -22,7 +22,7 @@ declare type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>;
 interface SpinSDK {
     config: SpinConfig;
     redis: {
-        execute: (address: string, args: Array<ArrayBuffer | bigint>) => undefined | string | bigint | ArrayBuffer;
+        execute: (address: string, command: string, args: Array<ArrayBuffer | bigint>) => undefined | string | bigint | ArrayBuffer;
         get: (address: string, key: string) => ArrayBuffer;
         incr: (address: string, key: string) => bigint;
         publish: (address: string, channel: string, value: ArrayBuffer) => undefined;
