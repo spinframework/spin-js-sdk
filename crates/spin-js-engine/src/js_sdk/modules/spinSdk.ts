@@ -43,7 +43,7 @@ interface SpinSDK {
         send: (arg0: BaseHttpRequest) => InternalHttpResponse
     }
     redis: {
-        execute: (address: string, args: Array< ArrayBuffer | bigint>) => undefined | string | bigint | ArrayBuffer
+        execute: (address: string, command: string, args: Array< ArrayBuffer | bigint>) => undefined | string | bigint | ArrayBuffer
         get: (address: string, key: string) => ArrayBuffer
         incr: (address: string, key: string) => bigint
         publish: (address: string, channel: string, value: ArrayBuffer) => undefined
