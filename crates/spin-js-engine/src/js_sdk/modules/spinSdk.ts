@@ -37,6 +37,13 @@ interface HttpResponse extends BaseHttpResponse {
 
 type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>
 
+type RdbmsParam = null | boolean | string | number | ArrayBuffer
+interface RdmsReturn {
+    columns: string[],
+    rows: [
+        [RdbmsParam]
+    ]
+}
 interface SpinSDK {
     config: SpinConfig
     /** @internal */
@@ -57,6 +64,14 @@ interface SpinSDK {
     kv: {
         open: (name: string) => KvStore
         openDefault: () => KvStore
+    }
+    mysql: {
+        execute: (address: string, statement: string, params: RdbmsParam[]) => void
+        query: (address: string, statement: string, params: RdbmsParam[]) => RdmsReturn
+    }
+    pg: {
+        execute: (address: string, statement: string, params: RdbmsParam[]) => void
+        query: (address: string, statement: string, params: RdbmsParam[]) => RdmsReturn
     }
 }
 
