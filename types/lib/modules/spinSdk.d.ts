@@ -43,7 +43,7 @@ interface FetchOptions {
     body?: ArrayBuffer | Uint8Array | string;
 }
 interface FetchHeaders {
-    entries: () => Iterator<[string, string]>;
+    entries: () => [string, string][];
     get: (key: string) => string | null;
     has: (key: string) => boolean;
 }
