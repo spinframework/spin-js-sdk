@@ -1051,32 +1051,11 @@ fn do_init() -> Result<()> {
 
     let context = Context::default();
     context.eval_global("sdk.js", include_str!("../sdk.js"))?;
-    context.eval_global("script.js", &script)?;
+    
 
     let global = context.global_object()?;
 
-    let entrypoint;
-    if global
-        .get_property("spin")?
-        .get_property("handler")?
-        .is_function()
-    {
-        // handler(req, res) signature exists
-        entrypoint = global
-            .get_property("spinInternal")?
-            .get_property("_handler")?;
-    } else if global
-        .get_property("spin")?
-        .get_property("handleRequest")?
-        .is_function()
-    {
-        // Fall back to handler(req) signature
-        entrypoint = global
-            .get_property("spinInternal")?
-            .get_property("_handleRequest")?;
-    } else {
-        panic!("expected function named \"handleRequest\" or \"handler\"  in \"spin\"")
-    }
+    
 
     let console = context.object_value()?;
     console.set_property("log", context.wrap_callback(console_log)?)?;
@@ -1142,12 +1121,40 @@ fn do_init() -> Result<()> {
         context.wrap_callback(timing_safe_equals)?,
     )?;
 
+    let internal_implementations = context.object_value()?;
+    internal_implementations.set_property("spin_sdk", spin_sdk)?;
+
     global.set_property("_random", _random)?;
-    global.set_property("spinSdk", spin_sdk)?;
+    global.set_property("__internal__", internal_implementations)?;
     global.set_property("_fsPromises", fs_promises)?;
     global.set_property("_glob", _glob)?;
 
     global.set_property("setTimeout", context.wrap_callback(set_timeout)?)?;
+
+    context.eval_global("script.js", &script)?;
+
+    let entrypoint;
+    if global
+        .get_property("spin")?
+        .get_property("handler")?
+        .is_function()
+    {
+        // handler(req, res) signature exists
+        entrypoint = global
+            .get_property("spinInternal")?
+            .get_property("_handler")?;
+    } else if global
+        .get_property("spin")?
+        .get_property("handleRequest")?
+        .is_function()
+    {
+        // Fall back to handler(req) signature
+        entrypoint = global
+            .get_property("spinInternal")?
+            .get_property("_handleRequest")?;
+    } else {
+        panic!("expected function named \"handleRequest\" or \"handler\"  in \"spin\"")
+    }
 
     let on_resolve = context.wrap_callback(on_resolve)?;
     let on_reject = context.wrap_callback(on_reject)?;
