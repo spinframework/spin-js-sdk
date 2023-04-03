@@ -1,4 +1,3 @@
-import 'fast-text-encoding';
 interface BaseHttpRequest {
     method: string;
     uri: string;

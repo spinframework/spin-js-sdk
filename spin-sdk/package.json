@@ -1,12 +1,13 @@
 {
-  "name": "spin-sdk-1",
+  "name": "spin-sdk",
   "version": "1.0.0",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
     "prepare": "npm run build",
-    "build": "tsc"
+    "build": "tsc",
+    "build-docs": "typedoc src/index.ts --out ../doc --excludeExternals --readme none"
   },
   "files": [
     "lib"
@@ -16,6 +17,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/typedarray-to-buffer": "^4.0.0",
+    "typedoc": "^0.23.28",
+    "typedoc-plugin-missing-exports": "^1.0.0",
     "typescript": "^5.0.3"
   },
   "dependencies": {

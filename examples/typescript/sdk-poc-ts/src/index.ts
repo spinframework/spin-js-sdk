@@ -9,9 +9,8 @@ router.get("/", () => console.log("got root"))
 router.get("/home", () => console.log("got home"))
 
 export const handleRequest: HandleRequest = async function (request: HttpRequest): Promise<HttpResponse> {
-    
     await router.handleRequest(request)
-
+    
     console.log("The config is ", spinSdk.config.get("test"))
 
     return {

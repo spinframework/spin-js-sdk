@@ -1,6 +1,5 @@
 import { router, routerType } from "./router"
 import { utils } from "./utils"
-import { Buffer } from "buffer"
 
 interface SpinConfig {
     get(arg0: string): string
@@ -14,7 +13,12 @@ interface KvStore {
     set: (key: string, value: ArrayBuffer | string) => void
 }
 
-interface SpinSDK {
+/**
+ * The SpinSdk interface provides access to all the spin defined function and more
+ * It has methods to access databases like redis, kv
+ * It also provides utility functions and a router
+ */
+interface SpinSdK {
     utils: {
         toBuffer: (arg0: ArrayBufferView) => Buffer
     }
@@ -31,8 +35,19 @@ interface SpinSDK {
         smembers: (address: string, key: string) => Array<string>
         srem: (address: string, key: string, values: Array<string>) => bigint
     }
+    /**
+     * Object that allows access to the Spin Key-Value Store 
+     */
     kv: {
+        /**
+         * 
+         * @param name - The name of the KV store to open
+         * @returns A KV store handle
+         */
         open: (name: string) => KvStore
+        /**
+         * @returns The handle to the default KV store
+         */
         openDefault: () => KvStore
     }
 }
@@ -40,14 +55,18 @@ interface SpinSDK {
 
 declare global {
     const __internal__: {
-        spin_sdk: SpinSDK
+        spin_sdk: SpinSdK
     }
 }
 
-const spinSdk = __internal__.spin_sdk
+
+/**
+ * Sdk module that provides access to spin features
+ */
+const spinSdk: SpinSdK = __internal__.spin_sdk
 spinSdk.utils = utils
 spinSdk.Router =  () => {
     return router()
 }
 
-export { spinSdk }
+export { spinSdk, SpinSdK }
