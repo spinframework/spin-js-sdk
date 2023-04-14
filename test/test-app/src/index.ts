@@ -1,9 +1,7 @@
-import { HandleRequest, HttpRequest, HttpResponse } from "spin-sdk"
+import { HandleRequest, HttpRequest, HttpResponse, spinSdk } from "spin-sdk"
 import { health, headersTest, outboundHttp, fileRead, dirRead, testFunctionality } from "./test"
 
-const encoder = new TextEncoder()
-const decoder = new TextDecoder()
-const router = utils.Router()
+const router = spinSdk.Router()
 
 // Add paths for router
 router.get("/", testFunctionality)

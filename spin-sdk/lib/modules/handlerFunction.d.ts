@@ -26,4 +26,4 @@ declare class ResponseBuilder {
     status(status: number): this;
     body(data: ArrayBuffer | Uint8Array | string): this;
 }
-export { HandleRequest, Handler, HttpRequest, HttpResponse };
+export { ResponseBuilder, HandleRequest, Handler, HttpRequest, HttpResponse };

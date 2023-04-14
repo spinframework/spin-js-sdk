@@ -18,7 +18,7 @@ interface KvStore {
  * It has methods to access databases like redis, kv
  * It also provides utility functions and a router
  */
-interface SpinSdK {
+interface SpinSdk {
     utils: {
         toBuffer: (arg0: ArrayBufferView) => Buffer
     }
@@ -55,7 +55,7 @@ interface SpinSdK {
 
 declare global {
     const __internal__: {
-        spin_sdk: SpinSdK
+        spin_sdk: SpinSdk
     }
 }
 
@@ -63,10 +63,10 @@ declare global {
 /**
  * Sdk module that provides access to spin features
  */
-const spinSdk: SpinSdK = __internal__.spin_sdk
+const spinSdk: SpinSdk = __internal__.spin_sdk
 spinSdk.utils = utils
 spinSdk.Router =  () => {
     return router()
 }
 
-export { spinSdk, SpinSdK }
+export { spinSdk, SpinSdk }

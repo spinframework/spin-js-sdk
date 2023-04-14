@@ -7,6 +7,7 @@ version = "1.0.0"
 [[component]]
 id = "hello"
 source = "target/spin-http-js.wasm"
+allowed_http_hosts = ["https://some-random-api.ml/"]
 [component.trigger]
 route = "/..."
 [component.config]

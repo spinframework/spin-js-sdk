@@ -1,9 +1,32 @@
 {
-  "name": "spin-sdk",
-  "version": "1.0.0",
+  "name": "@fermyon/spin-sdk",
+  "version": "0.5.0",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
+  "author": {
+    "name": "fermyon",
+    "email": "engineering@fermyon.com",
+    "url": "https://fermyon.com"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "fermyon",
+    "spin",
+    "sdk",
+    "spin-js-sdk",
+    "spin-ts-sdk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fermyon/spin-js-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fermyon/spin-js-sdk/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc",
@@ -12,9 +35,6 @@
   "files": [
     "lib"
   ],
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/typedarray-to-buffer": "^4.0.0",
     "typedoc": "^0.23.28",

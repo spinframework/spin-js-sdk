@@ -1051,11 +1051,8 @@ fn do_init() -> Result<()> {
 
     let context = Context::default();
     context.eval_global("sdk.js", include_str!("../sdk.js"))?;
-    
 
     let global = context.global_object()?;
-
-    
 
     let console = context.object_value()?;
     console.set_property("log", context.wrap_callback(console_log)?)?;

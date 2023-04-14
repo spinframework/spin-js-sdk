@@ -11,6 +11,9 @@ router.get("/home", () => console.log("got home"))
 export const handleRequest: HandleRequest = async function (request: HttpRequest): Promise<HttpResponse> {
     await router.handleRequest(request)
     
+    const dogFact = await fetch("https://some-random-api.ml/facts/dog")
+    console.log(await dogFact.text())
+
     console.log("The config is ", spinSdk.config.get("test"))
 
     return {

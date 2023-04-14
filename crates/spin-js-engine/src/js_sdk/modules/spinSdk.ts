@@ -81,7 +81,7 @@ function encodeBody(body: ArrayBuffer | Uint8Array | string) {
 /** @internal */
 function fetch(uri: string | URL, options?: FetchOptions) {
     let encodedBodyData = (options && options.body) ? encodeBody(options.body) : new Uint8Array().buffer
-    const { status, headers, body } = spinSdk.http.send({
+    const { status, headers, body } = __internal__.spin_sdk.http.send({
         method: (options && options.method) || "GET",
         uri: (uri instanceof URL) ? uri.toString() : uri,
         headers: (options && options.headers) || {},
@@ -171,7 +171,9 @@ const spinInternal = {
 }
 
 declare global {
-    const spinSdk: SpinSDK
+    const __internal__: {
+        spin_sdk: SpinSDK
+}
 }
 
 /** @internal */
