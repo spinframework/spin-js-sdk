@@ -7,7 +7,7 @@
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc",
-    "build-docs": "typedoc src/index.ts --out ../doc --excludeExternals --readme none"
+    "build-docs": "typedoc src/index.ts --out ../docs --excludeExternals --readme none"
   },
   "files": [
     "lib"
