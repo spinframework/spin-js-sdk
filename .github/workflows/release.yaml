@@ -1,6 +1,8 @@
 name: Release
 on:
   push:
+    branches:
+      - main
     tags:
       - "v*"
   workflow_dispatch:
@@ -9,9 +11,32 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  reset_canary_release: 
+    name: Delete and create Canary Release
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Delete canary tag
+        uses: dev-drprasad/delete-tag-and-release@v0.2.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: canary
+
+      - name: Recreate canary tag and release
+        uses: ncipollo/release-action@v1.10.0
+        with:
+          tag: canary
+          allowUpdates: true
+          prerelease: true
+          body: |
+            This is a "canary" release of the most recent commits on our main branch. Canary is **not stable**.
+            It is only intended for developers wishing to try out the latest features in Spin-js-sdk, some of which may not be fully implemented.
+
   build:
     name: Build spinjs
     runs-on: ${{ matrix.config.os }}
+    needs: reset_canary_release
     strategy:
       fail-fast: false
       matrix:
@@ -69,6 +94,10 @@ jobs:
           toolchain: stable
           default: true
           target: ${{ matrix.config.target }}
+
+      - name: set the release version (main)
+        shell: bash
+        run: echo "RELEASE_VERSION=canary" >> $GITHUB_ENV
 
       - name: set the release version (tag)
         if: startsWith(github.ref, 'refs/tags/v')
@@ -159,11 +188,23 @@ jobs:
           file: _dist/js2wasm-${{ env.RELEASE_VERSION }}-${{ env.RUNNER_OS }}-${{ matrix.config.arch }}.tar.gz
           tag: ${{ github.ref }}
 
-  checksums:
+      - name: upload binary to Github release (canary)
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: _dist/js2wasm-${{ env.RELEASE_VERSION }}-${{ env.RUNNER_OS }}-${{ matrix.config.arch }}.tar.gz
+          tag: "canary"
+
+  checksums_and_manifests:
     name: generate checksums
     runs-on: ubuntu-latest
     needs: build
     steps:
+
+      - uses: actions/checkout@v3
+      - name: set the release version (main)
+        shell: bash
+        run: echo "RELEASE_VERSION=canary" >> $GITHUB_ENV
 
       - name: set the release version (tag)
         if: startsWith(github.ref, 'refs/tags/v')
@@ -185,5 +226,28 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: checksums-${{ env.RELEASE_VERSION }}.txt
           tag: ${{ github.ref }}
+
+      - name: upload checksums to Github release (canary)
+        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: checksums-${{ env.RELEASE_VERSION }}.txt
+          tag: "canary"
+
+      - name: create plugin manifest
+        shell: bash
+        run: bash .plugin-manifests/generate-manifest.sh ${{ env.RELEASE_VERSION }} checksums-${{ env.RELEASE_VERSION }}.txt > js2wasm.json
+
+      - name: upload plugin manifest to releases
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: js2wasm.json
+          tag: ${{ env.RELEASE_VERSION }}
+
+      
+
+      
 
  
