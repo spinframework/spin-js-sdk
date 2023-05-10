@@ -67,7 +67,7 @@ interface FetchOptions {
 }
 
 interface FetchHeaders {
-    entries: () => Iterator<[string, string]>
+    entries: () => [string, string][]
     get: (key: string) => string | null
     has: (key: string) => boolean
 }
