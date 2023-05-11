@@ -7,7 +7,7 @@ version = "0.1.0"
 
 [[component]]
 id = "{{project-name | kebab_case}}"
-source = "target/spin-http-js.wasm"
+source = "target/{{project-name | kebab_case}}.wasm"
 exclude_files = ["**/node_modules"]
 [component.trigger]
 route = "{{http-path}}"

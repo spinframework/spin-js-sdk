@@ -1,6 +1,6 @@
 [[component]]
 id = "{{project-name | kebab_case}}"
-source = "{{ output-path }}/target/spin-http-js.wasm"
+source = "{{ output-path }}/target/{{project-name | kebab_case}}.wasm"
 [component.trigger]
 route = "{{http-path}}"
 [component.build]
