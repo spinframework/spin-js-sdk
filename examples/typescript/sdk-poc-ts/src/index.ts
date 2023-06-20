@@ -1,24 +1,26 @@
-import { HandleRequest, HttpRequest, HttpResponse, spinSdk } from "test"
+import { HandleRequest, HttpRequest, HttpResponse, spinSdk, Router, Redis, Config } from "spin-sdk"
 
-//@ts-ignore
-const encoder = new TextEncoder()
+const decoder = new TextDecoder()
 
-let router  = spinSdk.Router()
+let a  = Router()
 
-router.get("/", () => console.log("got root"))
-router.get("/home", () => console.log("got home"))
+a.get("/", () => console.log("got root"))
+a.get("/home", () => console.log("got home"))
 
 export const handleRequest: HandleRequest = async function (request: HttpRequest): Promise<HttpResponse> {
-    await router.handleRequest(request)
+    await a.handleRequest(request)
     
-    const dogFact = await fetch("https://some-random-api.ml/facts/dog")
+    let val = Redis.get("redis://localhost:6379/", "test")
+    console.log("redis value is ", decoder.decode(new Uint8Array(val)))
+
+    const dogFact = await fetch("https://random-data-api.fermyon.app/animals/json")
     console.log(await dogFact.text())
 
-    console.log("The config is ", spinSdk.config.get("test"))
+    console.log("The config is ", Config.get("test"))
 
     return {
         status: 200,
         headers: {"foo": "bar"},
-        body: encoder.encode("Hello from TS-SDK").buffer
+        body: "Hello from TS-SDK"
     }
 }

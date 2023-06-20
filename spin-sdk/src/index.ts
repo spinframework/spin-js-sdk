@@ -1,5 +1,12 @@
 import { HandleRequest, Handler, HttpRequest, HttpResponse } from "./modules/handlerFunction";
-import { spinSdk, SpinSdk } from "./modules/spinSdk";
+import { Config, Kv, Mysql, Pg, Redis, spinSdk, SpinSdk } from "./modules/spinSdk";
 import "./modules/globalDefinitions"
 
-export { HandleRequest, Handler, HttpRequest, HttpResponse, spinSdk, SpinSdk }
+import { router as Router, routerType } from "./modules/router";
+
+export { Router, routerType }
+
+export { Config, Redis, Kv, Mysql, Pg }
+
+export {spinSdk, SpinSdk}
+export { HandleRequest, Handler, HttpRequest, HttpResponse}

@@ -13,11 +13,16 @@ interface KvStore {
     set: (key: string, value: ArrayBuffer | string) => void
 }
 
-/**
- * The SpinSdk interface provides access to all the spin defined function and more
- * It has methods to access databases like redis, kv
- * It also provides utility functions and a router
- */
+type RdbmsParam = null | boolean | string | number | ArrayBuffer
+
+interface RdbmsReturn {
+    columns: string[],
+    rows: [
+        [RdbmsParam]
+    ]
+}
+
+/** @deprecated*/
 interface SpinSdk {
     utils: {
         toBuffer: (arg0: ArrayBufferView) => Buffer
@@ -50,6 +55,14 @@ interface SpinSdk {
          */
         openDefault: () => KvStore
     }
+    mysql: {
+        execute: (address: string, statement: string, params: RdbmsParam[]) => void
+        query: (address: string, statement: string, params: RdbmsParam[]) => RdbmsReturn
+    }
+    pg: {
+        execute: (address: string, statement: string, params: RdbmsParam[]) => void
+        query: (address: string, statement: string, params: RdbmsParam[]) => RdbmsReturn
+    }
 }
 
 
@@ -60,13 +73,20 @@ declare global {
 }
 
 
-/**
- * Sdk module that provides access to spin features
+/**  features
  */
+/** @deprecated */
 const spinSdk: SpinSdk = __internal__.spin_sdk
 spinSdk.utils = utils
 spinSdk.Router =  () => {
     return router()
 }
 
-export { spinSdk, SpinSdk }
+const Config = __internal__.spin_sdk.config
+const Redis = __internal__.spin_sdk.redis
+const Kv = __internal__.spin_sdk.kv
+const Mysql = __internal__.spin_sdk.mysql
+const Pg = __internal__.spin_sdk.pg
+
+export { spinSdk, SpinSdk}
+export { Config, Redis, Kv, router, Mysql, Pg }

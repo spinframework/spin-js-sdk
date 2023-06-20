@@ -2,6 +2,12 @@
 
 set -euo pipefail
 
+# Build the npm package
+cd ../spin-sdk
+npm install 
+npm run build
+cd -
+
 isFailed=false
 # Build test app
 echo "Building the test app"

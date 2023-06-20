@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "test": "file:../../../spin-sdk"
+    "spin-sdk": "file:../../../spin-sdk"
   },
   "devDependencies": {
     "ts-loader": "^9.4.1",
