@@ -84,7 +84,7 @@ You need to build the SDK from source to use it.
 - CMake
 - NPM
 - Rust (including the wasm32-wasi target)
-- WASI SDK installed at /opt/wasi-sdk
+- WASI SDK ([version 16.0](https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-16)) installed at /opt/wasi-sdk
 
 ### Steps
 
