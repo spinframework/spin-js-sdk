@@ -18,6 +18,7 @@ use {
         key_value::Store,
         mysql, outbound_http, pg,
         redis::{self, RedisResult},
+        sqlite,
     },
     std::{
         collections::HashMap,
@@ -696,6 +697,86 @@ fn open_kv(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     }
 }
 
+fn open_sqlite(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    let implementation = match args {
+        [] => sqlite::Connection::open_default()?,
+        [name] => sqlite::Connection::open(&deserialize_helper(name)?)?,
+        _ => bail!("expected one argument (name) got {} arguments", args.len()),
+    };
+    let connection = context.object_value()?;
+
+    connection.set_property(
+        "execute",
+        context.wrap_callback({
+            move |context, _this: &Value, args: &[Value]| {
+                let (query, js_parameters) = match args {
+                    [js_query] => (deserialize_helper(js_query)?, Vec::new()),
+                    [js_query, js_parameters, ..] => {
+                        let mut props = js_parameters.properties()?;
+                        let mut parameters = Vec::new();
+                        while props.next_key()?.is_some() {
+                            parameters.push(props.next_value()?);
+                        }
+
+                        (deserialize_helper(js_query)?, parameters)
+                    }
+                    [] => bail!("expected arguments to the `query` function but got none"),
+                };
+                let parameters = js_parameters
+                    .iter()
+                    .map(|v| {
+                        let p = if v.is_null() {
+                            sqlite::ValueParam::Null
+                        } else if v.is_repr_as_i32() {
+                            let deserializer = &mut Deserializer::from(v.clone());
+                            sqlite::ValueParam::Integer(i64::deserialize(deserializer)?)
+                        } else if let Ok(s) = v.as_str() {
+                            sqlite::ValueParam::Text(s)
+                        } else if let Ok(s) = v.as_bytes() {
+                            sqlite::ValueParam::Blob(s)
+                        } else if let Ok(f) = v.as_f64() {
+                            sqlite::ValueParam::Real(f)
+                        } else {
+                            bail!("invalid argument type for `parameters` argument to `execute` function: {:?}", v)
+                        };
+                        Ok(p)
+                    })
+                    .collect::<anyhow::Result<Vec<_>>>()?;
+                let result = implementation.execute(&query, &parameters)?;
+
+                let mut serializer = Serializer::from_context(context)?;
+                let columns = result.columns;
+                columns.serialize(&mut serializer)?;
+                let js_columns = serializer.value;
+
+                let js_rows = context.array_value()?;
+                for row in result.rows {
+                    let js_row = context.array_value()?;
+                    for value in row.values {
+                        let js_value = match value {
+                            sqlite::ValueResult::Null => context.null_value()?,
+                            sqlite::ValueResult::Integer(i) => context.value_from_i64(i)?,
+                            sqlite::ValueResult::Real(r) => context.value_from_f64(r)?,
+                            sqlite::ValueResult::Text(s) => context.value_from_str(&s)?,
+                            sqlite::ValueResult::Blob(b) => context.array_buffer_value(&b)?,
+                        };
+                        js_row.append_property(js_value)?;
+                    }
+                    js_rows.append_property(js_row)?;
+                }
+
+                let result = context.object_value()?;
+                result.set_property("columns", js_columns)?;
+                result.set_property("rows", js_rows)?;
+
+                Ok(result)
+            }
+        })?,
+    )?;
+
+    Ok(connection)
+}
+
 enum RdbmsParameter {
     Boolean(bool),
     Int32(i32),
@@ -1035,6 +1116,10 @@ fn do_init() -> Result<()> {
     kv.set_property("open", context.wrap_callback(open_kv)?)?;
     kv.set_property("openDefault", context.wrap_callback(open_kv)?)?;
 
+    let sqlite = context.object_value()?;
+    sqlite.set_property("open", context.wrap_callback(open_sqlite)?)?;
+    sqlite.set_property("openDefault", context.wrap_callback(open_sqlite)?)?;
+
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;
     spin_sdk.set_property("http", http)?;
@@ -1042,6 +1127,7 @@ fn do_init() -> Result<()> {
     spin_sdk.set_property("mysql", mysql)?;
     spin_sdk.set_property("pg", postgres)?;
     spin_sdk.set_property("kv", kv)?;
+    spin_sdk.set_property("sqlite", sqlite)?;
 
     let _glob = context.object_value()?;
     _glob.set_property("get", context.wrap_callback(get_glob)?)?;
@@ -1188,6 +1274,6 @@ fn deserialize_helper(value: &Value) -> Result<String> {
     let result = String::deserialize(deserializer);
     match result {
         Ok(value) => Ok(value),
-        _ => bail!("failed to deserialize string"),
+        _ => bail!("failed to deserialize value '{value:?}' as string"),
     }
 }
