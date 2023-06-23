@@ -8,8 +8,8 @@ name = "spinjs"
 path = "src/main.rs"
 
 [dependencies]
-wizer = "1.6.0"
-structopt = "0.3"
+wizer = "3.0.0"
+clap = { version = "4.1.4", features = [ "derive" ] }
 anyhow = "1.0"
 tempfile = "3.2.0"
 binaryen = { git = "https://github.com/pepyakin/binaryen-rs" }
