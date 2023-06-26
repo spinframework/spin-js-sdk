@@ -4,31 +4,29 @@
 use binaryen::{CodegenConfig, Module};
 use {
     anyhow::{bail, Context, Result},
+    clap::Parser,
     std::{
         env,
         fs::{self, File},
         path::PathBuf,
         process::Command,
     },
-    structopt::StructOpt,
     wizer::Wizer,
 };
 
-#[derive(Debug, StructOpt)]
-#[structopt(
+#[derive(Debug, Parser)]
+#[clap(
     name = "js2wasm",
     about = "A spin plugin to convert javascript files to Spin compatible modules"
 )]
 pub struct Options {
-    #[structopt(parse(from_os_str))]
     pub input: PathBuf,
-
-    #[structopt(short = "o", parse(from_os_str), default_value = "index.wasm")]
+    #[arg(short = 'o', default_value = "index.wasm")]
     pub output: PathBuf,
 }
 
 fn main() -> Result<()> {
-    let opts = Options::from_args();
+    let opts = Options::parse();
 
     if env::var("SPIN_JS_WIZEN").eq(&Ok("1".into())) {
         env::remove_var("SPIN_JS_WIZEN");
