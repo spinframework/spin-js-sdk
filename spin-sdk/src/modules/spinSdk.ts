@@ -13,6 +13,20 @@ interface KvStore {
     set: (key: string, value: ArrayBuffer | string) => void
 }
 
+type SqliteParam = number | string | ArrayBuffer
+type SqliteValue = null | number | string | ArrayBuffer
+
+interface SqliteReturn {
+    columns: string[],
+    rows: [
+        [SqliteValue]
+    ]
+}
+
+interface SqliteStore {
+    execute: (query: string, params: SqliteParam[]) => SqliteReturn
+}
+
 type RdbmsParam = null | boolean | string | number | ArrayBuffer
 
 interface RdbmsReturn {
@@ -63,6 +77,10 @@ interface SpinSdk {
         execute: (address: string, statement: string, params: RdbmsParam[]) => void
         query: (address: string, statement: string, params: RdbmsParam[]) => RdbmsReturn
     }
+    sqlite: {
+        open: (name: string) => SqliteStore
+        openDefault: () => SqliteStore
+    }
 }
 
 
@@ -87,6 +105,7 @@ const Redis = __internal__.spin_sdk.redis
 const Kv = __internal__.spin_sdk.kv
 const Mysql = __internal__.spin_sdk.mysql
 const Pg = __internal__.spin_sdk.pg
+const Sqlite = __internal__.spin_sdk.sqlite
 
 export { spinSdk, SpinSdk}
-export { Config, Redis, Kv, router, Mysql, Pg }
+export { Config, Redis, Kv, router, Mysql, Pg, Sqlite }
