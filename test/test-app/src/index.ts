@@ -15,7 +15,7 @@ export const handleRequest: HandleRequest = async function (request: HttpRequest
 
   const conn = Sqlite.openDefault();
   conn.execute("SELECT * FROM todos WHERE id > (?);", [1]);
-
+  
   return await router.handle({
     method: request.method,
     url: request.headers["spin-full-url"]

@@ -131,8 +131,8 @@ class ResponseBuilder {
         this.response.body = encodeBody(data)
         return this
     }
- }
- 
+}
+
 
 /** @internal */
 declare global {
@@ -145,8 +145,8 @@ declare global {
 /** @internal */
 const spinInternal = {
     _handleRequest: async function (request: HttpRequest): Promise<HttpResponse> {
-        request.text = () => { return decoder.decode(request.body)}
-        request.json = () => { return JSON.parse(decoder.decode(request.body))}
+        request.text = () => { return decoder.decode(request.body) }
+        request.json = () => { return JSON.parse(decoder.decode(request.body)) }
         let data = await spin.handleRequest(request)
         let encodedBodyData = (data && data.body) ? encodeBody(data.body) : undefined
 
@@ -157,8 +157,8 @@ const spinInternal = {
         }
     },
     _handler: async function (request: HttpRequest): Promise<HttpResponse> {
-        request.text = () => { return decoder.decode(request.body)}
-        request.json = () => { return JSON.parse(decoder.decode(request.body))}
+        request.text = () => { return decoder.decode(request.body) }
+        request.json = () => { return JSON.parse(decoder.decode(request.body)) }
         let response = new ResponseBuilder()
         await spin.handler(request, response)
 
@@ -173,7 +173,10 @@ const spinInternal = {
 declare global {
     const __internal__: {
         spin_sdk: SpinSDK
-}
+        console: {
+            log: (...args: any) => void
+        }
+    }
 }
 
 /** @internal */

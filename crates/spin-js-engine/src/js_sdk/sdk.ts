@@ -2,6 +2,7 @@
 require('fast-text-encoding')
 
 /** @internal */
+import  "./modules/spinSdk"
 import { fetch, spinInternal } from "./modules/spinSdk"
 
 /** @internal */
@@ -22,5 +23,7 @@ import "./modules/random"
 /** @internal */
 import { URL, URLSearchParams } from "./modules/url"
 
-/** @internal */
-export { atob, btoa, Buffer, fetch, fsPromises, glob, crypto, URL, URLSearchParams, spinInternal }
+import { console } from "./modules/console"
+
+export { atob, btoa, Buffer, fetch, fsPromises, glob, crypto, URL, URLSearchParams, spinInternal, console }
+

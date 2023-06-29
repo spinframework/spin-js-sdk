@@ -1050,14 +1050,10 @@ fn do_init() -> Result<()> {
     io::stdin().read_to_string(&mut script)?;
 
     let context = Context::default();
-    context.eval_global("sdk.js", include_str!("../sdk.js"))?;
-
     let global = context.global_object()?;
 
     let console = context.object_value()?;
     console.set_property("log", context.wrap_callback(console_log)?)?;
-
-    global.set_property("console", console)?;
 
     let config = context.object_value()?;
     config.set_property("get", context.wrap_callback(spin_get_config)?)?;
@@ -1120,6 +1116,7 @@ fn do_init() -> Result<()> {
 
     let internal_implementations = context.object_value()?;
     internal_implementations.set_property("spin_sdk", spin_sdk)?;
+    internal_implementations.set_property("console", console)?;
 
     global.set_property("_random", _random)?;
     global.set_property("__internal__", internal_implementations)?;
@@ -1127,6 +1124,7 @@ fn do_init() -> Result<()> {
     global.set_property("_glob", _glob)?;
 
     global.set_property("setTimeout", context.wrap_callback(set_timeout)?)?;
+    context.eval_global("sdk.js", include_str!("../sdk.js"))?;
 
     context.eval_global("script.js", &script)?;
 
