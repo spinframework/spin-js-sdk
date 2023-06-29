@@ -2,6 +2,12 @@
 
 set -euo pipefail
 
+# Build the npm package
+cd ../spin-sdk
+npm install 
+npm run build
+cd -
+
 isFailed=false
 # Build test app
 echo "Building the test app"
@@ -13,7 +19,7 @@ echo "built the test app successfully"
 
 # Start the spin app in the background
 echo "Starting Spin app"
-spin up &
+spin up --sqlite @migration.sql &
 
 # wait for app to be up and running
 echo "Waiting for Spin app to be ready"

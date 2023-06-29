@@ -1,0 +1,16 @@
+spin_manifest_version = "1"
+authors = ["Fermyon Engineering <engineering@fermyon.com>"]
+name = "spin-http-js"
+trigger = { type = "http", base = "/" }
+version = "1.0.0"
+
+[[component]]
+id = "hello"
+source = "target/spin-http-js.wasm"
+allowed_http_hosts = ["https://random-data-api.fermyon.app/"]
+[component.trigger]
+route = "/..."
+[component.config]
+test = "this is a ttry"
+[component.build]
+command = "npm run build"

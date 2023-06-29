@@ -2,7 +2,6 @@ require('fast-text-encoding')
 
 let encoder = new TextEncoder()
 
-/** @internal */
 declare var _random: {
     math_rand: () => number
     get_rand: () => number
@@ -11,7 +10,6 @@ declare var _random: {
     timing_safe_equals: (value1: ArrayBuffer, value2: ArrayBuffer) => boolean
 }
 
-/** @internal */
 export const crypto = {
     getRandomValues: function <T extends ArrayBufferView | null>(array: T) {
         if (array) {

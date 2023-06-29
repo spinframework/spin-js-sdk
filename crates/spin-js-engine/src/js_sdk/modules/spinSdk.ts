@@ -3,12 +3,7 @@ require('fast-text-encoding')
 let encoder = new TextEncoder()
 let decoder = new TextDecoder()
 
-/** @internal */
 import { statusTextList } from "./statusTextList"
-
-interface SpinConfig {
-    get(arg0: string): string
-}
 
 interface BaseHttpRequest {
     method: string
@@ -35,7 +30,6 @@ interface HttpResponse extends BaseHttpResponse {
     body?: ArrayBuffer | string | Uint8Array
 }
 
-type HandleRequest = (request: HttpRequest) => Promise<HttpResponse>
 
 type RdbmsParam = null | boolean | string | number | ArrayBuffer
 interface RdmsReturn {
@@ -45,33 +39,8 @@ interface RdmsReturn {
     ]
 }
 interface SpinSDK {
-    config: SpinConfig
-    /** @internal */
     http: {
         send: (arg0: BaseHttpRequest) => InternalHttpResponse
-    }
-    redis: {
-        execute: (address: string, command: string, args: Array< ArrayBuffer | bigint>) => undefined | string | bigint | ArrayBuffer
-        get: (address: string, key: string) => ArrayBuffer
-        incr: (address: string, key: string) => bigint
-        publish: (address: string, channel: string, value: ArrayBuffer) => undefined
-        set: (address: string, key: string, value: ArrayBuffer) => undefined
-        del: (address: string, key: Array<string>) => bigint
-        sadd: (address: string, key: string, values: Array<string>) => bigint
-        smembers: (address: string, key: string) => Array<string>
-        srem: (address: string, key: string, values: Array<string>) => bigint
-    }
-    kv: {
-        open: (name: string) => KvStore
-        openDefault: () => KvStore
-    }
-    mysql: {
-        execute: (address: string, statement: string, params: RdbmsParam[]) => void
-        query: (address: string, statement: string, params: RdbmsParam[]) => RdmsReturn
-    }
-    pg: {
-        execute: (address: string, statement: string, params: RdbmsParam[]) => void
-        query: (address: string, statement: string, params: RdbmsParam[]) => RdmsReturn
     }
 }
 
@@ -112,7 +81,7 @@ function encodeBody(body: ArrayBuffer | Uint8Array | string) {
 /** @internal */
 function fetch(uri: string | URL, options?: FetchOptions) {
     let encodedBodyData = (options && options.body) ? encodeBody(options.body) : new Uint8Array().buffer
-    const { status, headers, body } = spinSdk.http.send({
+    const { status, headers, body } = __internal__.spin_sdk.http.send({
         method: (options && options.method) || "GET",
         uri: (uri instanceof URL) ? uri.toString() : uri,
         headers: (options && options.headers) || {},
@@ -201,22 +170,12 @@ const spinInternal = {
     }
 }
 
-type Handler = (request: HttpRequest, response: ResponseBuilder) => Promise<void>
-
-
 declare global {
-    const spinSdk: SpinSDK
-    function fetch(uri: string | URL, options?: FetchOptions): Promise<FetchResult>
-    interface KvStore {
-        delete: (key: string) => void
-        exists: (key: string) => boolean
-        get: (key: string) => ArrayBuffer | null
-        getKeys: () => Array<string>
-        set: (key: string, value: ArrayBuffer | string) => void
-    }
+    const __internal__: {
+        spin_sdk: SpinSDK
+}
 }
 
 /** @internal */
 export { fetch, spinInternal }
 
-export { Handler, HttpRequest, HttpResponse, HandleRequest }

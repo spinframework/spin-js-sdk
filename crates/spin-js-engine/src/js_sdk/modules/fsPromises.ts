@@ -17,7 +17,6 @@ declare const _fsPromises: {
     }
 }
 
-/** @internal */
 const fsPromises = {
     readFile: (filename: string) => {
         return Promise.resolve(_fsPromises.readFile(filename))
@@ -43,5 +42,4 @@ declare global {
     }
 }
 
-/** @internal */
 export { fsPromises }

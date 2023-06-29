@@ -1,6 +1,6 @@
 /** @internal */
 import { Router as _router } from 'itty-router'
-import { HttpRequest } from './spinSdk'
+import { HttpRequest } from './handlerFunction'
 
 declare type GenericTraps = {
     [key: string]: any;
@@ -80,6 +80,4 @@ function router(): routerType {
     }
 }
 
-/** @internal */
-export { router }
-export { routerType }
+export { router, routerType }

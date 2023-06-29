@@ -1,9 +1,7 @@
-import { HandleRequest, HttpRequest, HttpResponse } from "spin-sdk"
+import { HandleRequest, HttpRequest, HttpResponse, Sqlite, spinSdk } from "spin-sdk"
 import { health, headersTest, outboundHttp, fileRead, dirRead, testFunctionality } from "./test"
 
-const encoder = new TextEncoder()
-const decoder = new TextDecoder()
-const router = utils.Router()
+const router = spinSdk.Router()
 
 // Add paths for router
 router.get("/", testFunctionality)
@@ -14,6 +12,9 @@ router.get("/fileRead", fileRead)
 router.get("/dirRead", dirRead)
 
 export const handleRequest: HandleRequest = async function (request: HttpRequest): Promise<HttpResponse> {
+
+  const conn = Sqlite.openDefault();
+  conn.execute("SELECT * FROM todos WHERE id > (?);", [1]);
 
   return await router.handle({
     method: request.method,
