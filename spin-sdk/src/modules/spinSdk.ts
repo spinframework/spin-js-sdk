@@ -9,8 +9,10 @@ interface KvStore {
     delete: (key: string) => void
     exists: (key: string) => boolean
     get: (key: string) => ArrayBuffer | null
+    getJson: (key: string) => any
     getKeys: () => Array<string>
     set: (key: string, value: ArrayBuffer | string) => void
+    setJson: (key: string, value: any) => void
 }
 
 type SqliteParam = number | string | ArrayBuffer
@@ -90,22 +92,46 @@ declare global {
     }
 }
 
+const kv = {
+    open: (name: string) => {
+        let store = __internal__.spin_sdk.kv.open(name)
+        store.getJson = (key: string) => {
+            return JSON.parse(new TextDecoder().decode(store.get(key)))
+        }
+        store.setJson = (key: string, value: any) => {
+            store.set(key, JSON.stringify(value))
+        }
+        return store
+    },
+    openDefault: () => {
+        let store = kv.open("default")
+        return store
+    }
+
+}
 
 /**  features
  */
 /** @deprecated */
-const spinSdk: SpinSdk = __internal__.spin_sdk
-spinSdk.utils = utils
-spinSdk.Router =  () => {
-    return router()
+const spinSdk: SpinSdk = {
+    config: __internal__.spin_sdk.config,
+    redis: __internal__.spin_sdk.redis,
+    kv: kv,
+    mysql: __internal__.spin_sdk.mysql,
+    pg: __internal__.spin_sdk.pg,
+    sqlite: __internal__.spin_sdk.sqlite,
+    utils: utils,
+    Router: () => {
+        return router()
+    }
 }
 
 const Config = __internal__.spin_sdk.config
 const Redis = __internal__.spin_sdk.redis
-const Kv = __internal__.spin_sdk.kv
+const Kv = kv
 const Mysql = __internal__.spin_sdk.mysql
 const Pg = __internal__.spin_sdk.pg
 const Sqlite = __internal__.spin_sdk.sqlite
 
-export { spinSdk, SpinSdk}
+export { spinSdk, SpinSdk }
 export { Config, Redis, Kv, router, Mysql, Pg, Sqlite }
