@@ -1,4 +1,4 @@
-import { HandleRequest, HttpRequest, HttpResponse } from "spin-sdk"
+import { HandleRequest, HttpRequest, HttpResponse, Pg } from "@fermyon/spin-sdk"
 
 const encoder = new TextEncoder()
 
@@ -14,9 +14,9 @@ const DB_URL = "host=localhost user=postgres dbname=spin_dev"
 
 export const handleRequest: HandleRequest = async function (request: HttpRequest): Promise<HttpResponse> {
 
-    spinSdk.pg.execute(DB_URL, "delete from test where id=4", [])
-    spinSdk.pg.execute(DB_URL, "insert into test values (4,5)", [])
-    let test = spinSdk.pg.query(DB_URL, "select * from test", [])
+    Pg.execute(DB_URL, "delete from test where id=4", [])
+    Pg.execute(DB_URL, "insert into test values (4,5)", [])
+    let test = Pg.query(DB_URL, "select * from test", [])
 
     console.log(test.columns)
     

@@ -1,4 +1,4 @@
-import { HandleRequest, HttpRequest, HttpResponse } from "@fermyon/spin-sdk"
+import { HandleRequest, HttpRequest, HttpResponse, Config } from "@fermyon/spin-sdk"
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
@@ -11,7 +11,7 @@ export const handleRequest: HandleRequest = async function (request: HttpRequest
 
     const env = JSON.stringify(process.env)
 
-    const body = `${spinSdk.config.get("message")}\nenv: ${env}\nHere's a dog fact: ${dogFactBody}\n`
+    const body = `${Config.get("message")}\nenv: ${env}\nHere's a dog fact: ${dogFactBody}\n`
 
     return {
         status: 200,

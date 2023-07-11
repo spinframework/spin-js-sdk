@@ -15,6 +15,7 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
-    "@planetscale/database": "^1.4.0"
+    "@planetscale/database": "^1.4.0",
+    "@fermyon/spin-sdk": "^0.5.0"
   }
 }
