@@ -1,4 +1,4 @@
-import { HandleRequest, HttpRequest, HttpResponse } from "spin-sdk"
+import { HandleRequest, HttpRequest, HttpResponse, Mysql } from "@fermyon/spin-sdk"
 
 const encoder = new TextEncoder()
 
@@ -15,9 +15,9 @@ const DB_URL = "mysql://root:@127.0.0.1/spin_dev"
 
 export const handleRequest: HandleRequest = async function (request: HttpRequest): Promise<HttpResponse> {
 
-    spinSdk.mysql.execute(DB_URL, "delete from test where id=?", [4])
-    spinSdk.mysql.execute(DB_URL, "insert into test values (4,5)", [])
-    let test = spinSdk.mysql.query(DB_URL, "select * from test", [])
+    Mysql.execute(DB_URL, "delete from test where id=?", [4])
+    Mysql.execute(DB_URL, "insert into test values (4,5)", [])
+    let test = Mysql.query(DB_URL, "select * from test", [])
 
     console.log(test.columns)
     test.rows.map (k => {
