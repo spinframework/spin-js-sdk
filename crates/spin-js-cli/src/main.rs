@@ -14,10 +14,13 @@ use {
     wizer::Wizer,
 };
 
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 #[derive(Debug, Parser)]
 #[clap(
     name = "js2wasm",
-    about = "A spin plugin to convert javascript files to Spin compatible modules"
+    about = "A spin plugin to convert javascript files to Spin compatible modules",
+    version = VERSION
 )]
 pub struct Options {
     pub input: PathBuf,
