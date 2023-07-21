@@ -13,8 +13,8 @@ router.get("/dirRead", dirRead)
 
 export const handleRequest: HandleRequest = async function (request: HttpRequest): Promise<HttpResponse> {
 
-  const conn = Sqlite.openDefault();
-  conn.execute("SELECT * FROM todos WHERE id > (?);", [1]);
+  // const conn = Sqlite.openDefault();
+  // conn.execute("SELECT * FROM todos WHERE id > (?);", [1]);
   
   return await router.handle({
     method: request.method,

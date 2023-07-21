@@ -10,7 +10,7 @@ id = "test-app"
 source = "target/spin-http-js.wasm"
 files = [{ source = "src/", destination = "/" }, ]
 allowed_http_hosts = ["http://localhost:3000"]
-sqlite_databases = ["default"]
+# sqlite_databases = ["default"]
 [component.trigger]
 route = "/..."
 [component.build]

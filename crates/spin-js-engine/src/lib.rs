@@ -16,7 +16,7 @@ use {
         http::{Request, Response},
         http_component, key_value,
         key_value::Store,
-        mysql, outbound_http, pg,
+        outbound_http, pg,
         redis::{self, RedisResult},
         sqlite,
     },
@@ -823,119 +823,121 @@ fn rdbms_param_deserializer(params: &Value, arg: &mut Vec<RdbmsParameter>) -> Re
     Ok(())
 }
 
-fn map_rdbms_mysql(arg: &RdbmsParameter) -> mysql::ParameterValue {
-    match arg {
-        RdbmsParameter::Boolean(v) => mysql::ParameterValue::Boolean(*v),
-        RdbmsParameter::Int32(v) => mysql::ParameterValue::Int32(*v),
-        RdbmsParameter::Int64(v) => mysql::ParameterValue::Int64(*v),
-        RdbmsParameter::Float64(v) => mysql::ParameterValue::Floating64(*v),
-        RdbmsParameter::Str(v) => mysql::ParameterValue::Str(v),
-        RdbmsParameter::Binary(v) => mysql::ParameterValue::Binary(v),
-        RdbmsParameter::DbNull => mysql::ParameterValue::DbNull,
-    }
-}
+// Host implementation does not exist in cloud yet
 
-fn mysql_execute(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
-    match args {
-        [address, statement, params] => {
-            let address = deserialize_helper(address)?;
-            let statement = deserialize_helper(statement)?;
-            let mut arg = vec![];
-            if params.is_array() {
-                rdbms_param_deserializer(params, &mut arg)?;
+// fn map_rdbms_mysql(arg: &RdbmsParameter) -> mysql::ParameterValue {
+//     match arg {
+//         RdbmsParameter::Boolean(v) => mysql::ParameterValue::Boolean(*v),
+//         RdbmsParameter::Int32(v) => mysql::ParameterValue::Int32(*v),
+//         RdbmsParameter::Int64(v) => mysql::ParameterValue::Int64(*v),
+//         RdbmsParameter::Float64(v) => mysql::ParameterValue::Floating64(*v),
+//         RdbmsParameter::Str(v) => mysql::ParameterValue::Str(v),
+//         RdbmsParameter::Binary(v) => mysql::ParameterValue::Binary(v),
+//         RdbmsParameter::DbNull => mysql::ParameterValue::DbNull,
+//     }
+// }
 
-                mysql::execute(
-                    &address,
-                    &statement,
-                    &arg.iter().map(map_rdbms_mysql).collect::<Vec<_>>(),
-                )
-                .map_err(|err| anyhow!("Error executing mysql execute command: {}", err))?;
-                context.undefined_value()
-            } else {
-                bail!("invalid argument type, must be array")
-            }
-        }
-        _ => {
-            bail!("expected three arguments (address, statement, list<parameter-value>) got {} arguments", args.len())
-        }
-    }
-}
+// fn mysql_execute(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+//     match args {
+//         [address, statement, params] => {
+//             let address = deserialize_helper(address)?;
+//             let statement = deserialize_helper(statement)?;
+//             let mut arg = vec![];
+//             if params.is_array() {
+//                 rdbms_param_deserializer(params, &mut arg)?;
 
-fn mysql_query(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
-    match args {
-        [address, statement, params] => {
-            let address = deserialize_helper(address)?;
-            let statement = deserialize_helper(statement)?;
-            let mut arg = vec![];
-            if params.is_array() {
-                rdbms_param_deserializer(params, &mut arg)?;
+//                 mysql::execute(
+//                     &address,
+//                     &statement,
+//                     &arg.iter().map(map_rdbms_mysql).collect::<Vec<_>>(),
+//                 )
+//                 .map_err(|err| anyhow!("Error executing mysql execute command: {}", err))?;
+//                 context.undefined_value()
+//             } else {
+//                 bail!("invalid argument type, must be array")
+//             }
+//         }
+//         _ => {
+//             bail!("expected three arguments (address, statement, list<parameter-value>) got {} arguments", args.len())
+//         }
+//     }
+// }
 
-                let result = mysql::query(
-                    &address,
-                    &statement,
-                    &arg.iter().map(map_rdbms_mysql).collect::<Vec<_>>(),
-                )
-                .map_err(|err| anyhow!("Error executing mysql execute command: {}", err))?;
+// fn mysql_query(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+//     match args {
+//         [address, statement, params] => {
+//             let address = deserialize_helper(address)?;
+//             let statement = deserialize_helper(statement)?;
+//             let mut arg = vec![];
+//             if params.is_array() {
+//                 rdbms_param_deserializer(params, &mut arg)?;
 
-                let ret = context.object_value()?;
-                let cols = context.array_value()?;
+//                 let result = mysql::query(
+//                     &address,
+//                     &statement,
+//                     &arg.iter().map(map_rdbms_mysql).collect::<Vec<_>>(),
+//                 )
+//                 .map_err(|err| anyhow!("Error executing mysql execute command: {}", err))?;
 
-                for col in result.columns.iter() {
-                    cols.append_property(context.value_from_str(&col.name)?)?;
-                }
+//                 let ret = context.object_value()?;
+//                 let cols = context.array_value()?;
 
-                let rows = context.array_value()?;
+//                 for col in result.columns.iter() {
+//                     cols.append_property(context.value_from_str(&col.name)?)?;
+//                 }
 
-                for row in result.rows.iter() {
-                    let temp = context.array_value()?;
-                    for val in row {
-                        let js_val = match val {
-                            mysql::DbValue::Boolean(v) => context.value_from_bool(*v)?,
-                            mysql::DbValue::Int8(v) => {
-                                context.value_from_i32(v.to_owned().into())?
-                            }
-                            mysql::DbValue::Int16(v) => {
-                                context.value_from_i32(v.to_owned().into())?
-                            }
-                            mysql::DbValue::Int32(v) => context.value_from_i32(*v)?,
-                            mysql::DbValue::Int64(v) => context.value_from_i64(*v)?,
-                            mysql::DbValue::Uint8(v) => {
-                                context.value_from_u32(v.to_owned().into())?
-                            }
-                            mysql::DbValue::Uint16(v) => {
-                                context.value_from_u32(v.to_owned().into())?
-                            }
-                            mysql::DbValue::Uint32(v) => context.value_from_u32(*v)?,
-                            mysql::DbValue::Uint64(v) => context.value_from_u64(*v)?,
-                            mysql::DbValue::Floating32(v) => {
-                                context.value_from_f64(v.to_owned().into())?
-                            }
-                            mysql::DbValue::Floating64(v) => context.value_from_f64(*v)?,
-                            mysql::DbValue::Str(v) => context.value_from_str(v)?,
-                            mysql::DbValue::Binary(v) => context.array_buffer_value(v)?,
-                            mysql::DbValue::DbNull => context.null_value()?,
-                            mysql::DbValue::Unsupported => {
-                                bail!("Unsupported value found in pg query")
-                            }
-                        };
-                        temp.append_property(js_val)?;
-                    }
-                    rows.append_property(temp)?;
-                }
+//                 let rows = context.array_value()?;
 
-                ret.set_property("columns", cols)?;
-                ret.set_property("rows", rows)?;
+//                 for row in result.rows.iter() {
+//                     let temp = context.array_value()?;
+//                     for val in row {
+//                         let js_val = match val {
+//                             mysql::DbValue::Boolean(v) => context.value_from_bool(*v)?,
+//                             mysql::DbValue::Int8(v) => {
+//                                 context.value_from_i32(v.to_owned().into())?
+//                             }
+//                             mysql::DbValue::Int16(v) => {
+//                                 context.value_from_i32(v.to_owned().into())?
+//                             }
+//                             mysql::DbValue::Int32(v) => context.value_from_i32(*v)?,
+//                             mysql::DbValue::Int64(v) => context.value_from_i64(*v)?,
+//                             mysql::DbValue::Uint8(v) => {
+//                                 context.value_from_u32(v.to_owned().into())?
+//                             }
+//                             mysql::DbValue::Uint16(v) => {
+//                                 context.value_from_u32(v.to_owned().into())?
+//                             }
+//                             mysql::DbValue::Uint32(v) => context.value_from_u32(*v)?,
+//                             mysql::DbValue::Uint64(v) => context.value_from_u64(*v)?,
+//                             mysql::DbValue::Floating32(v) => {
+//                                 context.value_from_f64(v.to_owned().into())?
+//                             }
+//                             mysql::DbValue::Floating64(v) => context.value_from_f64(*v)?,
+//                             mysql::DbValue::Str(v) => context.value_from_str(v)?,
+//                             mysql::DbValue::Binary(v) => context.array_buffer_value(v)?,
+//                             mysql::DbValue::DbNull => context.null_value()?,
+//                             mysql::DbValue::Unsupported => {
+//                                 bail!("Unsupported value found in pg query")
+//                             }
+//                         };
+//                         temp.append_property(js_val)?;
+//                     }
+//                     rows.append_property(temp)?;
+//                 }
 
-                Ok(ret)
-            } else {
-                bail!("invalid argument type, must be array")
-            }
-        }
-        _ => {
-            bail!("expected three arguments (address, statement, list<parameter-value>) got {} arguments", args.len())
-        }
-    }
-}
+//                 ret.set_property("columns", cols)?;
+//                 ret.set_property("rows", rows)?;
+
+//                 Ok(ret)
+//             } else {
+//                 bail!("invalid argument type, must be array")
+//             }
+//         }
+//         _ => {
+//             bail!("expected three arguments (address, statement, list<parameter-value>) got {} arguments", args.len())
+//         }
+//     }
+// }
 
 fn map_rdbms_pg(arg: &RdbmsParameter) -> pg::ParameterValue {
     match arg {
@@ -1076,9 +1078,9 @@ fn do_init() -> Result<()> {
     redis.set_property("srem", context.wrap_callback(redis_srem)?)?;
     redis.set_property("execute", context.wrap_callback(redis_exec)?)?;
 
-    let mysql = context.object_value()?;
-    mysql.set_property("execute", context.wrap_callback(mysql_execute)?)?;
-    mysql.set_property("query", context.wrap_callback(mysql_query)?)?;
+    // let mysql = context.object_value()?;
+    // mysql.set_property("execute", context.wrap_callback(mysql_execute)?)?;
+    // mysql.set_property("query", context.wrap_callback(mysql_query)?)?;
 
     let postgres = context.object_value()?;
     postgres.set_property("execute", context.wrap_callback(postgres_execute)?)?;
@@ -1096,7 +1098,7 @@ fn do_init() -> Result<()> {
     spin_sdk.set_property("config", config)?;
     spin_sdk.set_property("http", http)?;
     spin_sdk.set_property("redis", redis)?;
-    spin_sdk.set_property("mysql", mysql)?;
+    // spin_sdk.set_property("mysql", mysql)?;
     spin_sdk.set_property("pg", postgres)?;
     spin_sdk.set_property("kv", kv)?;
     spin_sdk.set_property("sqlite", sqlite)?;

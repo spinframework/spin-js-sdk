@@ -71,10 +71,10 @@ interface SpinSdk {
          */
         openDefault: () => KvStore
     }
-    mysql: {
-        execute: (address: string, statement: string, params: RdbmsParam[]) => void
-        query: (address: string, statement: string, params: RdbmsParam[]) => RdbmsReturn
-    }
+    // mysql: {
+    //     execute: (address: string, statement: string, params: RdbmsParam[]) => void
+    //     query: (address: string, statement: string, params: RdbmsParam[]) => RdbmsReturn
+    // }
     pg: {
         execute: (address: string, statement: string, params: RdbmsParam[]) => void
         query: (address: string, statement: string, params: RdbmsParam[]) => RdbmsReturn
@@ -117,7 +117,7 @@ const spinSdk: SpinSdk = {
     config: __internal__.spin_sdk.config,
     redis: __internal__.spin_sdk.redis,
     kv: kv,
-    mysql: __internal__.spin_sdk.mysql,
+    // mysql: __internal__.spin_sdk.mysql,
     pg: __internal__.spin_sdk.pg,
     sqlite: __internal__.spin_sdk.sqlite,
     utils: utils,
@@ -129,9 +129,13 @@ const spinSdk: SpinSdk = {
 const Config = __internal__.spin_sdk.config
 const Redis = __internal__.spin_sdk.redis
 const Kv = kv
-const Mysql = __internal__.spin_sdk.mysql
+// const Mysql = __internal__.spin_sdk.mysql
 const Pg = __internal__.spin_sdk.pg
 const Sqlite = __internal__.spin_sdk.sqlite
 
 export { spinSdk, SpinSdk }
-export { Config, Redis, Kv, router, Mysql, Pg, Sqlite }
+export {
+    Config, Redis, Kv, router,
+    //  Mysql
+    Pg, Sqlite
+}
