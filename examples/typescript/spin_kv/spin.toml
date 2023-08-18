@@ -1,0 +1,16 @@
+spin_manifest_version = "1"
+authors = ["karthik2804 <karthik.ganeshram@fermyon.com>"]
+description = ""
+name = "spin-kv-ts"
+trigger = { type = "http", base = "/" }
+version = "0.1.0"
+
+[[component]]
+id = "spin-kv"
+source = "target/spin-kv.wasm"
+exclude_files = ["**/node_modules"]
+key_value_stores = ["default"]
+[component.trigger]
+route = "/..."
+[component.build]
+command = "npm run build"
