@@ -1,4 +1,4 @@
-## Spin KV example
+## Key-value storage example
 
 This is a simple example showcasing using Spin key-value storage with TypeScript.
 
@@ -9,6 +9,14 @@ To build the app run the following commands:
 ```bash
 $ npm install
 $ spin build --up
+```
+
+the mapping between the request method and KV operation is as follows:
+```bash
+GET -> kv.get(request.url)
+POST -> kv.set(request.uri, body)
+HEAD -> kv.exists(request.uri)
+DELETE -> kv.delete(request.uri)
 ```
 
 The application can now receive requests on http://localhost:3000:
