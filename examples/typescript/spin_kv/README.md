@@ -1,6 +1,6 @@
 ## Spin KV example
 
-This is a simple example showcasing using Spin key-value with spin-js-sdk using typescript.
+This is a simple example showcasing using Spin key-value storage with TypeScript.
 
 ###  Building and Running
 
