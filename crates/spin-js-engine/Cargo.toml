@@ -7,7 +7,7 @@ edition = "2021"
 crate-type = [ "cdylib" ]
 
 [dependencies]
-anyhow = "1"
+anyhow = "1.0.70"
 bytes = { version = "1.2.1", features = ["serde"] }
 glob = "0.3.0"
 hmac = "0.12.1"
@@ -16,7 +16,7 @@ quickjs-wasm-rs = "0.1.4"
 quickjs-wasm-sys = "0.1.2"
 once_cell = "1.4.0"
 serde_json = "1.0.87"
-spin-sdk = { git = "https://github.com/fermyon/spin", rev = "d092cf40582a707066768737f13ad0b9b8c5cff3", default-features = false, features=["experimental"] }
+spin-sdk = { git = "https://github.com/fermyon/spin",branch = "llm-sdk", default-features = false, features=["experimental"] }
 wit-bindgen-rust = { git = "https://github.com/bytecodealliance/wit-bindgen", rev = "dde4694aaa6acf9370206527a798ac4ba6a8c5b8" }
 rand = "0.8.5"
 serde = "1.0.137"

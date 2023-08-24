@@ -16,7 +16,7 @@ use {
         http::{Request, Response},
         http_component, key_value,
         key_value::Store,
-        mysql, outbound_http, pg,
+        llm, mysql, outbound_http, pg,
         redis::{self, RedisResult},
         sqlite,
     },
@@ -1045,6 +1045,41 @@ fn postgres_query(context: &Context, _this: &Value, args: &[Value]) -> Result<Va
     }
 }
 
+fn llm_run_with_defaults(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [prompt] => {
+            let prompt = deserialize_helper(prompt)?;
+            let result = llm::infer(llm::InferencingModel::Llama2V13bChat, &prompt)?;
+            context.value_from_str(&result)
+        }
+        _ => Err(anyhow!("expected 1 argument, got {}", args.len())),
+    }
+}
+
+fn llm_embedding_with_defaults(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [sentences] => {
+            let deserializer = &mut Deserializer::from(sentences.clone());
+            let sentences = Vec::<String>::deserialize(deserializer)?;
+            let vec_str: Vec<&str> = sentences.iter().map(|s| s.as_str()).collect();
+            println!("Here");
+            let result = llm::generate_embeddings(llm::EmbeddingModel::AllMiniLmL6V2, &vec_str);
+            match result {
+                Ok(val) => {
+                    println!("Finished generating embeddings");
+                    let mut serializer = Serializer::from_context(context)?;
+                    val.serialize(&mut serializer)?;
+                    Ok(serializer.value)
+                }
+                Err(err) => {
+                    Err(anyhow!(err))
+                }
+            }
+        }
+        _ => Err(anyhow!("expected 1 argument, got {}", args.len())),
+    }
+}
+
 fn do_init() -> Result<()> {
     let mut script = String::new();
     io::stdin().read_to_string(&mut script)?;
@@ -1092,6 +1127,14 @@ fn do_init() -> Result<()> {
     sqlite.set_property("open", context.wrap_callback(open_sqlite)?)?;
     sqlite.set_property("openDefault", context.wrap_callback(open_sqlite)?)?;
 
+    // LLM object
+    let llm = context.object_value()?;
+    llm.set_property("infer", context.wrap_callback(llm_run_with_defaults)?)?;
+    llm.set_property(
+        "generatEmbeddings",
+        context.wrap_callback(llm_embedding_with_defaults)?,
+    )?;
+
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;
     spin_sdk.set_property("http", http)?;
@@ -1100,6 +1143,7 @@ fn do_init() -> Result<()> {
     spin_sdk.set_property("pg", postgres)?;
     spin_sdk.set_property("kv", kv)?;
     spin_sdk.set_property("sqlite", sqlite)?;
+    spin_sdk.set_property("llm", llm)?;
 
     let _glob = context.object_value()?;
     _glob.set_property("get", context.wrap_callback(get_glob)?)?;

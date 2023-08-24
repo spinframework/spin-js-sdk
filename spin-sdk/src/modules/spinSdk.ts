@@ -83,6 +83,10 @@ interface SpinSdk {
         open: (name: string) => SqliteStore
         openDefault: () => SqliteStore
     }
+    llm: {
+        infer: (prompt: string) => string
+        generatEmbeddings: (sentences: Array<string>) => Array<Array<number>>
+    }
 }
 
 
@@ -120,6 +124,7 @@ const spinSdk: SpinSdk = {
     mysql: __internal__.spin_sdk.mysql,
     pg: __internal__.spin_sdk.pg,
     sqlite: __internal__.spin_sdk.sqlite,
+    llm: __internal__.spin_sdk.llm,
     utils: utils,
     Router: () => {
         return router()
@@ -132,6 +137,7 @@ const Kv = kv
 const Mysql = __internal__.spin_sdk.mysql
 const Pg = __internal__.spin_sdk.pg
 const Sqlite = __internal__.spin_sdk.sqlite
+const Llm = __internal__.spin_sdk.llm
 
 export { spinSdk, SpinSdk }
-export { Config, Redis, Kv, router, Mysql, Pg, Sqlite }
+export { Config, Redis, Kv, router, Mysql, Pg, Sqlite, Llm }
