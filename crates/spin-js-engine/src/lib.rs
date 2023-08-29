@@ -1056,6 +1056,42 @@ fn llm_run_with_defaults(context: &Context, _this: &Value, args: &[Value]) -> Re
     }
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+struct InferencingOption {
+    max_tokens: u32,
+    repeat_penalty: f32,
+    repeat_penalty_last_n_token_count: u32,
+    temperature: f32,
+    top_k: u32,
+    top_p: f32,
+}
+
+fn llm_inference_with_options(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [prompt, options] => {
+            let prompt = deserialize_helper(prompt)?;
+            let options_deserializer = &mut Deserializer::from(options.clone());
+            let options = InferencingOption::deserialize(options_deserializer)?;
+            println!("{:#?}", options);
+            let llm_options = llm::InferencingParams {
+                max_tokens: options.max_tokens,
+                repeat_penalty: options.repeat_penalty,
+                repeat_penalty_last_n_token_count: options.repeat_penalty_last_n_token_count,
+                temperature: options.temperature,
+                top_k: options.top_k,
+                top_p: options.top_p,
+            };
+            let result = llm::infer_with_options(
+                llm::InferencingModel::Llama2V13bChat,
+                &prompt,
+                llm_options,
+            )?;
+            context.value_from_str(&result)
+        }
+        _ => Err(anyhow!("expected 2 argument, got {}", args.len())),
+    }
+}
+
 fn llm_embedding_with_defaults(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
     match args {
         [sentences] => {
@@ -1071,9 +1107,7 @@ fn llm_embedding_with_defaults(context: &Context, _this: &Value, args: &[Value])
                     val.serialize(&mut serializer)?;
                     Ok(serializer.value)
                 }
-                Err(err) => {
-                    Err(anyhow!(err))
-                }
+                Err(err) => Err(anyhow!(err)),
             }
         }
         _ => Err(anyhow!("expected 1 argument, got {}", args.len())),
@@ -1130,6 +1164,10 @@ fn do_init() -> Result<()> {
     // LLM object
     let llm = context.object_value()?;
     llm.set_property("infer", context.wrap_callback(llm_run_with_defaults)?)?;
+    llm.set_property(
+        "inferWithOptions",
+        context.wrap_callback(llm_inference_with_options)?,
+    )?;
     llm.set_property(
         "generatEmbeddings",
         context.wrap_callback(llm_embedding_with_defaults)?,

@@ -38,6 +38,15 @@ interface RdbmsReturn {
     ]
 }
 
+interface InferenceOptions {
+    max_tokens: number,
+    repeat_penalty: number,
+    repeat_penalty_last_n_token_count: number,
+    temperature: number,
+    top_k: number,
+    top_p: number
+}
+
 /** @deprecated*/
 interface SpinSdk {
     utils: {
@@ -85,6 +94,7 @@ interface SpinSdk {
     }
     llm: {
         infer: (prompt: string) => string
+        inferWithOptions: (prompt: string, options: InferenceOptions) => string
         generatEmbeddings: (sentences: Array<string>) => Array<Array<number>>
     }
 }
