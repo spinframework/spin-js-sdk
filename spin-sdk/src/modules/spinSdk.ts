@@ -47,6 +47,24 @@ interface InferenceOptions {
     top_p: number
 }
 
+interface InferenceUsage {
+    numPromptTokens: number,
+    numGeneratedTokens: number
+}
+interface InferenceResult {
+    text: string
+    usage: InferenceUsage
+}
+
+interface EmbeddingUsage {
+    numPromptTokens: number
+}
+
+interface EmbeddingResult {
+    embeddings: Array<Array<number>>
+    usage: EmbeddingUsage
+}
+
 /** @deprecated*/
 interface SpinSdk {
     utils: {
@@ -93,9 +111,9 @@ interface SpinSdk {
         openDefault: () => SqliteStore
     }
     llm: {
-        infer: (prompt: string) => string
-        inferWithOptions: (prompt: string, options: InferenceOptions) => string
-        generatEmbeddings: (sentences: Array<string>) => Array<Array<number>>
+        infer: (prompt: string) => InferenceResult
+        inferWithOptions: (prompt: string, options: InferenceOptions) => InferenceResult
+        generatEmbeddings: (sentences: Array<string>) => EmbeddingResult
     }
 }
 
