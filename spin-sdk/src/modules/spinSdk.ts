@@ -39,12 +39,12 @@ interface RdbmsReturn {
 }
 
 interface InferenceOptions {
-    max_tokens: number,
-    repeat_penalty: number,
-    repeat_penalty_last_n_token_count: number,
-    temperature: number,
-    top_k: number,
-    top_p: number
+    max_tokens?: number,
+    repeat_penalty?: number,
+    repeat_penalty_last_n_token_count?: number,
+    temperature?: number,
+    top_k?: number,
+    top_p?: number
 }
 
 interface InferenceUsage {
@@ -111,9 +111,9 @@ interface SpinSdk {
         openDefault: () => SqliteStore
     }
     llm: {
-        infer: (prompt: string) => InferenceResult
-        inferWithOptions: (prompt: string, options: InferenceOptions) => InferenceResult
-        generatEmbeddings: (sentences: Array<string>) => EmbeddingResult
+        infer: (model: InferencingModels | string, prompt: string) => InferenceResult
+        inferWithOptions: (model: InferencingModels | string, prompt: string, options: InferenceOptions) => InferenceResult
+        generateEmbeddings: (model: EmbeddingModels | string, sentences: Array<string>) => EmbeddingResult
     }
 }
 
@@ -159,13 +159,42 @@ const spinSdk: SpinSdk = {
     }
 }
 
+enum InferencingModels {
+    Llama2Chat = "llama2-chat",
+    CodellamaInstruct = "codellama-instruct"
+}
+
+enum EmbeddingModels {
+    AllMiniLmL6V2 = "all-minilm-l6-v2"
+}
+
+const Llm = {
+    infer: (model: InferencingModels | string, prompt: string, options?: InferenceOptions): InferenceResult => {
+        if (!options) {
+            return __internal__.spin_sdk.llm.infer(model, prompt)
+        }
+        let inference_options: InferenceOptions = {
+            max_tokens: options.max_tokens || 100,
+            repeat_penalty: options.repeat_penalty || 1.1,
+            repeat_penalty_last_n_token_count: options.repeat_penalty_last_n_token_count || 64,
+            temperature: options.temperature || 0.8,
+            top_k: options.top_k || 40,
+            top_p: options.top_p || 0.9
+        }
+        return __internal__.spin_sdk.llm.inferWithOptions(model, prompt, inference_options)
+    },
+    generateEmbeddings: (model: EmbeddingModels | string, text: Array<string>): EmbeddingResult => {
+        return __internal__.spin_sdk.llm.generateEmbeddings(model, text)
+    }
+}
+
 const Config = __internal__.spin_sdk.config
 const Redis = __internal__.spin_sdk.redis
 const Kv = kv
 const Mysql = __internal__.spin_sdk.mysql
 const Pg = __internal__.spin_sdk.pg
 const Sqlite = __internal__.spin_sdk.sqlite
-const Llm = __internal__.spin_sdk.llm
+// const Llm = __internal__.spin_sdk.llm
 
 export { spinSdk, SpinSdk }
-export { Config, Redis, Kv, router, Mysql, Pg, Sqlite, Llm }
+export { Config, Redis, Kv, router, Mysql, Pg, Sqlite, Llm, InferencingModels, EmbeddingModels, InferenceOptions}
