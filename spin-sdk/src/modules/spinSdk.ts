@@ -39,6 +39,15 @@ interface RdbmsReturn {
 }
 
 interface InferencingOptions {
+    maxTokens?: number,
+    repeatPenalty?: number,
+    repeatPenaltyLastNTokenCount?: number,
+    temperature?: number,
+    topK?: number,
+    topP?: number
+}
+
+interface InternalInferencingOptions {
     max_tokens?: number,
     repeat_penalty?: number,
     repeat_penalty_last_n_token_count?: number,
@@ -112,7 +121,7 @@ interface SpinSdk {
     }
     llm: {
         infer: (model: InferencingModels | string, prompt: string) => InferenceResult
-        inferWithOptions: (model: InferencingModels | string, prompt: string, options: InferencingOptions) => InferenceResult
+        inferWithOptions: (model: InferencingModels | string, prompt: string, options: InternalInferencingOptions) => InferenceResult
         generateEmbeddings: (model: EmbeddingModels | string, sentences: Array<string>) => EmbeddingResult
     }
 }
@@ -216,13 +225,13 @@ const Llm = {
         if (!options) {
             return __internal__.spin_sdk.llm.infer(model, prompt)
         }
-        let inference_options: InferencingOptions = {
-            max_tokens: options.max_tokens || 100,
-            repeat_penalty: options.repeat_penalty || 1.1,
-            repeat_penalty_last_n_token_count: options.repeat_penalty_last_n_token_count || 64,
+        let inference_options: InternalInferencingOptions = {
+            max_tokens: options.maxTokens || 100,
+            repeat_penalty: options.repeatPenalty || 1.1,
+            repeat_penalty_last_n_token_count: options.repeatPenaltyLastNTokenCount || 64,
             temperature: options.temperature || 0.8,
-            top_k: options.top_k || 40,
-            top_p: options.top_p || 0.9
+            top_k: options.topK || 40,
+            top_p: options.topP || 0.9
         }
         return __internal__.spin_sdk.llm.inferWithOptions(model, prompt, inference_options)
     },

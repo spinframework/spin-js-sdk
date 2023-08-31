@@ -1045,7 +1045,7 @@ fn postgres_query(context: &Context, _this: &Value, args: &[Value]) -> Result<Va
 }
 
 fn map_inferencing_model_name(name: &str) -> llm::InferencingModel {
-    match name{
+    match name {
         "llama2-chat" => llm::InferencingModel::Llama2Chat,
         "codellama-instruct" => llm::InferencingModel::CodellamaInstruct,
         _ => llm::InferencingModel::Other(name),
@@ -1057,7 +1057,7 @@ fn llm_run_with_defaults(context: &Context, _this: &Value, args: &[Value]) -> Re
         [model, prompt] => {
             let model = deserialize_helper(model)?;
             let prompt = deserialize_helper(prompt)?;
-            let llm_model= map_inferencing_model_name(model.as_str());
+            let llm_model = map_inferencing_model_name(model.as_str());
             let inference_result = llm::infer(llm_model, &prompt);
             match inference_result {
                 Ok(val) => {
@@ -1074,7 +1074,7 @@ fn llm_run_with_defaults(context: &Context, _this: &Value, args: &[Value]) -> Re
                     )?;
                     ret.set_property("usage", usage)?;
                     Ok(ret)
-                },
+                }
                 Err(err) => Err(anyhow!(err)),
             }
         }
@@ -1097,7 +1097,7 @@ fn llm_inference_with_options(context: &Context, _this: &Value, args: &[Value]) 
         [model, prompt, options] => {
             let model = deserialize_helper(model)?;
             let prompt = deserialize_helper(prompt)?;
-            let llm_model= map_inferencing_model_name(model.as_str());
+            let llm_model = map_inferencing_model_name(model.as_str());
             let options_deserializer = &mut Deserializer::from(options.clone());
             let options = InferencingOption::deserialize(options_deserializer)?;
             let llm_options = llm::InferencingParams {
@@ -1108,8 +1108,7 @@ fn llm_inference_with_options(context: &Context, _this: &Value, args: &[Value]) 
                 top_k: options.top_k,
                 top_p: options.top_p,
             };
-            let inference_result =
-                llm::infer_with_options(llm_model, &prompt, llm_options);
+            let inference_result = llm::infer_with_options(llm_model, &prompt, llm_options);
             match inference_result {
                 Ok(val) => {
                     let ret = context.object_value()?;
@@ -1134,7 +1133,7 @@ fn llm_inference_with_options(context: &Context, _this: &Value, args: &[Value]) 
 }
 
 fn map_embedding_model_name(name: &str) -> llm::EmbeddingModel {
-    match name{
+    match name {
         "all-minilm-l6-v2" => llm::EmbeddingModel::AllMiniLmL6V2,
         _ => llm::EmbeddingModel::Other(name),
     }
