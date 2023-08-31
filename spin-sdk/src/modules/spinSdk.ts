@@ -48,8 +48,8 @@ interface InferencingOptions {
 }
 
 interface InferenceUsage {
-    numPromptTokens: number,
-    numGeneratedTokens: number
+    promptTokenCount: number,
+    generatedTokenCount: number
 }
 interface InferenceResult {
     text: string
@@ -57,7 +57,7 @@ interface InferenceResult {
 }
 
 interface EmbeddingUsage {
-    numPromptTokens: number
+    promptTokenCount: number
 }
 
 interface EmbeddingResult {
@@ -117,6 +117,49 @@ interface SpinSdk {
     }
 }
 
+interface HttpResponse {
+    status: number
+    headers?: Record<string, string>
+    body?: ArrayBuffer | string | Uint8Array
+}
+
+function encodeBody(body: ArrayBuffer | Uint8Array | string) {
+    if (typeof (body) == "string") {
+        return new TextEncoder().encode(body).buffer
+    } else if (ArrayBuffer.isView(body)) {
+        return body.buffer
+    } else {
+        return body
+    }
+}
+
+class ResponseBuilder {
+    response: HttpResponse
+    statusCode: number
+    constructor() {
+        this.response = {
+            status: 200,
+            headers: {}
+        }
+        this.statusCode = this.response.status
+    }
+    getHeader(key: string) {
+        return this.response.headers![key] || null
+    }
+    header(key: string, value: string) {
+        this.response.headers![key] = value
+        return this
+    }
+    status(status: number) {
+        this.response.status! = status
+        this.statusCode = this.response.status
+        return this
+    }
+    body(data: ArrayBuffer | Uint8Array | string) {
+        this.response.body = encodeBody(data)
+        return this
+    }
+}
 
 declare global {
     const __internal__: {
@@ -197,4 +240,4 @@ const Sqlite = __internal__.spin_sdk.sqlite
 // const Llm = __internal__.spin_sdk.llm
 
 export { spinSdk, SpinSdk }
-export { Config, Redis, Kv, router, Mysql, Pg, Sqlite, Llm, InferencingModels, EmbeddingModels, InferencingOptions}
+export { Config, Redis, Kv, router, Mysql, Pg, Sqlite, Llm, InferencingModels, EmbeddingModels, InferencingOptions,  ResponseBuilder}

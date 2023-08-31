@@ -1065,12 +1065,12 @@ fn llm_run_with_defaults(context: &Context, _this: &Value, args: &[Value]) -> Re
                     ret.set_property("text", context.value_from_str(&val.text)?)?;
                     let usage = context.object_value()?;
                     usage.set_property(
-                        "numPromptTokens",
-                        context.value_from_u32(val.usage.num_prompt_tokens)?,
+                        "promptTokenCount",
+                        context.value_from_u32(val.usage.prompt_token_count)?,
                     )?;
                     usage.set_property(
-                        "numGeneratedTokens",
-                        context.value_from_u32(val.usage.num_generated_tokens)?,
+                        "generatedTokenCount",
+                        context.value_from_u32(val.usage.generated_token_count)?,
                     )?;
                     ret.set_property("usage", usage)?;
                     Ok(ret)
@@ -1116,12 +1116,12 @@ fn llm_inference_with_options(context: &Context, _this: &Value, args: &[Value]) 
                     ret.set_property("text", context.value_from_str(&val.text)?)?;
                     let usage = context.object_value()?;
                     usage.set_property(
-                        "numPromptTokens",
-                        context.value_from_u32(val.usage.num_prompt_tokens)?,
+                        "promptTokenCount",
+                        context.value_from_u32(val.usage.prompt_token_count)?,
                     )?;
                     usage.set_property(
-                        "numGeneratedTokens",
-                        context.value_from_u32(val.usage.num_generated_tokens)?,
+                        "generatedTokenCount",
+                        context.value_from_u32(val.usage.generated_token_count)?,
                     )?;
                     ret.set_property("usage", usage)?;
                     Ok(ret)
@@ -1148,7 +1148,6 @@ fn llm_embedding_with_defaults(context: &Context, _this: &Value, args: &[Value])
             let deserializer = &mut Deserializer::from(sentences.clone());
             let sentences = Vec::<String>::deserialize(deserializer)?;
             let vec_str: Vec<&str> = sentences.iter().map(|s| s.as_str()).collect();
-            println!("Here");
             let result = llm::generate_embeddings(embedding_model, &vec_str);
             match result {
                 Ok(val) => {
@@ -1159,8 +1158,8 @@ fn llm_embedding_with_defaults(context: &Context, _this: &Value, args: &[Value])
                     result.set_property("embeddings", serializer.value)?;
                     let usage = context.object_value()?;
                     usage.set_property(
-                        "numPromptTokens",
-                        context.value_from_u32(val.usage.num_prompt_tokens)?,
+                        "promptTokenCount",
+                        context.value_from_u32(val.usage.prompt_token_count)?,
                     )?;
                     result.set_property("usage", usage)?;
                     Ok(result)
