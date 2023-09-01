@@ -745,24 +745,24 @@ fn open_sqlite(context: &Context, _this: &Value, args: &[Value]) -> Result<Value
 
                 let mut serializer = Serializer::from_context(context)?;
                 let columns = result.columns;
-                columns.serialize(&mut serializer)?;
-                let js_columns = serializer.value;
-
                 let js_rows = context.array_value()?;
                 for row in result.rows {
-                    let js_row = context.array_value()?;
-                    for value in row.values {
+                    let js_row = context.object_value()?;
+                    for (index, value ) in row.values.iter().enumerate() {
                         let js_value = match value {
                             sqlite::ValueResult::Null => context.null_value()?,
-                            sqlite::ValueResult::Integer(i) => context.value_from_i64(i)?,
-                            sqlite::ValueResult::Real(r) => context.value_from_f64(r)?,
-                            sqlite::ValueResult::Text(s) => context.value_from_str(&s)?,
-                            sqlite::ValueResult::Blob(b) => context.array_buffer_value(&b)?,
+                            sqlite::ValueResult::Integer(i) => context.value_from_i64(*i)?,
+                            sqlite::ValueResult::Real(r) => context.value_from_f64(*r)?,
+                            sqlite::ValueResult::Text(s) => context.value_from_str(s)?,
+                            sqlite::ValueResult::Blob(b) => context.array_buffer_value(b)?,
                         };
-                        js_row.append_property(js_value)?;
+                        js_row.set_property(columns[index].to_string(),js_value)?;
                     }
                     js_rows.append_property(js_row)?;
                 }
+
+                columns.serialize(&mut serializer)?;
+                let js_columns = serializer.value;
 
                 let result = context.object_value()?;
                 result.set_property("columns", js_columns)?;
