@@ -4,7 +4,7 @@ version = "0.6.0"
 edition = "2021"
 
 [lib]
-crate-type = [ "cdylib" ]
+crate-type = ["cdylib"]
 
 [dependencies]
 anyhow = "1.0.70"
@@ -16,7 +16,9 @@ quickjs-wasm-rs = "0.1.4"
 quickjs-wasm-sys = "0.1.2"
 once_cell = "1.4.0"
 serde_json = "1.0.87"
-spin-sdk = { git = "https://github.com/fermyon/spin",branch = "llm-sdk", default-features = false, features=["experimental"] }
+spin-sdk = { git = "https://github.com/fermyon/spin", rev = "4d178a11407aecca5ab062458abb8580eee3247c", default-features = false, features = [
+    "experimental",
+] }
 wit-bindgen-rust = { git = "https://github.com/bytecodealliance/wit-bindgen", rev = "dde4694aaa6acf9370206527a798ac4ba6a8c5b8" }
 rand = "0.8.5"
 serde = "1.0.137"
