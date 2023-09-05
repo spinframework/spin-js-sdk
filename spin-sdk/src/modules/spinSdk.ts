@@ -38,6 +38,42 @@ interface RdbmsReturn {
     ]
 }
 
+interface InferencingOptions {
+    maxTokens?: number,
+    repeatPenalty?: number,
+    repeatPenaltyLastNTokenCount?: number,
+    temperature?: number,
+    topK?: number,
+    topP?: number
+}
+
+interface InternalInferencingOptions {
+    max_tokens?: number,
+    repeat_penalty?: number,
+    repeat_penalty_last_n_token_count?: number,
+    temperature?: number,
+    top_k?: number,
+    top_p?: number
+}
+
+interface InferenceUsage {
+    promptTokenCount: number,
+    generatedTokenCount: number
+}
+interface InferenceResult {
+    text: string
+    usage: InferenceUsage
+}
+
+interface EmbeddingUsage {
+    promptTokenCount: number
+}
+
+interface EmbeddingResult {
+    embeddings: Array<Array<number>>
+    usage: EmbeddingUsage
+}
+
 /** @deprecated*/
 interface SpinSdk {
     utils: {
@@ -83,8 +119,56 @@ interface SpinSdk {
         open: (name: string) => SqliteStore
         openDefault: () => SqliteStore
     }
+    llm: {
+        infer: (model: InferencingModels | string, prompt: string) => InferenceResult
+        inferWithOptions: (model: InferencingModels | string, prompt: string, options: InternalInferencingOptions) => InferenceResult
+        generateEmbeddings: (model: EmbeddingModels | string, sentences: Array<string>) => EmbeddingResult
+    }
 }
 
+interface HttpResponse {
+    status: number
+    headers?: Record<string, string>
+    body?: ArrayBuffer | string | Uint8Array
+}
+
+function encodeBody(body: ArrayBuffer | Uint8Array | string) {
+    if (typeof (body) == "string") {
+        return new TextEncoder().encode(body).buffer
+    } else if (ArrayBuffer.isView(body)) {
+        return body.buffer
+    } else {
+        return body
+    }
+}
+
+class ResponseBuilder {
+    response: HttpResponse
+    statusCode: number
+    constructor() {
+        this.response = {
+            status: 200,
+            headers: {}
+        }
+        this.statusCode = this.response.status
+    }
+    getHeader(key: string) {
+        return this.response.headers![key] || null
+    }
+    header(key: string, value: string) {
+        this.response.headers![key] = value
+        return this
+    }
+    status(status: number) {
+        this.response.status! = status
+        this.statusCode = this.response.status
+        return this
+    }
+    body(data: ArrayBuffer | Uint8Array | string) {
+        this.response.body = encodeBody(data)
+        return this
+    }
+}
 
 declare global {
     const __internal__: {
@@ -120,9 +204,39 @@ const spinSdk: SpinSdk = {
     mysql: __internal__.spin_sdk.mysql,
     pg: __internal__.spin_sdk.pg,
     sqlite: __internal__.spin_sdk.sqlite,
+    llm: __internal__.spin_sdk.llm,
     utils: utils,
     Router: () => {
         return router()
+    }
+}
+
+enum InferencingModels {
+    Llama2Chat = "llama2-chat",
+    CodellamaInstruct = "codellama-instruct"
+}
+
+enum EmbeddingModels {
+    AllMiniLmL6V2 = "all-minilm-l6-v2"
+}
+
+const Llm = {
+    infer: (model: InferencingModels | string, prompt: string, options?: InferencingOptions): InferenceResult => {
+        if (!options) {
+            return __internal__.spin_sdk.llm.infer(model, prompt)
+        }
+        let inference_options: InternalInferencingOptions = {
+            max_tokens: options.maxTokens || 100,
+            repeat_penalty: options.repeatPenalty || 1.1,
+            repeat_penalty_last_n_token_count: options.repeatPenaltyLastNTokenCount || 64,
+            temperature: options.temperature || 0.8,
+            top_k: options.topK || 40,
+            top_p: options.topP || 0.9
+        }
+        return __internal__.spin_sdk.llm.inferWithOptions(model, prompt, inference_options)
+    },
+    generateEmbeddings: (model: EmbeddingModels | string, text: Array<string>): EmbeddingResult => {
+        return __internal__.spin_sdk.llm.generateEmbeddings(model, text)
     }
 }
 
@@ -132,6 +246,7 @@ const Kv = kv
 const Mysql = __internal__.spin_sdk.mysql
 const Pg = __internal__.spin_sdk.pg
 const Sqlite = __internal__.spin_sdk.sqlite
+// const Llm = __internal__.spin_sdk.llm
 
 export { spinSdk, SpinSdk }
-export { Config, Redis, Kv, router, Mysql, Pg, Sqlite }
+export { Config, Redis, Kv, router, Mysql, Pg, Sqlite, Llm, InferencingModels, EmbeddingModels, InferencingOptions,  ResponseBuilder}

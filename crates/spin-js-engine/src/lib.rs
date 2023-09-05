@@ -1,5 +1,4 @@
 #![deny(warnings)]
-
 use {
     anyhow::{anyhow, bail, Result},
     hmac::{Hmac, Mac},
@@ -16,7 +15,7 @@ use {
         http::{Request, Response},
         http_component, key_value,
         key_value::Store,
-        mysql, outbound_http, pg,
+        llm, mysql, outbound_http, pg,
         redis::{self, RedisResult},
         sqlite,
     },
@@ -1045,6 +1044,132 @@ fn postgres_query(context: &Context, _this: &Value, args: &[Value]) -> Result<Va
     }
 }
 
+fn map_inferencing_model_name(name: &str) -> llm::InferencingModel {
+    match name {
+        "llama2-chat" => llm::InferencingModel::Llama2Chat,
+        "codellama-instruct" => llm::InferencingModel::CodellamaInstruct,
+        _ => llm::InferencingModel::Other(name),
+    }
+}
+
+fn llm_run_with_defaults(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [model, prompt] => {
+            let model = deserialize_helper(model)?;
+            let prompt = deserialize_helper(prompt)?;
+            let llm_model = map_inferencing_model_name(model.as_str());
+            let inference_result = llm::infer(llm_model, &prompt);
+            match inference_result {
+                Ok(val) => {
+                    let ret = context.object_value()?;
+                    ret.set_property("text", context.value_from_str(&val.text)?)?;
+                    let usage = context.object_value()?;
+                    usage.set_property(
+                        "promptTokenCount",
+                        context.value_from_u32(val.usage.prompt_token_count)?,
+                    )?;
+                    usage.set_property(
+                        "generatedTokenCount",
+                        context.value_from_u32(val.usage.generated_token_count)?,
+                    )?;
+                    ret.set_property("usage", usage)?;
+                    Ok(ret)
+                }
+                Err(err) => Err(anyhow!(err)),
+            }
+        }
+        _ => Err(anyhow!("expected 2 arguments, got {}", args.len())),
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct InferencingOption {
+    max_tokens: u32,
+    repeat_penalty: f32,
+    repeat_penalty_last_n_token_count: u32,
+    temperature: f32,
+    top_k: u32,
+    top_p: f32,
+}
+
+fn llm_inference_with_options(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [model, prompt, options] => {
+            let model = deserialize_helper(model)?;
+            let prompt = deserialize_helper(prompt)?;
+            let llm_model = map_inferencing_model_name(model.as_str());
+            let options_deserializer = &mut Deserializer::from(options.clone());
+            let options = InferencingOption::deserialize(options_deserializer)?;
+            let llm_options = llm::InferencingParams {
+                max_tokens: options.max_tokens,
+                repeat_penalty: options.repeat_penalty,
+                repeat_penalty_last_n_token_count: options.repeat_penalty_last_n_token_count,
+                temperature: options.temperature,
+                top_k: options.top_k,
+                top_p: options.top_p,
+            };
+            let inference_result = llm::infer_with_options(llm_model, &prompt, llm_options);
+            match inference_result {
+                Ok(val) => {
+                    let ret = context.object_value()?;
+                    ret.set_property("text", context.value_from_str(&val.text)?)?;
+                    let usage = context.object_value()?;
+                    usage.set_property(
+                        "promptTokenCount",
+                        context.value_from_u32(val.usage.prompt_token_count)?,
+                    )?;
+                    usage.set_property(
+                        "generatedTokenCount",
+                        context.value_from_u32(val.usage.generated_token_count)?,
+                    )?;
+                    ret.set_property("usage", usage)?;
+                    Ok(ret)
+                }
+                Err(err) => Err(anyhow!(err)),
+            }
+        }
+        _ => Err(anyhow!("expected 2 argument, got {}", args.len())),
+    }
+}
+
+fn map_embedding_model_name(name: &str) -> llm::EmbeddingModel {
+    match name {
+        "all-minilm-l6-v2" => llm::EmbeddingModel::AllMiniLmL6V2,
+        _ => llm::EmbeddingModel::Other(name),
+    }
+}
+
+fn llm_embedding_with_defaults(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
+    match args {
+        [model, sentences] => {
+            let model = deserialize_helper(model)?;
+            let embedding_model = map_embedding_model_name(model.as_str());
+            let deserializer = &mut Deserializer::from(sentences.clone());
+            let sentences = Vec::<String>::deserialize(deserializer)?;
+            let vec_str: Vec<&str> = sentences.iter().map(|s| s.as_str()).collect();
+            let result = llm::generate_embeddings(embedding_model, &vec_str);
+            match result {
+                Ok(val) => {
+                    let mut serializer = Serializer::from_context(context)?;
+                    val.embeddings.serialize(&mut serializer)?;
+
+                    let result = context.object_value()?;
+                    result.set_property("embeddings", serializer.value)?;
+                    let usage = context.object_value()?;
+                    usage.set_property(
+                        "promptTokenCount",
+                        context.value_from_u32(val.usage.prompt_token_count)?,
+                    )?;
+                    result.set_property("usage", usage)?;
+                    Ok(result)
+                }
+                Err(err) => Err(anyhow!(err)),
+            }
+        }
+        _ => Err(anyhow!("expected 1 argument, got {}", args.len())),
+    }
+}
+
 fn do_init() -> Result<()> {
     let mut script = String::new();
     io::stdin().read_to_string(&mut script)?;
@@ -1092,6 +1217,18 @@ fn do_init() -> Result<()> {
     sqlite.set_property("open", context.wrap_callback(open_sqlite)?)?;
     sqlite.set_property("openDefault", context.wrap_callback(open_sqlite)?)?;
 
+    // LLM object
+    let llm = context.object_value()?;
+    llm.set_property("infer", context.wrap_callback(llm_run_with_defaults)?)?;
+    llm.set_property(
+        "inferWithOptions",
+        context.wrap_callback(llm_inference_with_options)?,
+    )?;
+    llm.set_property(
+        "generateEmbeddings",
+        context.wrap_callback(llm_embedding_with_defaults)?,
+    )?;
+
     let spin_sdk = context.object_value()?;
     spin_sdk.set_property("config", config)?;
     spin_sdk.set_property("http", http)?;
@@ -1100,6 +1237,7 @@ fn do_init() -> Result<()> {
     spin_sdk.set_property("pg", postgres)?;
     spin_sdk.set_property("kv", kv)?;
     spin_sdk.set_property("sqlite", sqlite)?;
+    spin_sdk.set_property("llm", llm)?;
 
     let _glob = context.object_value()?;
     _glob.set_property("get", context.wrap_callback(get_glob)?)?;
