@@ -18,11 +18,11 @@ interface KvStore {
 type SqliteParam = number | string | ArrayBuffer
 type SqliteValue = null | number | string | ArrayBuffer
 
+
+type SqliteRow = Record<string, SqliteValue>
 interface SqliteReturn {
     columns: string[],
-    rows: [
-        [SqliteValue]
-    ]
+    rows: SqliteRow[]
 }
 
 interface SqliteStore {
