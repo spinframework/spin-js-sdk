@@ -180,7 +180,12 @@ const kv = {
     open: (name: string) => {
         let store = __internal__.spin_sdk.kv.open(name)
         store.getJson = (key: string) => {
-            return JSON.parse(new TextDecoder().decode(store.get(key)))
+            let val = store.get(key)
+            if(val) {
+                return JSON.parse(new TextDecoder().decode(val))
+            } else {
+                return null
+            }
         }
         store.setJson = (key: string, value: any) => {
             store.set(key, JSON.stringify(value))
