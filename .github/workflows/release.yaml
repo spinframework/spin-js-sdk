@@ -133,6 +133,12 @@ jobs:
           tar -xvf wasi-sdk-16.0-${{ matrix.config.wasiSDK }}.tar.gz
           sudo cp -v -r wasi-sdk-16.0 /opt/wasi-sdk
 
+      - name: Setup LLVM 14 on Windows
+        if: runner.os == 'Windows'
+        uses: KyleMayes/install-llvm-action@v1
+        with:
+          version: "14"
+      
       - name: Setup WASI-SDK on Windows
         if: runner.os == 'Windows'
         shell: bash
