@@ -16,6 +16,6 @@
   },
   "dependencies": {
     "@planetscale/database": "^1.4.0",
-    "@fermyon/spin-sdk": "^0.5.0"
+    "@fermyon/spin-sdk": "^0.6.0"
   }
 }
