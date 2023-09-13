@@ -7,6 +7,8 @@ on:
       - "v*"
   workflow_dispatch:
 
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
 env:
   CARGO_TERM_COLOR: always
 
