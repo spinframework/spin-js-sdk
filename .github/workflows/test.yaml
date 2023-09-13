@@ -21,11 +21,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install latest Rust stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          components: clippy, rustfmt
+        shell: bash
+        run: |
+          rustup toolchain install stable --component clippy --component rustfmt
+          rustup default stable
 
       - uses: Swatinem/rust-cache@v2
         with:
