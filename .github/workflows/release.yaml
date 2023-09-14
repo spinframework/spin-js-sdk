@@ -91,11 +91,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install latest Rust stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          target: ${{ matrix.config.target }}
+        shell: bash
+        run: |
+          rustup toolchain install stable
+          rustup default stable
+
+      - name: Install target
+        if: matrix.config.target != ''
+        shell: bash
+        run: rustup target add --toolchain stable ${{ matrix.config.target }}
 
       - name: set the release version (main)
         shell: bash
