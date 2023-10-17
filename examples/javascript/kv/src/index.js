@@ -1,7 +1,7 @@
 import { Router, Kv } from '@fermyon/spin-sdk'
 
-const en = new TextEncoder()
-const de = new TextDecoder()
+const encoder = new TextEncoder()
+const decoder = new TextDecoder()
 
 let router = new Router()
 
@@ -19,11 +19,11 @@ function getAll() {
     const keys = store.getKeys()
     let body = {}
     for (let key of keys) {
-        body[key] = de.decode(store.get(key))
+        body[key] = decoder.decode(store.get(key))
     }
     return {
         status: 200,
-        body: en.encode(JSON.stringify(body))
+        body: encoder.encode(JSON.stringify(body))
     }
 }
 
@@ -40,7 +40,7 @@ function getJson(key) {
     catch (e) {
         return {
             status: 400,
-            body: en.encode("Key holds a non-JSON value")
+            body: encoder.encode("Key holds a non-JSON value")
         }
     }
     return {
@@ -48,21 +48,21 @@ function getJson(key) {
         headers: {
             "Content-Type": "application/json"
         },
-        body: en.encode(JSON.stringify(model))
+        body: encoder.encode(JSON.stringify(model))
     }
 }
 
 /// sets a JSON value in the store
 function setJson(key, body) {
     const store = Kv.openDefault()
-    const model = JSON.parse(de.decode(body))
+    const model = JSON.parse(decoder.decode(body))
     store.setJson(key, model)
     return {
         status: 201,
         headers: {
             "Location": `/${key}`
         },
-        body: de.decode(JSON.stringify({
+        body: decoder.decode(JSON.stringify({
             key,
             value: model
         }))
@@ -78,19 +78,19 @@ function getByKey(key) {
     const value = store.get(key);
     return {
         status: 200,
-        body: de.decode(value)
+        body: decoder.decode(value)
     }
 }
 
 /// adds a value to the store for a given key
 function set(key, body) {
     const store = Kv.openDefault()
-    const model = JSON.parse(de.decode(body))
+    const model = JSON.parse(decoder.decode(body))
 
     if (!model.hasOwnProperty("value")) {
         return {
             status: 400,
-            body: en.encode("Value is required")
+            body: encoder.encode("Value is required")
         }
     }
     store.set(key, model.value)
@@ -99,7 +99,7 @@ function set(key, body) {
         headers: {
             "Location": `/${key}`
         },
-        body: de.decode(JSON.stringify({
+        body: decoder.decode(JSON.stringify({
             key,
             value: model.value
         }))
@@ -123,7 +123,7 @@ function deleteByKey(key) {
 function notFound() {
     return {
         status: 404,
-        body: en.encode("Not Found")
+        body: encoder.encode("Not Found")
     }
 }
 
