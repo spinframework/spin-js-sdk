@@ -1,0 +1,16 @@
+spin_manifest_version = "1"
+authors = ["Thorsten Hans <thorsten.hans@gmail.com>"]
+description = "Demonstrates how to use key-value store APIs in JS"
+name = "kv"
+trigger = { type = "http", base = "/" }
+version = "0.1.0"
+
+[[component]]
+id = "kv"
+source = "target/kv.wasm"
+key_value_stores = ["default"]
+exclude_files = ["**/node_modules"]
+[component.trigger]
+route = "/..."
+[component.build]
+command = "npm run build"
