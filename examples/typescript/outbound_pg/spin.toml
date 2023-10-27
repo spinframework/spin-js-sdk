@@ -11,5 +11,6 @@ component = "hello"
 
 [component.hello]
 source = "target/spin-outbound-pg.wasm"
+allowed_outbound_hosts = ["localhost:5432"]
 [component.hello.build]
 command = "npm run build"

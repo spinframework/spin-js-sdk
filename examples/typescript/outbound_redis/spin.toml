@@ -11,5 +11,6 @@ component = "hello"
 
 [component.hello]
 source = "target/spin-outbound-redis.wasm"
+allowed_outbound_hosts = ["redis://localhost:6379"]
 [component.hello.build]
 command = "npm run build"

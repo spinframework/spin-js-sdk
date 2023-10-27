@@ -5,7 +5,7 @@ const encoder = new TextEncoder()
 const DB_URL = "host=localhost user=postgres dbname=spin_dev"
 
 /*
- Run the following commands to setup the mysql instance:
+ Run the following commands to setup the postgres instance:
  create database spin_dev;
  \c spin_dev;
  create table test(id int, val int);
