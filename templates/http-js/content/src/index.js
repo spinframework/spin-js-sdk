@@ -2,7 +2,7 @@ export async function handleRequest(request) {
 
     return {
         status: 200,
-        headers: { "foo": "bar" },
+        headers: { "content-type": "text/plain" },
         body: "Hello from JS-SDK"
     }
 }
