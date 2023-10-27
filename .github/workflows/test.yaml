@@ -71,11 +71,9 @@ jobs:
         run: make
 
       - name: Install spin
-        uses: engineerd/configurator@v0.0.8
+        uses: fermyon/actions/spin/setup@v1
         with:
-          name: "spin"
-          url: "https://github.com/fermyon/spin/releases/download/canary/spin-canary-linux-amd64.tar.gz"
-          pathInArchive: "spin"
+          version: canary
 
       - name: Run Test
         shell: bash
