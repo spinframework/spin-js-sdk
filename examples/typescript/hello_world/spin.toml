@@ -1,13 +1,15 @@
-spin_manifest_version = "1"
+spin_manifest_version = 2
+
+[application]
 authors = ["Fermyon Engineering <engineering@fermyon.com>"]
 name = "spin-http-js"
-trigger = { type = "http", base = "/" }
 version = "1.0.0"
 
-[[component]]
-id = "hello"
-source = "target/spin-http-js.wasm"
-[component.trigger]
+[[trigger.http]]
 route = "/hello"
-[component.build]
+component = "hello"
+
+[component.hello]
+source = "target/spin-http-ts.wasm"
+[component.hello.build]
 command = "npm run build"

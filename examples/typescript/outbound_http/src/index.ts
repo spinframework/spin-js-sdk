@@ -5,13 +5,13 @@ const decoder = new TextDecoder()
 
 export const handleRequest: HandleRequest = async function (request: HttpRequest): Promise<HttpResponse> {
 
-    const dogFact = await fetch("https://some-random-api.ml/facts/dog")
+    const physicsFact = await fetch("https://random-data-api.fermyon.app/physics/json")
 
-    const dogFactBody = await dogFact.text()
+    const physicsFactBody = await physicsFact.text()
 
     const env = JSON.stringify(process.env)
 
-    const body = `${Config.get("message")}\nenv: ${env}\nHere's a dog fact: ${dogFactBody}\n`
+    const body = `${Config.get("message")}\nenv: ${env}\nHere's a physics fact: ${physicsFactBody}\n`
 
     return {
         status: 200,

@@ -7,5 +7,6 @@ This is a simple showcase of the SQLite feature in the Spin JS SDK.
 Run the following:
 
 ```bash
-spin build -u --sqlite @migration.sql
+npm install
+spin build --up --sqlite @migration.sql
 ```

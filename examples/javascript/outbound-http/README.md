@@ -5,12 +5,14 @@ This example showcases utilizing fetch to request data from an API and use it in
 ### Building the example
 
 ```
-npm run build
+npm install
+spin build
 ```
+
 ### Running the example
 
 ```
-spin up --follow-all
+spin up
 ```
 
 Use e.g. `curl -v http://127.0.0.1:3000/hello` to test the endpoint.
