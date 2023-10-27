@@ -11,7 +11,7 @@ component = "planetscale"
 
 [component.planetscale]
 source = "target/spin-planetscale.wasm"
-allowed_http_hosts = ["https://aws.connect.psdb.cloud"]
+allowed_http_hosts = ["aws.connect.psdb.cloud"]
 files = ["src/index.js"]
 [component.planetscale.build]
 command = "npm run build"

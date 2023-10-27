@@ -1,7 +1,7 @@
 {
   "name": "http-router",
   "version": "1.0.0",
-  "description": "Sample to demonstrate the usage of theHTTP router",
+  "description": "Sample to demonstrate the usage of the HTTP router",
   "main": "index.js",
   "scripts": {
     "build": "npx webpack --mode=production && mkdir -p target && spin js2wasm -o target/http-router.wasm dist/spin.js",

@@ -15,7 +15,6 @@ component = "fileserver"
 
 [component.SSR]
 source = "target/spin-simple-ssr.wasm"
-allowed_http_hosts = ["https://some-random-api.ml"]
 files = [{source = "src/public", destination = "/"} ]
 [component.SSR.build]
 command = "npm run build"
