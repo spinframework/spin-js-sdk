@@ -100,3 +100,5 @@ The build produces the `spinjs` utility, which is used to build wasm modules fro
 There are some examples provided in the [examples](./examples/) directory. Each example has a readme on building and running it.
 
 Ensure you have the [latest version of Spin](https://developer.fermyon.com/spin/install) and the [js2wasm plugin](#using-the-sdk) installed.
+
+__Note__: These examples track Spin's `main` branch, so you may need to ensure you are using the [canary](https://github.com/fermyon/spin/releases/tag/canary) Spin release.
