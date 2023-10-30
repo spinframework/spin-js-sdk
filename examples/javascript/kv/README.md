@@ -15,4 +15,6 @@ The app leverages the `default` key-value store as specified in `spin.toml`.
 
 ## Build and run the app locally
 
+First, install npm dependencies with `npm install`.
+
 To build and run the app locally, you can either use `spin build` and `spin up` or combine both commands and simply run `spin build --up`.

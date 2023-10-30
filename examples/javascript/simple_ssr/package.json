@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": "npm run build:client && npx webpack --mode=production && mkdir -p target && spin js2wasm -o target/spin-http-js.wasm dist/spin.js",
+    "build": "npm run build:client && npx webpack --mode=production && mkdir -p target && spin js2wasm -o target/spin-simple-ssr.wasm dist/spin.js",
     "build:client": "esbuild src/client/index.js --bundle --outfile=dist/static/bundle.js --loader:.js=jsx",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

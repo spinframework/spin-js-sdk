@@ -28,13 +28,13 @@ const config = {
 
 ```
 npm install
-npm run build
+spin build
 ```
 
 ### Running the example
 
 ```
-spin up --follow-all
+spin up
 ```
 
 Use e.g. `curl -v http://127.0.0.1:3000/hello` to test the endpoint.

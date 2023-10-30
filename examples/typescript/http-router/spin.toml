@@ -1,15 +1,17 @@
-spin_manifest_version = "1"
+spin_manifest_version = 2
+
+[application]
 authors = ["Thorsten Hans <thorsten.hans@gmail.com>"]
-description = "Sample to demonstrate the usage of theHTTP router"
+description = "Sample to demonstrate the usage of the HTTP router"
 name = "http-router"
-trigger = { type = "http", base = "/" }
 version = "0.1.0"
 
-[[component]]
-id = "http-router"
+[[trigger.http]]
+route = "/..."
+component = "http-router"
+
+[component.http-router]
 source = "target/http-router.wasm"
 exclude_files = ["**/node_modules"]
-[component.trigger]
-route = "/..."
-[component.build]
+[component.http-router.build]
 command = "npm run build"

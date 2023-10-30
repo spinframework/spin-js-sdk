@@ -61,7 +61,7 @@ Installed 2 template(s)
 Once the templates are installed, a new TypeScript project can be instantiated using:
 
 ```bash
-spin new http-ts hello_world --accept-defaults
+spin new -t http-ts hello_world --accept-defaults
 ```
 
 To run the created template:
@@ -72,7 +72,6 @@ npm install
 spin build
 spin up
 ```
-
 
 ## Building
 
@@ -90,7 +89,7 @@ You need to build the SDK from source to use it.
 
 #### Setup SDK
 ```bash
-npm install --prefix crates/spin-js-engine/src/js_sdk 
+npm install --prefix crates/spin-js-engine/src/js_sdk
 make
 ```
 
@@ -98,4 +97,8 @@ The build produces the `spinjs` utility, which is used to build wasm modules fro
 
 #### Build and run the examples
 
-There are some examples provided in the `example/` directory. Each example has a readme on building and running it.
+There are some examples provided in the [examples](./examples/) directory. Each example has a readme on building and running it.
+
+Ensure you have the [latest version of Spin](https://developer.fermyon.com/spin/install) and the [js2wasm plugin](#using-the-sdk) installed.
+
+__Note__: These examples track Spin's `main` branch, so you may need to ensure you are using the [canary](https://github.com/fermyon/spin/releases/tag/canary) Spin release.

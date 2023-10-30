@@ -5,8 +5,10 @@ This is the example of using the Javascript SDK to access mysql.
 ### Building the example
 
 ```
-npm run build
+npm install
+spin build
 ```
+
 ### Running the example
 
 ```

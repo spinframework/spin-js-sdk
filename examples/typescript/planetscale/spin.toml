@@ -1,14 +1,16 @@
-spin_manifest_version = "1"
+spin_manifest_version = 2
+
+[application]
 authors = ["Fermyon Engineering <engineering@fermyon.com>"]
-name = "spin-http-js"
-trigger = { type = "http", base = "/" }
+name = "spin-planetscale"
 version = "1.0.0"
 
-[[component]]
-id = "planetscale"
-source = "target/spin-http-js.wasm"
-allowed_http_hosts = ["https://aws.connect.psdb.cloud"]
-[component.trigger]
+[[trigger.http]]
 route = "/hello"
-[component.build]
+component = "planetscale"
+
+[component.planetscale]
+source = "target/spin-planetscale.wasm"
+allowed_http_hosts = ["aws.connect.psdb.cloud"]
+[component.planetscale.build]
 command = "npm run build"

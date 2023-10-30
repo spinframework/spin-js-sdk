@@ -1,23 +1,24 @@
-spin_manifest_version = "1"
+spin_manifest_version = 2
+
+[application]
 authors = ["Fermyon Engineering <engineering@fermyon.com>"]
-name = "spin-http-js"
-trigger = { type = "http", base = "/" }
+name = "spin-simple-ssr"
 version = "1.0.0"
 
-
-[[component]]
-id = "SSR"
-source = "target/spin-http-js.wasm"
-allowed_http_hosts = ["https://some-random-api.ml"]
-files = [{source = "src/public", destination = "/"} ]
-[component.trigger]
+[[trigger.http]]
 route = "/hello"
-[component.build]
+component = "SSR"
+
+[[trigger.http]]
+route = "/static/..."
+component = "fileserver"
+
+[component.SSR]
+source = "target/spin-simple-ssr.wasm"
+files = [{source = "src/public", destination = "/"} ]
+[component.SSR.build]
 command = "npm run build"
 
-[[component]]
+[component.fileserver]
 source = "modules/spin_static_fs.wasm"
-id = "fileserver"
 files = [{ source = "dist/static", destination = "/" }, ]
-[component.trigger]
-route = "/static/..."
