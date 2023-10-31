@@ -14,7 +14,7 @@ component = "hello"
 
 [component.hello]
 source = "target/spin-outbound-http.wasm"
-allowed_http_hosts = ["random-data-api.fermyon.app"]
+allowed_outbound_hosts = ["https://random-data-api.fermyon.app"]
 [component.hello.variables]
 message = "I'm a {{object}}"
 [component.hello.build]

@@ -11,6 +11,6 @@ component = "hello"
 
 [component.hello]
 source = "target/spin-outbound-mysql.wasm"
-allowed_outbound_hosts = ["mysql://127.0.0.1:3306"]
+allowed_outbound_hosts = ["mysql://127.0.0.1"]
 [component.hello.build]
 command = "npm run build"

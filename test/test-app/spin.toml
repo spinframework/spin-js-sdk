@@ -13,7 +13,7 @@ component = "test-app"
 [component.test-app]
 source = "target/spin-http-js.wasm"
 files = [{ source = "src/", destination = "/" }, ]
-allowed_http_hosts = ["http://localhost:3000"]
+allowed_outbound_hosts = ["http://localhost:3000"]
 sqlite_databases = ["default"]
 [component.test-app.build]
 command = "npm run build"
