@@ -15,3 +15,4 @@ source = "target/{{project-name | kebab_case}}.wasm"
 exclude_files = ["**/node_modules"]
 [component.{{project-name | kebab_case}}.build]
 command = "npm run build"
+watch = ["src/**/*.js", "package.json"]
