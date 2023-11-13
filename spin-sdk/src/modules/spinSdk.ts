@@ -2,16 +2,62 @@ import { router, routerType } from "./router"
 import { utils } from "./utils"
 
 interface SpinConfig {
+    /**
+     * Returns the value of the given config key
+     * 
+     * @param arg0 - The name of the key
+     * @returns - A value string for the given key
+     */
     get(arg0: string): string
 }
 
 interface KvStore {
+    /**
+     * Delete the key
+     * 
+     * @param key - The name of the key
+     */
     delete: (key: string) => void
+    /**
+     * Checks if the key exists
+     * 
+     * @param key - The name of the key
+     * @returns - A boolean
+     */
     exists: (key: string) => boolean
+    /**
+     * Gets the value of the key
+     * 
+     * @param key - The name of the key
+     * @returns - Either null or  an ArrayBuffer
+     */
     get: (key: string) => ArrayBuffer | null
+    /**
+     * Gets the value of the key
+     * 
+     * @param key - The name of the key
+     * @returns - any
+    */
     getJson: (key: string) => any
+    /**
+     * Gets the list of keys
+     * 
+     * @returns - An array of strings
+   */
     getKeys: () => Array<string>
+    /**
+     * Sets the value for the given key
+     * 
+     * @param key - The name of the key
+     * @param value - The value to be set
+    */
     set: (key: string, value: ArrayBuffer | string) => void
+    /**
+     * Sets the value for the given key after running a json.stringify
+     * 
+     * @param key - The name of the key
+     * @param value - The value to be set
+    */
     setJson: (key: string, value: any) => void
 }
 
@@ -177,11 +223,16 @@ declare global {
 }
 
 const kv = {
+    /**
+     * 
+     * @param name - The name of the KV store to open
+     * @returns A KV store handle
+    */
     open: (name: string) => {
         let store = __internal__.spin_sdk.kv.open(name)
         store.getJson = (key: string) => {
             let val = store.get(key)
-            if(val) {
+            if (val) {
                 return JSON.parse(new TextDecoder().decode(val))
             } else {
                 return null
@@ -192,6 +243,10 @@ const kv = {
         }
         return store
     },
+    /**
+     * 
+     * @returns A KV store handle to the default store
+    */
     openDefault: () => {
         let store = kv.open("default")
         return store
@@ -244,7 +299,9 @@ const Llm = {
         return __internal__.spin_sdk.llm.generateEmbeddings(model, text)
     }
 }
-
+/**
+ * Module to allow access to Spin Config
+ */
 const Config = __internal__.spin_sdk.config
 const Redis = __internal__.spin_sdk.redis
 const Kv = kv
@@ -254,4 +311,4 @@ const Sqlite = __internal__.spin_sdk.sqlite
 // const Llm = __internal__.spin_sdk.llm
 
 export { spinSdk, SpinSdk }
-export { Config, Redis, Kv, router, Mysql, Pg, Sqlite, Llm, InferencingModels, EmbeddingModels, InferencingOptions,  ResponseBuilder}
+export { Config, Redis, Kv, router, Mysql, Pg, Sqlite, Llm, InferencingModels, EmbeddingModels, InferencingOptions, ResponseBuilder }
