@@ -1667,7 +1667,7 @@ dependencies = [
 
 [[package]]
 name = "spin-js-cli"
-version = "0.6.0"
+version = "0.6.1"
 dependencies = [
  "anyhow",
  "binaryen",
@@ -1678,7 +1678,7 @@ dependencies = [
 
 [[package]]
 name = "spin-js-engine"
-version = "0.6.0"
+version = "0.6.1"
 dependencies = [
  "anyhow",
  "bytes",
