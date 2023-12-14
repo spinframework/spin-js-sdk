@@ -5,7 +5,7 @@ use {
     http::{header::HeaderName, request, HeaderValue},
     once_cell::sync::{Lazy, OnceCell},
     quickjs_wasm_rs::{Context, Deserializer, Exception, Serializer, Value},
-    rand::{thread_rng, Rng},
+    rand::{rngs::OsRng, Rng},
     send_wrapper::SendWrapper,
     serde::{Deserialize, Serialize},
     serde_bytes::ByteBuf,
@@ -265,7 +265,7 @@ fn get_glob(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
 }
 
 fn get_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> {
-    context.value_from_u32(thread_rng().gen_range(0..=255))
+    context.value_from_u32(OsRng.gen_range(0..=255))
 }
 
 fn get_hash(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
@@ -333,7 +333,7 @@ fn get_hmac(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
 }
 
 fn math_rand(context: &Context, _this: &Value, _args: &[Value]) -> Result<Value> {
-    context.value_from_f64(thread_rng().gen_range(0.0_f64..1.0))
+    context.value_from_f64(OsRng.gen_range(0.0_f64..1.0))
 }
 
 fn redis_exec(context: &Context, _this: &Value, args: &[Value]) -> Result<Value> {
