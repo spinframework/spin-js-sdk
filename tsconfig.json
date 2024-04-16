@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "outDir": "lib",
+        "lib": [
+            "WebWorker",
+            "ESNext"
+        ],
+        "declaration": true,
+        "noImplicitAny": true,
+        "module": "es6",
+        "target": "ES2020",
+        "jsx": "react",
+        "skipLibCheck": true,
+        "allowJs": true,
+        "strict": true,
+        "noImplicitReturns": true,
+        "moduleResolution": "node"
+    },
+}
