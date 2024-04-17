@@ -1,10 +1,10 @@
 import { IncomingRequest, OutputStream } from './types/wasi-http';
 export declare class SimpleHTTP {
     constructor();
-    handleRequest(req: SimpleRequest, res: ResponseBuilder): Promise<void>;
+    handleRequest(req: HttpRequest, res: ResponseBuilder): Promise<void>;
     handle(request: IncomingRequest, response_out: OutputStream): Promise<void>;
 }
-export interface SimpleRequest {
+export interface HttpRequest {
     method: string;
     uri: string;
     headers: Headers;

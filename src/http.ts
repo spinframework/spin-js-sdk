@@ -10,7 +10,7 @@ export class SimpleHTTP {
         this.handle = this.handle.bind(this)
         this.handleRequest = this.handleRequest.bind(this)
     }
-    async handleRequest(req: SimpleRequest, res: ResponseBuilder) {
+    async handleRequest(req: HttpRequest, res: ResponseBuilder) {
         throw new Error("not implemented")
     }
     async handle(request: IncomingRequest, response_out: OutputStream) {
@@ -39,7 +39,7 @@ export class SimpleHTTP {
             headers.append(key, decoder.decode(value));
         });
 
-        let req: SimpleRequest = {
+        let req: HttpRequest = {
             method: method.tag.toString().toUpperCase(),
             uri: url,
             headers: headers,
@@ -56,7 +56,7 @@ export class SimpleHTTP {
     }
 }
 
-export interface SimpleRequest {
+export interface HttpRequest {
     method: string,
     uri: string,
     headers: Headers

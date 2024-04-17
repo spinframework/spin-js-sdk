@@ -16,4 +16,8 @@
         "noImplicitReturns": true,
         "moduleResolution": "node"
     },
+    "exclude": [
+        "templates/**/*",
+        "lib/**/*"
+    ]
 }
