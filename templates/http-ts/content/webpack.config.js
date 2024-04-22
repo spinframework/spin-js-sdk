@@ -1,26 +1,7 @@
 const path = require('path');
-const fs = require('fs');
-
-let directoryPath = path.join(__dirname, 'build')
-const tempFilename = path.join(__dirname, `build/add-export-loader.js`);
-if (!fs.existsSync(directoryPath)) {
-    try {
-        fs.mkdirSync(directoryPath, { recursive: true });
-    } catch (err) {
-        console.error('Error creating directory:', err);
-    }
-}
-const content = `
-module.exports = function (content) {
-    if (content.includes('export const handleRequest ')) {
-        return \`import {incomingHandler} from \"@fermyon/spin-sdk\"\n\${content}\nincomingHandler.handleRequest = handleRequest\nexport { incomingHandler };\`;
-    }
-    return content;
-};`;
-fs.writeFileSync(tempFilename, content);
 
 module.exports = {
-    entry: './src/index.ts',
+    entry: './src/spin.ts',
     experiments: {
         outputModule: true,
     },
@@ -28,9 +9,7 @@ module.exports = {
         rules: [
             {
                 test: /\.tsx?$/,
-                use: [{ loader: 'ts-loader' },
-                { loader: tempFilename }
-                ],
+                use: 'ts-loader',
                 exclude: /node_modules/,
             },
         ],

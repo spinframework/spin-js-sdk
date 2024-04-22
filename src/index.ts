@@ -10,11 +10,3 @@ import { Mqtt } from "./mqtt"
 import { RedisHandler } from "./inboundRedis";
 
 export { SimpleHTTP, Llm, Variables, Redis, KeyValue, Sqlite, Postgres, Mysql, Mqtt, RedisHandler, ResponseBuilder, HttpRequest }
-
-class HttpHandler extends SimpleHTTP {
-    constructor() {
-        super();
-    }
-}
-
-export const incomingHandler = new HttpHandler()
