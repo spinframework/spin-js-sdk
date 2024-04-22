@@ -3,16 +3,22 @@ import * as spinSqlite from "fermyon:spin/sqlite@2.0.0"
 
 export type sqliteValues = ValueInteger | ValueReal | ValueText | ValueBlob | ValueNull
 export type ParameterValue = sqliteValues | number | bigint | null | string | Uint8Array
-export type SqliteRowResult = sqliteValues[]
+type SqliteRowResultItem = { tag: string, val: number | bigint | string | Uint8Array | null }
+type SqliteRowResult = { values: SqliteRowResultItem[] }
 export type ValueInteger = { tag: "integer", val: number | bigint }
 export type ValueReal = { tag: "real", val: number | bigint }
 export type ValueText = { tag: "text", val: string }
 export type ValueBlob = { tag: "blob", val: Uint8Array }
 export type ValueNull = { tag: "null" }
 
-export interface SqliteResult {
+interface SpinSqliteResult {
     columns: string[]
     rows: SqliteRowResult[]
+}
+
+export interface SqliteResult {
+    columns: string[]
+    rows: { [key: string]: number | bigint | null | string | Uint8Array }[]
 }
 
 export interface SpinSqliteConnection {
@@ -21,9 +27,20 @@ export interface SpinSqliteConnection {
 
 function createSqliteConnection(connection: spinSqlite.Connection): SpinSqliteConnection {
     return {
-        execute: (statement: string, parameters: ParameterValue[]) => {
+        execute: (statement: string, parameters: ParameterValue[]): SqliteResult => {
             let santizedParams = convertToWitTypes(parameters)
-            return connection.execute(statement, santizedParams)
+            let ret = connection.execute(statement, santizedParams) as SpinSqliteResult
+            let results: SqliteResult = {
+                columns: ret.columns,
+                rows: []
+            }
+            ret.rows.map((k: SqliteRowResult, rowIndex: number) => {
+                results.rows.push({})
+                k.values.map((val, valIndex: number) => {
+                    results.rows[rowIndex][results.columns[valIndex]] = val.val
+                })
+            })
+            return results
         }
     }
 }

@@ -1,6 +1,12 @@
 export type sqliteValues = ValueInteger | ValueReal | ValueText | ValueBlob | ValueNull;
 export type ParameterValue = sqliteValues | number | bigint | null | string | Uint8Array;
-export type SqliteRowResult = sqliteValues[];
+type SqliteRowResultItem = {
+    tag: string;
+    val: number | bigint | string | Uint8Array | null;
+};
+export type SqliteRowResult = {
+    values: SqliteRowResultItem[];
+};
 export type ValueInteger = {
     tag: "integer";
     val: number | bigint;
@@ -22,7 +28,9 @@ export type ValueNull = {
 };
 export interface SqliteResult {
     columns: string[];
-    rows: SqliteRowResult[];
+    rows: {
+        [key: string]: number | bigint | null | string | Uint8Array;
+    }[];
 }
 export interface SpinSqliteConnection {
     execute: (statement: string, parameters: ParameterValue[]) => SqliteResult;
@@ -36,3 +44,4 @@ export declare const valueReal: (value: number | bigint) => ValueReal;
 export declare const valueText: (value: string) => ValueText;
 export declare const valueBlob: (value: Uint8Array) => ValueBlob;
 export declare const valueNull: () => ValueNull;
+export {};
