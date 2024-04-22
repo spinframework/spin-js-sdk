@@ -2,18 +2,18 @@ export type RdbmsValueBoolean = { tag: "boolean"; val: boolean };
 export type RdbmsValueInt8 = { tag: "int8"; val: number };
 export type RdbmsValueInt16 = { tag: "int16"; val: number };
 export type RdbmsValueInt32 = { tag: "int32"; val: number };
-export type RdbmsValueInt64 = { tag: "int64"; val: number };
+export type RdbmsValueInt64 = { tag: "int64"; val: bigint };
 export type RdbmsValueUint8 = { tag: "uint8"; val: number };
 export type RdbmsValueUint16 = { tag: "uint16"; val: number };
 export type RdbmsValueUint32 = { tag: "uint32"; val: number };
-export type RdbmsValueUint64 = { tag: "uint64"; val: number };
+export type RdbmsValueUint64 = { tag: "uint64"; val: bigint };
 export type RdbmsValueFloating32 = { tag: "floating32"; val: number };
 export type RdbmsValueFloating64 = { tag: "floating64"; val: number };
 export type RdbmsValueStr = { tag: "str"; val: string };
 export type RdbmsValueBinary = { tag: "binary"; val: Uint8Array };
 export type RdbmsValueDbNull = { tag: "db-null" };
 
-export type RdbmsParameterValue =
+export type SpinRdbmsParameterValue =
     | RdbmsValueBoolean
     | RdbmsValueInt8
     | RdbmsValueInt16
@@ -29,6 +29,8 @@ export type RdbmsParameterValue =
     | RdbmsValueBinary
     | RdbmsValueDbNull;
 
+export type RdbmsParameterValue = SpinRdbmsParameterValue | number | bigint | boolean | null | Uint8Array | string
+
 export interface RdbmsColumn {
     name: string
     dataType: RdbmsDataType[]
@@ -36,9 +38,14 @@ export interface RdbmsColumn {
 
 export type RdbmsRow = RdbmsDbValue[]
 
-export interface RdbmsRowSet {
+export interface SpinRdbmsRowSet {
     columns: RdbmsColumn[]
     rows: RdbmsRow[]
+}
+
+export interface RdbmsRowSet {
+    columns: RdbmsColumn[]
+    rows: { [key: string]: number | boolean | bigint | null | string | Uint8Array }[]
 }
 
 export type RdbmsDbBoolean = { tag: "boolean"; val: boolean };

@@ -1,12 +1,5 @@
 export type sqliteValues = ValueInteger | ValueReal | ValueText | ValueBlob | ValueNull;
 export type ParameterValue = sqliteValues | number | bigint | null | string | Uint8Array;
-type SqliteRowResultItem = {
-    tag: string;
-    val: number | bigint | string | Uint8Array | null;
-};
-export type SqliteRowResult = {
-    values: SqliteRowResultItem[];
-};
 export type ValueInteger = {
     tag: "integer";
     val: number | bigint;
@@ -44,4 +37,3 @@ export declare const valueReal: (value: number | bigint) => ValueReal;
 export declare const valueText: (value: string) => ValueText;
 export declare const valueBlob: (value: Uint8Array) => ValueBlob;
 export declare const valueNull: () => ValueNull;
-export {};
