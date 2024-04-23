@@ -5,24 +5,26 @@ import { headers, IncomingRequest, OutputStream, OutgoingResponse as OutgoingRes
 const decoder = new TextDecoder()
 const encoder = new TextEncoder()
 
-export class SimpleHTTP {
+const MAX_BLOCKING_BODY_READ_SIZE = 16 * 1024;
+const MAX_BLOCKING_BODY_WRITE_SIZE = 4 * 1024;
+
+export abstract class Handler {
     constructor() {
         this.handle = this.handle.bind(this)
         this.handleRequest = this.handleRequest.bind(this)
     }
-    async handleRequest(req: HttpRequest, res: ResponseBuilder) {
-        throw new Error("not implemented")
-    }
-    async handle(request: IncomingRequest, response_out: OutputStream) {
+    abstract handleRequest(req: HttpRequest, res: ResponseBuilder): Promise<void>;
+
+    async handle(request: IncomingRequest, responseOut: OutputStream) {
         let method = request.method()
 
-        let request_body = request.consume()
-        let request_stream = request_body.stream()
+        let requestBody = request.consume()
+        let requestStream = requestBody.stream()
         let body = new Uint8Array()
 
         while (true) {
             try {
-                body = new Uint8Array([...body, ...request_stream.blockingRead(16 * 1024)])
+                body = new Uint8Array([...body, ...requestStream.blockingRead(MAX_BLOCKING_BODY_READ_SIZE)])
             } catch (e: any) {
                 if (e.payload?.tag === "closed") {
                     break
@@ -31,8 +33,8 @@ export class SimpleHTTP {
             }
         }
 
-        let request_uri = request.pathWithQuery()
-        let url = request_uri ? request_uri : "/"
+        let requestUri = request.pathWithQuery()
+        let url = requestUri ? requestUri : "/"
 
         let headers = new Headers();
         request.headers().entries().forEach(([key, value]) => {
@@ -46,7 +48,7 @@ export class SimpleHTTP {
             body: body,
         }
 
-        let res = new ResponseBuilder(response_out)
+        let res = new ResponseBuilder(responseOut)
         try {
             await this.handleRequest(req, res)
         }
@@ -62,8 +64,6 @@ export interface HttpRequest {
     headers: Headers
     body?: Uint8Array
 }
-
-
 
 // FormData and Blob need to be added
 export type BodyInit = BufferSource | URLSearchParams | ReadableStream<Uint8Array> | USVString;
@@ -151,10 +151,9 @@ export class ResponseBuilder {
 
 function writeBytesToOutputStream(body: BodyInit, responseStream: OutputStream) {
     let bytes = convertToUint8Array(body)
-    const MAX_BLOCKING_WRITE_SIZE = 4096
     let offset = 0
     while (offset < bytes.length) {
-        const count = Math.min(bytes.length - offset, MAX_BLOCKING_WRITE_SIZE)
+        const count = Math.min(bytes.length - offset, MAX_BLOCKING_BODY_WRITE_SIZE)
         responseStream.blockingWriteAndFlush(bytes.slice(offset, offset + count))
         offset += count
     }
