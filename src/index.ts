@@ -9,4 +9,4 @@ import { Mysql } from "./mysql";
 import { Mqtt } from "./mqtt"
 import { RedisHandler } from "./inboundRedis";
 
-export { Handler as SimpleHTTP, Llm, Variables, Redis, KeyValue, Sqlite, Postgres, Mysql, Mqtt, RedisHandler, ResponseBuilder, HttpRequest }
+export { Handler, Llm, Variables, Redis, KeyValue, Sqlite, Postgres, Mysql, Mqtt, RedisHandler, ResponseBuilder, HttpRequest }

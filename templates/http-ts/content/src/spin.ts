@@ -1,11 +1,13 @@
-import { SimpleHTTP } from "@fermyon/spin-sdk";
-import { handleRequest } from ".";
+import { Handler, HttpRequest, ResponseBuilder } from "@fermyon/spin-sdk";
+import { handler } from ".";
 
-class HttpHandler extends SimpleHTTP {
+class HttpHandler extends Handler {
     constructor() {
         super();
     }
-    handleRequest = handleRequest
+    handleRequest(req: HttpRequest, res: ResponseBuilder): Promise<void> {
+        return handler(req, res)
+    }
 }
 
 export const incomingHandler = new HttpHandler()

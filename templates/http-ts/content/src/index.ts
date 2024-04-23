@@ -1,5 +1,6 @@
-import { ResponseBuilder, HttpRequest } from "@fermyon/spin-sdk"
+import { HttpRequest, ResponseBuilder } from "@fermyon/spin-sdk";
 
-export const handleRequest = async (req: HttpRequest, res: ResponseBuilder) => {
-    res.send("hello world- I ACTUALLY WORK!!!")
+export async function handler(req: HttpRequest, res: ResponseBuilder) {
+    console.log("Request: ", req.uri);
+    res.send("Hello, Universe!");
 }

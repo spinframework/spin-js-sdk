@@ -1,4 +1,4 @@
-import { ResponseBuilder, SimpleHTTP, HttpRequest } from "./http";
+import { ResponseBuilder, Handler, HttpRequest } from "./http";
 import * as Llm from './llm';
 import { Variables } from './variables';
 import { Redis } from './redis';
@@ -8,8 +8,4 @@ import { Postgres } from "./postgres";
 import { Mysql } from "./mysql";
 import { Mqtt } from "./mqtt";
 import { RedisHandler } from "./inboundRedis";
-export { SimpleHTTP, Llm, Variables, Redis, KeyValue, Sqlite, Postgres, Mysql, Mqtt, RedisHandler, ResponseBuilder, HttpRequest };
-declare class HttpHandler extends SimpleHTTP {
-    constructor();
-}
-export declare const incomingHandler: HttpHandler;
+export { Handler, Llm, Variables, Redis, KeyValue, Sqlite, Postgres, Mysql, Mqtt, RedisHandler, ResponseBuilder, HttpRequest };

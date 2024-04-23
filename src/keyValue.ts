@@ -29,7 +29,7 @@ function CreateSpinKvStore(store: spinKv.store): SpinKvStore {
             store.delete(key)
         },
         exists: (key: string) => {
-            return store.exists("key")
+            return store.exists(key)
         },
         getKeys: () => {
             return store.getKeys()
