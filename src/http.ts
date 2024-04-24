@@ -9,13 +9,9 @@ const MAX_BLOCKING_BODY_READ_SIZE = 16 * 1024;
 const MAX_BLOCKING_BODY_WRITE_SIZE = 4 * 1024;
 
 export abstract class Handler {
-    constructor() {
-        this.handle = this.handle.bind(this)
-        this.handleRequest = this.handleRequest.bind(this)
-    }
     abstract handleRequest(req: HttpRequest, res: ResponseBuilder): Promise<void>;
 
-    async handle(request: IncomingRequest, responseOut: OutputStream) {
+    handle = async (request: IncomingRequest, responseOut: OutputStream): Promise<void> => {
         let method = request.method()
 
         let requestBody = request.consume()
@@ -87,7 +83,7 @@ export class ResponseBuilder {
         this.hasWrittenHeaders = false
         this.hasSentResponse = false
     }
-    status(code: number): this {
+    status(code: number): ResponseBuilder {
         if (this.hasWrittenHeaders) {
             throw new Error("Headers and Status already sent")
         }
@@ -97,7 +93,7 @@ export class ResponseBuilder {
     getStatus(): number {
         return this.statusCode
     }
-    set(arg1: string | { [key: string]: string }, arg2?: string): this {
+    set(arg1: string | { [key: string]: string }, arg2?: string): ResponseBuilder {
         if (this.hasWrittenHeaders) {
             throw new Error("Headers already sent")
         }

@@ -6,7 +6,7 @@ const decoder = new TextDecoder()
 
 export interface SpinKvStore {
     get: (key: string) => Uint8Array | null
-    set: (key: string, value: Uint8Array | string) => void
+    set: (key: string, value: Uint8Array | string | object) => void
     delete: (key: string) => void
     exists: (key: string) => boolean
     getKeys: () => string[]
@@ -19,9 +19,11 @@ function CreateSpinKvStore(store: spinKv.store): SpinKvStore {
         get: (key: string) => {
             return store.get(key)
         },
-        set: (key: string, value: Uint8Array | string) => {
-            if (typeof (value) == "string") {
+        set: (key: string, value: Uint8Array | string | object) => {
+            if (typeof (value) === "string") {
                 value = encoder.encode(value)
+            } else if (typeof (value) === "object") {
+                value = encoder.encode(JSON.stringify(value))
             }
             store.set(key, value)
         },

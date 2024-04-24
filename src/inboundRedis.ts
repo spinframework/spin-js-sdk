@@ -1,5 +1,3 @@
-export class RedisHandler {
-    handleMessage(msg: Uint8Array) {
-        throw new Error("Not Implemented. Create a redis handler by implementing the `RedisHandler` class.")
-    }
+export abstract class RedisHandler {
+    abstract handleMessage(msg: Uint8Array): Promise<void>;
 }

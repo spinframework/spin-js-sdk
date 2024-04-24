@@ -1,6 +1,6 @@
 export interface SpinKvStore {
     get: (key: string) => Uint8Array | null;
-    set: (key: string, value: Uint8Array | string) => void;
+    set: (key: string, value: Uint8Array | string | object) => void;
     delete: (key: string) => void;
     exists: (key: string) => boolean;
     getKeys: () => string[];

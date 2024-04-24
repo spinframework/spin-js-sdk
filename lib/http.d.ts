@@ -1,8 +1,7 @@
 import { IncomingRequest, OutputStream } from './types/wasi-http';
 export declare abstract class Handler {
-    constructor();
     abstract handleRequest(req: HttpRequest, res: ResponseBuilder): Promise<void>;
-    handle(request: IncomingRequest, responseOut: OutputStream): Promise<void>;
+    handle: (request: IncomingRequest, responseOut: OutputStream) => Promise<void>;
 }
 export interface HttpRequest {
     method: string;
@@ -22,11 +21,11 @@ export declare class ResponseBuilder {
     private responseStream;
     private response;
     constructor(responseOut: OutputStream);
-    status(code: number): this;
+    status(code: number): ResponseBuilder;
     getStatus(): number;
     set(arg1: string | {
         [key: string]: string;
-    }, arg2?: string): this;
+    }, arg2?: string): ResponseBuilder;
     send(value?: BodyInit): void;
     write(value: BodyInit): void;
     end(): void;

@@ -1,3 +1,3 @@
-export declare class RedisHandler {
-    handleMessage(msg: Uint8Array): void;
+export declare abstract class RedisHandler {
+    abstract handleMessage(msg: Uint8Array): Promise<void>;
 }
