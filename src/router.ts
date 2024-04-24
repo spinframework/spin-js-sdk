@@ -1,6 +1,5 @@
-/** @internal */
 import { Router as _router } from 'itty-router'
-import { HttpRequest } from './inboundHttp'
+import { HttpRequest, ResponseBuilder } from './inboundHttp'
 
 declare type GenericTraps = {
     [key: string]: any;
@@ -27,6 +26,10 @@ interface RouteHandler {
     (request: IRequest, ...args: any): any;
 }
 
+interface SpinRouteHandler {
+    (metadata: IRequest, req: HttpRequest, res: ResponseBuilder, ...args: any): any;
+}
+
 declare type RouteEntry = [string, RegExp, RouteHandler[]];
 declare type Route = <T extends RouterType>(path: string, ...handlers: RouteHandler[]) => T;
 declare type RouterHints = {
@@ -45,15 +48,15 @@ declare type RouterType = {
 } & RouterHints;
 
 interface routerType {
-    all(path: string, ...handlers: RouteHandler[]): RouterType
-    delete(path: string, ...handlers: RouteHandler[]): RouterType
-    get(path: string, ...handlers: RouteHandler[]): RouterType
+    all(path: string, ...handlers: SpinRouteHandler[]): RouterType
+    delete(path: string, ...handlers: SpinRouteHandler[]): RouterType
+    get(path: string, ...handlers: SpinRouteHandler[]): RouterType
     handle(request: RequestLike, ...extras: any): Promise<any>
-    handleRequest(request: HttpRequest, ...extras: any): Promise<any>
-    options(path: string, ...handlers: RouteHandler[]): RouterType
-    patch(path: string, ...handlers: RouteHandler[]): RouterType
-    post(path: string, ...handlers: RouteHandler[]): RouterType
-    put(path: string, ...handlers: RouteHandler[]): RouterType
+    handleRequest(request: HttpRequest, response: ResponseBuilder, ...extras: any): Promise<any>
+    options(path: string, ...handlers: SpinRouteHandler[]): RouterType
+    patch(path: string, ...handlers: SpinRouteHandler[]): RouterType
+    post(path: string, ...handlers: SpinRouteHandler[]): RouterType
+    put(path: string, ...handlers: SpinRouteHandler[]): RouterType
     routes: RouteEntry[]
 }
 
@@ -62,22 +65,33 @@ function Router(): routerType {
     let _spinRouter = _router()
 
     return {
-        all: function(path: string, ...handlers: RouteHandler[]): RouterType { return _spinRouter.all(path, ...handlers) },
-        delete: function(path: string, ...handlers: RouteHandler[]): RouterType { return _spinRouter.delete(path, ...handlers) },
-        get: function(path: string, ...handlers: RouteHandler[]): RouterType { return _spinRouter.get(path, ...handlers) },
-        handle: function(request: RequestLike, ...extra: any): Promise<any> { return _spinRouter.handle(request, ...extra) },
-        handleRequest: function(request: HttpRequest, ...a: any): Promise<any> {
+        all: function (path: string, ...handlers: SpinRouteHandler[]): RouterType { return _spinRouter.all(path, ...wrapRouteHandler(handlers)) },
+        delete: function (path: string, ...handlers: SpinRouteHandler[]): RouterType { return _spinRouter.delete(path, ...wrapRouteHandler(handlers)) },
+        get: function (path: string, ...handlers: SpinRouteHandler[]): RouterType { return _spinRouter.get(path, ...wrapRouteHandler(handlers)) },
+        handle: function (request: RequestLike, ...extra: any): Promise<any> { return _spinRouter.handle(request, ...extra) },
+        handleRequest: function (request: HttpRequest, response: ResponseBuilder, ...a: any): Promise<any> {
             return _spinRouter.handle({
                 method: request.method,
                 url: request.headers.get("spin-full-url") || ""
-            }, ...a)
+            }, request, response, ...a)
         },
-        options: function(path: string, ...handlers: RouteHandler[]): RouterType { return _spinRouter.options(path, ...handlers) },
-        patch: function(path: string, ...handlers: RouteHandler[]): RouterType { return _spinRouter.patch(path, ...handlers) },
-        post: function(path: string, ...handlers: RouteHandler[]): RouterType { return _spinRouter.post(path, ...handlers) },
-        put: function(path: string, ...handlers: RouteHandler[]): RouterType { return _spinRouter.put(path, ...handlers) },
+        options: function (path: string, ...handlers: SpinRouteHandler[]): RouterType { return _spinRouter.options(path, ...wrapRouteHandler(handlers)) },
+        patch: function (path: string, ...handlers: SpinRouteHandler[]): RouterType { return _spinRouter.patch(path, ...wrapRouteHandler(handlers)) },
+        post: function (path: string, ...handlers: SpinRouteHandler[]): RouterType { return _spinRouter.post(path, ...wrapRouteHandler(handlers)) },
+        put: function (path: string, ...handlers: SpinRouteHandler[]): RouterType { return _spinRouter.put(path, ...wrapRouteHandler(handlers)) },
         routes: _spinRouter.routes
     }
+}
+
+function wrapRouteHandler(handlers: SpinRouteHandler[]): RouteHandler[] {
+    let h: RouteHandler[] = []
+    for (let handler of handlers) {
+        let fn = async (metadata: IRequest, req: HttpRequest, res: ResponseBuilder, ...args: any) => {
+            return handler(metadata, req, res, args)
+        }
+        h.push(fn)
+    }
+    return h
 }
 
 export { Router, routerType }

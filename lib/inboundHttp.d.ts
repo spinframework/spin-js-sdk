@@ -13,10 +13,6 @@ export interface HttpRequest extends WasiHttpRequest {
     text: () => string;
     json: () => any;
 }
-export interface HttpRequestBody {
-    text: () => string;
-    json: () => any;
-}
 export type BodyInit = BufferSource | URLSearchParams | ReadableStream<Uint8Array> | USVString;
 export type USVString = string | ArrayBuffer | ArrayBufferView;
 export declare class ResponseBuilder {
