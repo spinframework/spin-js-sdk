@@ -3,11 +3,19 @@ export declare abstract class HttpHandler {
     abstract handleRequest(req: HttpRequest, res: ResponseBuilder): Promise<void>;
     handle: (request: IncomingRequest, responseOut: OutputStream) => Promise<void>;
 }
-export interface HttpRequest {
+export interface WasiHttpRequest {
     method: string;
     uri: string;
     headers: Headers;
     body?: Uint8Array;
+}
+export interface HttpRequest extends WasiHttpRequest {
+    text: () => string;
+    json: () => any;
+}
+export interface HttpRequestBody {
+    text: () => string;
+    json: () => any;
 }
 export type BodyInit = BufferSource | URLSearchParams | ReadableStream<Uint8Array> | USVString;
 export type USVString = string | ArrayBuffer | ArrayBufferView;

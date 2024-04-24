@@ -42,6 +42,8 @@ export abstract class HttpHandler {
             uri: url,
             headers: headers,
             body: body,
+            text: () => { return decoder.decode(body) },
+            json: (): any => { return JSON.parse(decoder.decode(body)) },
         }
 
         let res = new ResponseBuilder(responseOut)
@@ -54,12 +56,18 @@ export abstract class HttpHandler {
     }
 }
 
-export interface HttpRequest {
+export interface WasiHttpRequest {
     method: string,
     uri: string,
     headers: Headers
     body?: Uint8Array
 }
+
+export interface HttpRequest extends WasiHttpRequest {
+    text: () => string
+    json: () => any
+}
+
 
 // FormData and Blob need to be added
 export type BodyInit = BufferSource | URLSearchParams | ReadableStream<Uint8Array> | USVString;
