@@ -6,12 +6,10 @@ export enum QoS {
     ExactlyOnce = "exactly-once"
 }
 
-export interface SpinMqttConnection {
+export interface MqttConnection {
     publish: (topic: string, payload: Uint8Array, qos: QoS) => void
 }
 
-export const Mqtt = {
-    open: (address: string, username: string, password: string, keepAliveIntervalInSecs: number): SpinMqttConnection => {
-        return spinMqtt.Connection.open(address, username, password, keepAliveIntervalInSecs)
-    }
+export function open(address: string, username: string, password: string, keepAliveIntervalInSecs: number): MqttConnection {
+    return spinMqtt.Connection.open(address, username, password, keepAliveIntervalInSecs)
 }

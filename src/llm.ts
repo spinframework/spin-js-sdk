@@ -1,5 +1,5 @@
 //@ts-ignore
-import { infer as llm_infer, llm_generateEmbeddings } from "fermyon:spin/llm@2.0.0"
+import { infer as llmInfer, llm_generateEmbeddings as llmGenerateEmbeddings } from "fermyon:spin/llm@2.0.0"
 
 export enum InferencingModels {
     Llama2Chat = "llama2-chat",
@@ -20,12 +20,12 @@ export interface InferencingOptions {
 }
 
 export interface InternalInferencingOptions {
-    max_tokens?: number,
-    repeat_penalty?: number,
-    repeat_penalty_last_n_token_count?: number,
+    maxTokens?: number,
+    repeatPenalty?: number,
+    repeatPenaltyLastNTokenCount?: number,
     temperature?: number,
-    top_k?: number,
-    top_p?: number
+    topK?: number,
+    topP?: number
 }
 
 export interface InferenceUsage {
@@ -46,18 +46,18 @@ export interface EmbeddingResult {
     usage: EmbeddingUsage
 }
 
-export const infer = (model: InferencingModels | string, prompt: string, options?: InferencingOptions): InferenceResult => {
+export function infer(model: InferencingModels | string, prompt: string, options?: InferencingOptions): InferenceResult {
     let inference_options: InternalInferencingOptions = {
-        max_tokens: options?.maxTokens || 100,
-        repeat_penalty: options?.repeatPenalty || 1.1,
-        repeat_penalty_last_n_token_count: options?.repeatPenaltyLastNTokenCount || 64,
+        maxTokens: options?.maxTokens || 100,
+        repeatPenalty: options?.repeatPenalty || 1.1,
+        repeatPenaltyLastNTokenCount: options?.repeatPenaltyLastNTokenCount || 64,
         temperature: options?.temperature || 0.8,
-        top_k: options?.topK || 40,
-        top_p: options?.topP || 0.9
+        topK: options?.topK || 40,
+        topP: options?.topP || 0.9
     }
-    return llm_infer(model, prompt, inference_options)
+    return llmInfer(model, prompt, inference_options)
 }
 
 export const generateEmbeddings = (model: EmbeddingModels | string, text: Array<string>): EmbeddingResult => {
-    return llm_generateEmbeddings(model, text)
+    return llmGenerateEmbeddings(model, text)
 }

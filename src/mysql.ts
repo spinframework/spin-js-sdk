@@ -1,14 +1,14 @@
 //@ts-ignore
 import * as spinMysql from "fermyon:spin/mysql@2.0.0"
 import { RdbmsParameterValue, RdbmsRow, RdbmsRowSet, SpinRdbmsRowSet } from "./types/rdbms"
-import { convertRdbmsToWitTypes } from "./rdbms-helper"
+import { convertRdbmsToWitTypes } from "./rdbmsHelper"
 
-export interface SpinMysqlConnection {
+export interface MysqlConnection {
     query: (statement: string, params: RdbmsParameterValue[]) => RdbmsRowSet
     execute: (statement: string, params: RdbmsParameterValue[]) => number
 }
 
-function createMysqlConnection(connection: spinMysql.Connection): SpinMysqlConnection {
+function createMysqlConnection(connection: spinMysql.Connection): MysqlConnection {
     return {
         query: (statement: string, params: RdbmsParameterValue[]) => {
             let santizedParams = convertRdbmsToWitTypes(params)
@@ -33,8 +33,6 @@ function createMysqlConnection(connection: spinMysql.Connection): SpinMysqlConne
     }
 }
 
-export const Mysql = {
-    open: (address: string): SpinMysqlConnection => {
-        return createMysqlConnection(spinMysql.Connection.open(address))
-    }
+export function open(address: string): MysqlConnection {
+    return createMysqlConnection(spinMysql.Connection.open(address))
 }

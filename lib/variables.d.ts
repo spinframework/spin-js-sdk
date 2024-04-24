@@ -1,3 +1,1 @@
-export declare const Variables: {
-    get: (key: string) => string | null;
-};
+export declare function get(key: string): string | null;

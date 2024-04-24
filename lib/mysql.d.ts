@@ -1,8 +1,6 @@
 import { RdbmsParameterValue, RdbmsRowSet } from "./types/rdbms";
-export interface SpinMysqlConnection {
+export interface MysqlConnection {
     query: (statement: string, params: RdbmsParameterValue[]) => RdbmsRowSet;
     execute: (statement: string, params: RdbmsParameterValue[]) => number;
 }
-export declare const Mysql: {
-    open: (address: string) => SpinMysqlConnection;
-};
+export declare function open(address: string): MysqlConnection;

@@ -4,7 +4,7 @@ import * as spinKv from "fermyon:spin/key-value@2.0.0"
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
-export interface SpinKvStore {
+export interface Store {
     get: (key: string) => Uint8Array | null
     set: (key: string, value: Uint8Array | string | object) => void
     delete: (key: string) => void
@@ -14,7 +14,7 @@ export interface SpinKvStore {
     setJson: (key: string, value: any) => void
 }
 
-function CreateSpinKvStore(store: spinKv.store): SpinKvStore {
+function createKvStore(store: spinKv.store): Store {
     let kv = {
         get: (key: string) => {
             return store.get(key)
@@ -47,11 +47,9 @@ function CreateSpinKvStore(store: spinKv.store): SpinKvStore {
 }
 
 
-export const KeyValue = {
-    open: (label: string): SpinKvStore => {
-        return CreateSpinKvStore(spinKv.Store.open(label))
-    },
-    openDefault: (): SpinKvStore => {
-        return CreateSpinKvStore(spinKv.Store.open("default"))
-    }
+export function open(label: string): Store {
+    return createKvStore(spinKv.Store.open(label))
+}
+export function openDefault(): Store {
+    return createKvStore(spinKv.Store.open("default"))
 }

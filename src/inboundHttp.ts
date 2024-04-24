@@ -8,7 +8,7 @@ const encoder = new TextEncoder()
 const MAX_BLOCKING_BODY_READ_SIZE = 16 * 1024;
 const MAX_BLOCKING_BODY_WRITE_SIZE = 4 * 1024;
 
-export abstract class Handler {
+export abstract class HttpHandler {
     abstract handleRequest(req: HttpRequest, res: ResponseBuilder): Promise<void>;
 
     handle = async (request: IncomingRequest, responseOut: OutputStream): Promise<void> => {

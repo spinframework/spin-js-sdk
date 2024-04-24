@@ -21,11 +21,11 @@ export interface SqliteResult {
     rows: { [key: string]: number | bigint | null | string | Uint8Array }[]
 }
 
-export interface SpinSqliteConnection {
+export interface SqliteConnection {
     execute: (statement: string, parameters: ParameterValue[]) => SqliteResult
 }
 
-function createSqliteConnection(connection: spinSqlite.Connection): SpinSqliteConnection {
+function createSqliteConnection(connection: spinSqlite.Connection): SqliteConnection {
     return {
         execute: (statement: string, parameters: ParameterValue[]): SqliteResult => {
             let santizedParams = convertToWitTypes(parameters)
@@ -45,32 +45,30 @@ function createSqliteConnection(connection: spinSqlite.Connection): SpinSqliteCo
     }
 }
 
-export const Sqlite = {
-    open: (label: string): SpinSqliteConnection => {
-        return createSqliteConnection(spinSqlite.Connection.open(label))
-    },
-    openDefault: (): SpinSqliteConnection => {
-        return createSqliteConnection(spinSqlite.Connection.open("default"))
-    }
+export function open(label: string): SqliteConnection {
+    return createSqliteConnection(spinSqlite.Connection.open(label))
+}
+export function openDefault(): SqliteConnection {
+    return createSqliteConnection(spinSqlite.Connection.open("default"))
 }
 
-export const valueInteger = (value: number | bigint): ValueInteger => {
+const valueInteger = (value: number | bigint): ValueInteger => {
     return { tag: "integer", val: value }
 }
 
-export const valueReal = (value: number | bigint): ValueReal => {
+const valueReal = (value: number | bigint): ValueReal => {
     return { tag: "real", val: value }
 }
 
-export const valueText = (value: string): ValueText => {
+const valueText = (value: string): ValueText => {
     return { tag: "text", val: value }
 }
 
-export const valueBlob = (value: Uint8Array): ValueBlob => {
+const valueBlob = (value: Uint8Array): ValueBlob => {
     return { tag: "blob", val: value }
 }
 
-export const valueNull = (): ValueNull => {
+const valueNull = (): ValueNull => {
     return { tag: "null" }
 }
 

@@ -1,10 +1,10 @@
-import { Handler, HttpRequest, ResponseBuilder } from "@fermyon/spin-sdk";
+import { HttpHandler, HttpRequest, ResponseBuilder } from "@fermyon/spin-sdk";
 import { handler } from ".";
 
-class HttpHandler extends Handler {
+class App extends HandlerHandler {
     handleRequest(req: HttpRequest, res: ResponseBuilder): Promise<void> {
         return handler(req, res)
     }
 }
 
-export const incomingHandler = new HttpHandler()
+export const incomingHandler = new App()

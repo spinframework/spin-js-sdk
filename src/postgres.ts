@@ -1,14 +1,14 @@
 //@ts-ignore
 import * as spinPg from "fermyon:spin/postgres@2.0.0"
 import { RdbmsParameterValue, RdbmsRow, RdbmsRowSet, SpinRdbmsParameterValue, SpinRdbmsRowSet } from "./types/rdbms"
-import { convertRdbmsToWitTypes } from "./rdbms-helper"
+import { convertRdbmsToWitTypes } from "./rdbmsHelper"
 
-export interface SpinPostgresConnection {
+export interface PostgresConnection {
     query: (statement: string, params: RdbmsParameterValue[]) => RdbmsRowSet
     execute: (statement: string, params: RdbmsParameterValue[]) => number
 }
 
-function createPostgresConnection(connection: spinPg.Connection): SpinPostgresConnection {
+function createPostgresConnection(connection: spinPg.Connection): PostgresConnection {
     return {
         query: (statement: string, params: RdbmsParameterValue[]) => {
             let santizedParams = convertRdbmsToWitTypes(params)
@@ -33,8 +33,6 @@ function createPostgresConnection(connection: spinPg.Connection): SpinPostgresCo
     }
 }
 
-export const Postgres = {
-    open: (address: string): SpinPostgresConnection => {
-        return createPostgresConnection(spinPg.Connection.open(address))
-    }
+export function open(address: string): PostgresConnection {
+    return createPostgresConnection(spinPg.Connection.open(address))
 }

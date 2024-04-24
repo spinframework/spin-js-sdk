@@ -25,15 +25,8 @@ export interface SqliteResult {
         [key: string]: number | bigint | null | string | Uint8Array;
     }[];
 }
-export interface SpinSqliteConnection {
+export interface SqliteConnection {
     execute: (statement: string, parameters: ParameterValue[]) => SqliteResult;
 }
-export declare const Sqlite: {
-    open: (label: string) => SpinSqliteConnection;
-    openDefault: () => SpinSqliteConnection;
-};
-export declare const valueInteger: (value: number | bigint) => ValueInteger;
-export declare const valueReal: (value: number | bigint) => ValueReal;
-export declare const valueText: (value: string) => ValueText;
-export declare const valueBlob: (value: Uint8Array) => ValueBlob;
-export declare const valueNull: () => ValueNull;
+export declare function open(label: string): SqliteConnection;
+export declare function openDefault(): SqliteConnection;

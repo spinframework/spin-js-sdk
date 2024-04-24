@@ -1,4 +1,4 @@
-export interface SpinKvStore {
+export interface Store {
     get: (key: string) => Uint8Array | null;
     set: (key: string, value: Uint8Array | string | object) => void;
     delete: (key: string) => void;
@@ -7,7 +7,5 @@ export interface SpinKvStore {
     getJson: (key: string) => any;
     setJson: (key: string, value: any) => void;
 }
-export declare const KeyValue: {
-    open: (label: string) => SpinKvStore;
-    openDefault: () => SpinKvStore;
-};
+export declare function open(label: string): Store;
+export declare function openDefault(): Store;

@@ -1,7 +1,7 @@
 export type payload = Uint8Array;
 export type redisParameter = number | Uint8Array;
 export type redisResult = number | Uint8Array | null | string;
-export interface SpinRedisConnection {
+export interface RedisConnection {
     publish: (channel: string, payload: payload) => void;
     get: (key: string) => payload | null;
     set: (key: string, value: payload) => void;
@@ -12,6 +12,4 @@ export interface SpinRedisConnection {
     srem: (key: string, value: string[]) => number;
     execute: (command: string, args: redisParameter[]) => redisResult[];
 }
-export declare const Redis: {
-    open: (address: string) => SpinRedisConnection;
-};
+export declare function open(address: string): RedisConnection;
