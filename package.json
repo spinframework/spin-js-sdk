@@ -12,5 +12,8 @@
   "license": "ISC",
   "devDependencies": {
     "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "itty-router": "^3.0.12"
   }
 }
