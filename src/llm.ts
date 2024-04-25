@@ -1,5 +1,5 @@
 //@ts-ignore
-import { infer as llmInfer, llm_generateEmbeddings as llmGenerateEmbeddings } from "fermyon:spin/llm@2.0.0"
+import { infer as llmInfer, generateEmbeddings as llmGenerateEmbeddings } from "fermyon:spin/llm@2.0.0"
 
 export enum InferencingModels {
     Llama2Chat = "llama2-chat",
