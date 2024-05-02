@@ -1,9 +1,12 @@
 {
   "name": "@fermyon/spin-sdk",
-  "version": "2.0.0-rc1",
+  "version": "2.0.0-alpha.0",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
+  "bin": {
+    "j2w": "./bin/j2w.mjs"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && cp -r src/types ./lib/"
@@ -11,7 +14,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^5.4.3"
+    "@bytecodealliance/componentize-js": "^0.8.3",
+    "typescript": "^5.4.3",
+    "yargs": "^17.7.2"
   },
   "dependencies": {
     "itty-router": "^3.0.12"
