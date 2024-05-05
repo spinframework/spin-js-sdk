@@ -5,9 +5,20 @@ authors = ["Fermyon Engineering <engineering@fermyon.com>"]
 name = "spin-planetscale"
 version = "1.0.0"
 
+[variables]
+host = { required = true, secret = true }
+username = { required = true, secret = true }
+password = { required = true, secret = true }
+
 [[trigger.http]]
 route = "/hello"
 component = "planetscale"
+
+[component.planetscale.variables]
+host = "{{ host }}"
+username = "{{ username }}"
+password = "{{ password }}"
+
 
 [component.planetscale]
 source = "target/spin-planetscale.wasm"

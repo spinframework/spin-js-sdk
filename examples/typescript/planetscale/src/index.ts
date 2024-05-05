@@ -1,11 +1,11 @@
-import {HandleRequest, HttpRequest, HttpResponse} from "@fermyon/spin-sdk"
+import {HandleRequest, HttpRequest, HttpResponse, Config} from "@fermyon/spin-sdk"
 
 import { connect } from '@planetscale/database'
 
 const config = {
-   host: '<host>',
-   username: '<username>',
-   password: '<password>'
+   host: Config.get("host"),
+   username: Config.get("username"),
+   password: Config.get("password")
 }
 
 const encoder = new TextEncoder()
