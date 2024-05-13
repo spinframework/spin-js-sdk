@@ -1,0 +1,34 @@
+spin_manifest_version = 2
+
+[application]
+name = "nuxt-app"
+description = ""
+version = "0.1.0"
+authors = ["Matt Fisher <matt.fisher@fermyon.com>"]
+
+[[trigger.http]]
+route = "/..."
+component = "app"
+
+[component.app]
+source = "./.output/app.wasm"
+
+[component.app.build]
+command = "npm run build && npm run componentize"
+
+[[trigger.http]]
+route = "/_nuxt/..."
+component = "nuxt-assets"
+
+[component.nuxt-assets]
+source = { url = "https://github.com/fermyon/spin-fileserver/releases/download/v0.3.0/spin_static_fs.wasm", digest = "sha256:ef88708817e107bf49985c7cefe4dd1f199bf26f6727819183d5c996baa3d148" }
+files = [{ source = "./.output/public/_nuxt", destination = "/" }]
+
+
+[[trigger.http]]
+route = "/favicon.ico"
+component = "favicon"
+
+[component.favicon]
+source = { url = "https://github.com/fermyon/spin-fileserver/releases/download/v0.3.0/spin_static_fs.wasm", digest = "sha256:ef88708817e107bf49985c7cefe4dd1f199bf26f6727819183d5c996baa3d148" }
+files = [{ source = "./.output/public/", destination = "/" }]
