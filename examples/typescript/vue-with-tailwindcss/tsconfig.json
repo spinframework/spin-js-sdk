@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "noImplicitAny": true,
+        "module": "es2020",
+        "target": "es2020",
+        "jsx": "react",
+        "skipLibCheck": true,
+        "lib": [
+            "es2020"
+        ],
+        "allowJs": true,
+        "strict": true,
+        "noImplicitReturns": true,
+        "moduleResolution": "node"
+    }
+}

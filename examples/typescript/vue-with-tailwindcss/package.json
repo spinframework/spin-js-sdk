@@ -1,0 +1,41 @@
+{
+  "name": "vue-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "build": "npm run build:client && npm run build:server && npm run componentize",
+    "build:client": "npx webpack --mode production --config webpack.client.js",
+    "build:server": "npx webpack --mode production --config webpack.server.js",
+    "componentize": "npx j2w -i ./dist/server.js --d .wit -n spin-http -o ./dist/app.wasm",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@bytecodealliance/componentize-js": "^0.8.3",
+    "@fermyon/spin-sdk": "^2.0.0-alpha.0",
+    "@vue/compiler-sfc": "^3.4.27",
+    "@vue/server-renderer": "^3.4.27",
+    "autoprefixer": "^10.4.19",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^7.1.1",
+    "install": "^0.13.0",
+    "postcss": "^8.4.38",
+    "postcss-loader": "^8.1.1",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^3.4.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "vue": "^3.4.27",
+    "vue-loader": "^17.4.2",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "yargs": "^17.7.2"
+  },
+  "dependencies": {
+    "util": "^0.12.5",
+    "vue-router": "^4.3.2"
+  }
+}

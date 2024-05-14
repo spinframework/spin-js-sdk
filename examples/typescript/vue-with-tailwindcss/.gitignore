@@ -1,0 +1,6 @@
+# Spin/WASM output
+.spin
+
+# Node.js output
+dist
+node_modules
