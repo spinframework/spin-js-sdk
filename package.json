@@ -9,11 +9,15 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint",
+    "fmt": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
+    "fmt-check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
     "build": "tsc && cp -r src/types ./lib/"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "prettier": "^3.2.5",
     "typescript": "^5.4.3"
   },
   "dependencies": {

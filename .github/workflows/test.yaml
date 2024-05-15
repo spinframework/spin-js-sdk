@@ -1,0 +1,27 @@
+name: Test
+
+on:
+  push:
+    branches: [ feat/sdk-v2 ]
+  pull_request:
+    branches: [ feat/sdk-v2 ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+        - uses: actions/checkout@v3
+
+        - name: Use Node.js 20
+          uses: actions/setup-node@v3
+          with:
+            node-version: 20
+
+        - name: Use Node.js 20
+          shell: bash
+          run: npm intstall
+
+        - name: fmt TS
+          shell: bash
+          run: npm run fmt-check
