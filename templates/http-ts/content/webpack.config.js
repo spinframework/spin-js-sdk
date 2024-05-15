@@ -1,5 +1,5 @@
 const path = require('path');
-const SpinSdkPlugin = require("@fermyon/spin-sdk/plugin/webpack")
+const SpinSdkPlugin = require("@fermyon/spin-sdk/plugins/webpack")
 
 module.exports = {
     entry: './src/spin.ts',
