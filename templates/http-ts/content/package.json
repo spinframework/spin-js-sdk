@@ -20,6 +20,6 @@
         "yargs": "^17.7.2"
     },
     "dependencies": {
-        "@fermyon/spin-sdk": "^2.0.0-alpha.0"
+        "@fermyon/spin-sdk": "^2.0.0-alpha.1"
     }
 }
