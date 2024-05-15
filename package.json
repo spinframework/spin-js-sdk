@@ -12,7 +12,7 @@
     "build": "tsc && cp -r src/types ./lib/"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
     "typescript": "^5.4.3"
   },
