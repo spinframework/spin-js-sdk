@@ -1,9 +1,9 @@
-// @ts-ignore
 import {
   ResponseOutparam,
   Fields,
   OutgoingResponse,
   OutgoingBody,
+  // @ts-ignore
 } from 'wasi:http/types@0.2.0';
 import {
   headers,

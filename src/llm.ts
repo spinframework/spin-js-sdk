@@ -1,7 +1,7 @@
-//@ts-ignore
 import {
   infer as llmInfer,
   generateEmbeddings as llmGenerateEmbeddings,
+  //@ts-ignore
 } from 'fermyon:spin/llm@2.0.0';
 
 export enum InferencingModels {

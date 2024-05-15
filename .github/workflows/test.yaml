@@ -5,9 +5,10 @@ on:
     branches: [ feat/sdk-v2 ]
   pull_request:
     branches: [ feat/sdk-v2 ]
+  workflow_dispatch:
 
 jobs:
-  lint:
+  lint_and_test:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,10 +19,23 @@ jobs:
           with:
             node-version: 20
 
-        - name: Use Node.js 20
+        - name: Install depencies
           shell: bash
-          run: npm intstall
+          run: npm install
 
-        - name: fmt TS
+        - name: Run prettier check
           shell: bash
           run: npm run fmt-check
+
+        - name: Install spin
+          uses: engineerd/configurator@v0.0.8
+          with:
+            name: "spin"
+            url: "https://github.com/fermyon/spin/releases/download/v2.5.0/spin-v2.5.0-linux-amd64.tar.gz"
+            pathInArchive: "spin"
+
+        - name: Run Test
+          shell: bash
+          run: |
+            cd test
+            ./test.sh

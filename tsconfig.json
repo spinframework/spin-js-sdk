@@ -19,6 +19,7 @@
     "exclude": [
         "templates/**/*",
         "lib/**/*",
-        "bin/**/*"
+        "bin/**/*",
+        "test/**/*"
     ]
 }
