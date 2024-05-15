@@ -9,7 +9,6 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint",
     "fmt": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "fmt-check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
     "build": "tsc && cp -r src/types ./lib/"
