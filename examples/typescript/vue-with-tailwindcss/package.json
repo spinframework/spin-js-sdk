@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@fermyon/spin-sdk": "^2.0.0-alpha.1",
     "@vue/compiler-sfc": "^3.4.27",
