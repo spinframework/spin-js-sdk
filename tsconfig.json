@@ -17,9 +17,10 @@
         "moduleResolution": "node"
     },
     "exclude": [
-        "templates/**/*",
-        "lib/**/*",
         "bin/**/*",
+        "examples/**/*",
+        "lib/**/*",
+        "templates/**/*",
         "test/**/*"
     ]
 }
