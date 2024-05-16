@@ -1,5 +1,6 @@
 const path = require('path');
 const { VueLoaderPlugin } = require('vue-loader');
+const SpinSDKPlugin = require('@fermyon/spin-sdk/plugins/webpack');
 
 module.exports = {
     entry: './src/client.ts', // Entry point for your application
@@ -26,6 +27,7 @@ module.exports = {
     },
     plugins: [
         new VueLoaderPlugin(),
+        new SpinSDKPlugin(),
     ],
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
