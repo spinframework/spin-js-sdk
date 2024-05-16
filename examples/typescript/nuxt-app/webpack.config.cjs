@@ -1,4 +1,5 @@
 const path = require('path');
+const SpinSDKPlugin = require("@fermyon/spin-sdk/plugins/webpack");
 
 module.exports = {
     entry: './spin.ts',
@@ -25,18 +26,10 @@ module.exports = {
             type: "module",
         }
     },
-    externals: {
-        "wasi:http/types@0.2.0": "wasi:http/types@0.2.0",
-        "fermyon:spin/llm@2.0.0": "fermyon:spin/llm@2.0.0",
-        "fermyon:spin/variables@2.0.0": "fermyon:spin/variables@2.0.0",
-        "fermyon:spin/redis@2.0.0": "fermyon:spin/redis@2.0.0",
-        "fermyon:spin/key-value@2.0.0": "fermyon:spin/key-value@2.0.0",
-        "fermyon:spin/sqlite@2.0.0": "fermyon:spin/sqlite@2.0.0",
-        "fermyon:spin/postgres@2.0.0": "fermyon:spin/postgres@2.0.0",
-        "fermyon:spin/mysql@2.0.0": "fermyon:spin/mysql@2.0.0",
-        "fermyon:spin/mqtt@2.0.0": "fermyon:spin/mqtt@2.0.0"
-    },
     optimization: {
         minimize: false
     },
+    plugins: [
+        new SpinSDKPlugin()
+    ]
 };

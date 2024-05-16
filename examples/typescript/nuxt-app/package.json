@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "componentize": "webpack --mode=production && npx j2w -i ./.output/spin.js --d .wit -n spin-http -o ./.output/app.wasm",
+    "componentize": "webpack --mode=production && npx j2w -i ./.output/spin.js -n spin-http -o ./.output/app.wasm",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
@@ -14,10 +14,8 @@
     "nuxt": "^3.11.2"
   },
   "devDependencies": {
-    "@bytecodealliance/componentize-js": "^0.8.3",
-    "@fermyon/spin-sdk": "^2.0.0-alpha.0",
+    "@fermyon/spin-sdk": "^2.0.0-alpha.1",
     "ts-loader": "^9.5.1",
-    "webpack-cli": "^5.1.4",
-    "yargs": "^17.7.2"
+    "webpack-cli": "^5.1.4"
   }
 }
