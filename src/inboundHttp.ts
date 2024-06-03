@@ -1,121 +1,15 @@
-import {
-  ResponseOutparam,
-  Fields,
-  OutgoingResponse,
-  OutgoingBody,
-  // @ts-ignore
-} from 'wasi:http/types@0.2.0';
-import {
-  headers,
-  IncomingRequest,
-  OutputStream,
-  OutgoingResponse as OutgoingResponseType,
-  OutgoingBody as OutgoingBodyType,
-} from './types/wasi-http';
-
-const decoder = new TextDecoder();
-const encoder = new TextEncoder();
-
-const MAX_BLOCKING_BODY_READ_SIZE = 16 * 1024;
-const MAX_BLOCKING_BODY_WRITE_SIZE = 4 * 1024;
-
-export abstract class HttpHandler {
-  abstract handleRequest(req: HttpRequest, res: ResponseBuilder): Promise<void>;
-
-  handle = async (
-    request: IncomingRequest,
-    responseOut: OutputStream,
-  ): Promise<void> => {
-    let method = request.method();
-
-    let requestBody = request.consume();
-    let requestStream = requestBody.stream();
-    let body = new Uint8Array();
-
-    while (true) {
-      try {
-        body = new Uint8Array([
-          ...body,
-          ...requestStream.blockingRead(MAX_BLOCKING_BODY_READ_SIZE),
-        ]);
-      } catch (e: any) {
-        if (e.payload?.tag === 'closed') {
-          break;
-        }
-        throw e;
-      }
-    }
-
-    let requestUri = request.pathWithQuery();
-    let url = requestUri ? requestUri : '/';
-
-    let headers = new Headers();
-    request
-      .headers()
-      .entries()
-      .forEach(([key, value]) => {
-        headers.append(key, decoder.decode(value));
-      });
-
-    let req: HttpRequest = {
-      method: method.tag.toString().toUpperCase(),
-      uri: url,
-      headers: headers,
-      body: body,
-      text: () => {
-        return decoder.decode(body);
-      },
-      json: (): any => {
-        return JSON.parse(decoder.decode(body));
-      },
-    };
-
-    let res = new ResponseBuilder(responseOut);
-    try {
-      await this.handleRequest(req, res);
-    } catch (e: any) {
-      console.log(e.message);
-    }
-  };
-}
-
-export interface WasiHttpRequest {
-  method: string;
-  uri: string;
-  headers: Headers;
-  body?: Uint8Array;
-}
-
-export interface HttpRequest extends WasiHttpRequest {
-  text: () => string;
-  json: () => any;
-}
-
-// FormData and Blob need to be added
-export type BodyInit =
-  | BufferSource
-  | URLSearchParams
-  | ReadableStream<Uint8Array>
-  | USVString;
-
-export type USVString = string | ArrayBuffer | ArrayBufferView;
+type ResolveFunction = (value: Response | PromiseLike<Response>) => void;
 
 export class ResponseBuilder {
-  headers: Headers;
-  private hasWrittenHeaders: boolean;
-  private hasSentResponse: boolean;
-  private responseOut: OutputStream;
-  private statusCode: number;
-  private responseBody: OutgoingBodyType | undefined;
-  private responseStream: OutputStream | undefined;
-  private response: OutgoingResponseType | undefined;
+  headers: Headers = new Headers();
+  statusCode: number = 200;
+  private hasWrittenHeaders: boolean = false;
+  private hasSentResponse: boolean = false;
+  private resolveFunction: ResolveFunction;
+  private streamController: any;
 
-  constructor(responseOut: OutputStream) {
-    this.responseOut = responseOut;
-    this.statusCode = 200;
-    this.headers = new Headers();
-    this.hasWrittenHeaders = false;
-    this.hasSentResponse = false;
+  constructor(resolve: ResolveFunction) {
+    this.resolveFunction = resolve;
   }
   status(code: number): ResponseBuilder {
     if (this.hasWrittenHeaders) {
@@ -149,7 +43,14 @@ export class ResponseBuilder {
     if (this.hasSentResponse) {
       throw new Error('Response has already been sent');
     }
-    this.write(value);
+    if (!this.hasWrittenHeaders) {
+      this.resolveFunction(
+        new Response(value, { headers: this.headers, status: this.statusCode }),
+      );
+      this.hasWrittenHeaders = true;
+    } else {
+      this.write(value);
+    }
     this.end();
     this.hasSentResponse = true;
   }
@@ -158,40 +59,40 @@ export class ResponseBuilder {
       throw new Error('Response has already been sent');
     }
     if (!this.hasWrittenHeaders) {
-      let headers = new Fields() as headers;
-      this.headers.forEach((value, key) => {
-        headers.append(key, encoder.encode(value));
+      let temp;
+      let readableStream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(convertToUint8Array(value));
+          let streamController = {
+            pump: (value: BodyInit) => {
+              controller.enqueue(convertToUint8Array(value));
+            },
+            close: () => {
+              controller.close();
+            },
+          };
+          temp = streamController;
+        },
       });
-      this.response = new OutgoingResponse(headers) as OutgoingResponseType;
-      this.responseBody = this.response.body();
-      this.responseStream = this.responseBody.write();
-      this.response.setStatusCode(this.statusCode);
-      ResponseOutparam.set(this.responseOut, { tag: 'ok', val: this.response });
+      this.streamController = temp;
+      this.resolveFunction(
+        new Response(readableStream, {
+          headers: this.headers,
+          status: this.statusCode,
+        }),
+      );
       this.hasWrittenHeaders = true;
+      return;
     }
-    writeBytesToOutputStream(value, this.responseStream!);
+    this.streamController.pump(convertToUint8Array(value));
   }
   end() {
     if (this.hasSentResponse) {
       throw new Error('Response has already been sent');
     }
-    // The OutgoingBody here is untyped because I have not figured out how to do that in typescript yet.
-    this.responseStream?.[Symbol.dispose]();
-    OutgoingBody.finish(this.responseBody!, { tag: 'none' });
+    // close stream
+    this.streamController.close();
     this.hasSentResponse = true;
-  }
-}
-
-function writeBytesToOutputStream(
-  body: BodyInit,
-  responseStream: OutputStream,
-) {
-  let bytes = convertToUint8Array(body);
-  let offset = 0;
-  while (offset < bytes.length) {
-    const count = Math.min(bytes.length - offset, MAX_BLOCKING_BODY_WRITE_SIZE);
-    responseStream.blockingWriteAndFlush(bytes.slice(offset, offset + count));
-    offset += count;
   }
 }
 
