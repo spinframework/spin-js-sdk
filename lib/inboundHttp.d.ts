@@ -11,7 +11,7 @@ export declare class ResponseBuilder {
     getStatus(): number;
     set(arg1: string | {
         [key: string]: string;
-    }, arg2?: string): ResponseBuilder;
+    } | Headers, arg2?: string): ResponseBuilder;
     send(value?: BodyInit): void;
     write(value: BodyInit): void;
     end(): void;

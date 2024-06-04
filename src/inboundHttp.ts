@@ -22,7 +22,7 @@ export class ResponseBuilder {
     return this.statusCode;
   }
   set(
-    arg1: string | { [key: string]: string },
+    arg1: string | { [key: string]: string } | Headers,
     arg2?: string,
   ): ResponseBuilder {
     if (this.hasWrittenHeaders) {
@@ -30,6 +30,10 @@ export class ResponseBuilder {
     }
     if (typeof arg1 === 'string' && typeof arg2 === 'string') {
       this.headers.set(arg1, arg2);
+    } else if (typeof arg1 === 'object' && arg1 instanceof Headers) {
+      arg1.forEach((value, key) => {
+        this.headers.set(key, value);
+      });
     } else if (typeof arg1 === 'object' && arg2 === undefined) {
       for (const key in arg1) {
         this.headers.set(key, arg1[key]);
