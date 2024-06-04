@@ -18,6 +18,6 @@
         "webpack-cli": "^4.10.0"
     },
     "dependencies": {
-        "@fermyon/spin-sdk": "https://github.com/fermyon/spin-js-sdk#update_to_fetch_event"
+        "@fermyon/spin-sdk": "https://github.com/karthik2804/spin-js-sdk#update_to_fetch_event"
     }
 }
