@@ -10,7 +10,7 @@ This is an SDK for Javascript and Typescript based on [ComponentizeJS](https://g
 The templates can be installed with the following command:
 
 ```bash
-spin plugin install --update --git https://github.com/fermyon/spin-js-sdk --branch feat/sdk-v2
+spin templates install --update --git https://github.com/fermyon/spin-js-sdk --branch feat/sdk-v2
 ```
 
 ## Creating and building a new app
