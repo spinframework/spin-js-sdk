@@ -2,6 +2,8 @@ class SpinSdkPlugin {
     constructor() {
         this.externals = {
             "wasi:http/types@0.2.0": "wasi:http/types@0.2.0",
+            "wasi:cli/environment@0.2.0": "wasi:cli/environment@0.2.0",
+            "wasi:filesystem/preopens@0.2.0": "wasi:filesystem/preopens@0.2.0",
             "fermyon:spin/llm@2.0.0": "fermyon:spin/llm@2.0.0",
             "fermyon:spin/variables@2.0.0": "fermyon:spin/variables@2.0.0",
             "fermyon:spin/redis@2.0.0": "fermyon:spin/redis@2.0.0",

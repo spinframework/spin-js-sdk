@@ -1,5 +1,5 @@
 import { Router as _router } from 'itty-router';
-import { HttpRequest, ResponseBuilder } from './inboundHttp';
+import { ResponseBuilder } from './inboundHttp';
 
 declare type GenericTraps = {
   [key: string]: any;
@@ -27,12 +27,7 @@ interface RouteHandler {
 }
 
 interface SpinRouteHandler {
-  (
-    metadata: IRequest,
-    req: HttpRequest,
-    res: ResponseBuilder,
-    ...args: any
-  ): any;
+  (metadata: IRequest, req: Request, res: ResponseBuilder, ...args: any): any;
 }
 
 declare type RouteEntry = [string, RegExp, RouteHandler[]];
@@ -61,7 +56,7 @@ interface routerType {
   get(path: string, ...handlers: SpinRouteHandler[]): RouterType;
   handle(request: RequestLike, ...extras: any): Promise<any>;
   handleRequest(
-    request: HttpRequest,
+    request: Request,
     response: ResponseBuilder,
     ...extras: any
   ): Promise<any>;
@@ -93,7 +88,7 @@ function Router(): routerType {
       return _spinRouter.handle(request, ...extra);
     },
     handleRequest: function (
-      request: HttpRequest,
+      request: Request,
       response: ResponseBuilder,
       ...a: any
     ): Promise<any> {
@@ -134,7 +129,7 @@ function wrapRouteHandler(handlers: SpinRouteHandler[]): RouteHandler[] {
   for (let handler of handlers) {
     let fn = async (
       metadata: IRequest,
-      req: HttpRequest,
+      req: Request,
       res: ResponseBuilder,
       ...args: any
     ) => {

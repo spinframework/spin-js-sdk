@@ -1,6 +1,6 @@
 {
   "name": "@fermyon/spin-sdk",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -20,7 +20,7 @@
     "typescript": "^5.4.3"
   },
   "dependencies": {
-    "@bytecodealliance/componentize-js": "^0.8.3",
+    "@bytecodealliance/componentize-js": "https://github.com/fermyon/ComponentizeJS#use_fetch_event",
     "itty-router": "^3.0.12",
     "yargs": "^17.7.2"
   }

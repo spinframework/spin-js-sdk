@@ -7,7 +7,8 @@
         "jsx": "react",
         "skipLibCheck": true,
         "lib": [
-            "ES2015"
+            "ES2015",
+            "WebWorker"
         ],
         "allowJs": true,
         "strict": true,
