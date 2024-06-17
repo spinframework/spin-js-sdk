@@ -3,7 +3,7 @@ import { handler } from ".";
 
 //@ts-ignore
 addEventListener('fetch', (event: FetchEvent) => {
-    handleEvent(event)
+    handleEvent(event);
 });
 
 async function handleEvent(event: FetchEvent) {
@@ -16,7 +16,7 @@ async function handleEvent(event: FetchEvent) {
     //@ts-ignore
     event.respondWith(responsePromise);
 
-    let res = new ResponseBuilder(resolve)
+    let res = new ResponseBuilder(resolve);
 
     await handler(event.request, res)
 }

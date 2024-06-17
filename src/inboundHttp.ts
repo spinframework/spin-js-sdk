@@ -43,7 +43,7 @@ export class ResponseBuilder {
     }
     return this;
   }
-  send(value: BodyInit | null) {
+  send(value?: BodyInit) {
     if (this.hasSentResponse) {
       throw new Error('Response has already been sent');
     }
@@ -78,19 +78,18 @@ export class ResponseBuilder {
           status: this.statusCode,
         }),
       );
+      this.hasWrittenHeaders = true;
     }
     this.internalWriter!.write(contents);
-    this.hasWrittenHeaders = true;
     return;
   }
   end() {
     if (this.hasSentResponse) {
       throw new Error('Response has already been sent');
     }
+    // Not a streaming response, use 'send()' directly to send reponse.
     if (!this.internalWriter) {
-      throw new Error(
-        '`res.end()` called before `res.write()` - Consider using `res.send()` instead',
-      );
+      this.send();
     }
     // close stream
     this.internalWriter!.close();

@@ -1,6 +1,6 @@
 # Spin JS SDK
 
-This is an SDK for Javascript and Typescript based on [componentize-js](https://github.com/bytecodealliance/ComponentizeJS).
+This is an SDK for Javascript and Typescript based on [ComponentizeJS](https://github.com/bytecodealliance/ComponentizeJS).
 
 
 ## Installing the templates
@@ -13,7 +13,7 @@ The templates can be installed with the following command:
 spin plugin install --update --git https://github.com/fermyon/spin-js-sdk --branch feat/sdk-v2
 ```
 
-## Creating and Building a new app=
+## Creating and building a new app
 
 ```bash
 spin new -t http-ts hello-world -a
@@ -30,7 +30,7 @@ spin up
 
 ## Note: Installing the package
 
-Currently pre-release versionf are published on NPM and can be installed using the following command: 
+Currently pre-release versions are published on NPM and can be installed using the following command: 
 
 ```bash
 npm install @fermyon/spin-sdk@next
