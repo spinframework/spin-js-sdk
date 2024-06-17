@@ -6,7 +6,7 @@ export class ResponseBuilder {
   private hasWrittenHeaders: boolean = false;
   private hasSentResponse: boolean = false;
   private resolveFunction: ResolveFunction;
-  private streamController: any;
+  private internalWriter: WritableStreamDefaultWriter<any> | undefined;
 
   constructor(resolve: ResolveFunction) {
     this.resolveFunction = resolve;
@@ -43,59 +43,57 @@ export class ResponseBuilder {
     }
     return this;
   }
-  send(value: BodyInit = new Uint8Array()) {
+  send(value: BodyInit | null) {
     if (this.hasSentResponse) {
       throw new Error('Response has already been sent');
     }
+    // If headers have not already been sent, Set the value on the engine and
+    // let it take care of setting content type/length headers
     if (!this.hasWrittenHeaders) {
       this.resolveFunction(
         new Response(value, { headers: this.headers, status: this.statusCode }),
       );
       this.hasWrittenHeaders = true;
     } else {
-      this.write(value);
+      // If headers have been sent already, it is a streaming response, continue
+      // writing to Readable stream
+      if (value) {
+        this.write(value);
+      }
+      this.end();
     }
-    this.end();
     this.hasSentResponse = true;
   }
   write(value: BodyInit) {
     if (this.hasSentResponse) {
       throw new Error('Response has already been sent');
     }
+    let contents = convertToUint8Array(value);
     if (!this.hasWrittenHeaders) {
-      let temp;
-      let readableStream = new ReadableStream({
-        start(controller) {
-          controller.enqueue(convertToUint8Array(value));
-          let streamController = {
-            pump: (value: BodyInit) => {
-              controller.enqueue(convertToUint8Array(value));
-            },
-            close: () => {
-              controller.close();
-            },
-          };
-          temp = streamController;
-        },
-      });
-      this.streamController = temp;
+      let { readable, writable } = new TransformStream();
+      this.internalWriter = writable.getWriter();
       this.resolveFunction(
-        new Response(readableStream, {
+        new Response(readable, {
           headers: this.headers,
           status: this.statusCode,
         }),
       );
-      this.hasWrittenHeaders = true;
-      return;
     }
-    this.streamController.pump(convertToUint8Array(value));
+    this.internalWriter!.write(contents);
+    this.hasWrittenHeaders = true;
+    return;
   }
   end() {
     if (this.hasSentResponse) {
       throw new Error('Response has already been sent');
     }
+    if (!this.internalWriter) {
+      throw new Error(
+        '`res.end()` called before `res.write()` - Consider using `res.send()` instead',
+      );
+    }
     // close stream
-    this.streamController.close();
+    this.internalWriter!.close();
     this.hasSentResponse = true;
   }
 }
