@@ -13,6 +13,7 @@
     "fmt-check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
     "build": "tsc && cp -r src/types ./lib/"
   },
+  "sideEffects": false,
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
