@@ -1,0 +1,19 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["karthik2804 <karthik.ganeshram@fermyon.com>"]
+description = ""
+name = "s3"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/..."
+component = "s3"
+
+[component.s3]
+source = "target/s3.wasm"
+exclude_files = ["**/node_modules"]
+allowed_outbound_hosts = ["https://*:*"]
+[component.s3.build]
+command = "npm run build"
+watch = ["src/**/*.ts", "package.json"]
