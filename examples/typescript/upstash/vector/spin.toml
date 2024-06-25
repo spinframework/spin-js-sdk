@@ -1,0 +1,19 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["karthik2804 <karthik.ganeshram@fermyon.com>"]
+description = ""
+name = "vector"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/..."
+component = "vector"
+
+[component.vector]
+source = "target/vector.wasm"
+exclude_files = ["**/node_modules"]
+allowed_outbound_hosts = ["https://*:*"]
+[component.vector.build]
+command = "npm run build"
+watch = ["src/**/*.ts", "package.json"]

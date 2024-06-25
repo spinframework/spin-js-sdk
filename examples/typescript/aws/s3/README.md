@@ -43,7 +43,7 @@ npm install
    };
    ```
 
-### Building and Running the Example
+## Building and Running the Example
 
 ```bash
 spin build
