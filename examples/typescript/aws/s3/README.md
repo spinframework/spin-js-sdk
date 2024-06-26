@@ -1,6 +1,6 @@
 # AWS S3 Integration
 
-This example showcases how to connect to and send messages using Amazon SQS with the AWS SDK.
+This example showcases how to connect to and send messages using Amazon S3 with the AWS SDK.
 
 ## Prerequisites
 - `spin >=2.6.0`
@@ -18,15 +18,15 @@ npm install
 1. **Create an AWS Account**
    - If you don't have an AWS account, create one at [AWS](https://aws.amazon.com/).
 
-2. **Create an SQS Queue**
-   - Go to the [Amazon SQS Console](https://console.aws.amazon.com/sqs/).
-   - Create a new SQS queue and note down the Queue URL.
+2. **Create an S3 bucket**
+   - Go to the [Amazon S3 Console](https://console.aws.amazon.com/s3/).
+   - Create a new bucket and add files to it. Note down the bucket name.
 
 3. **Get AWS Credentials**
-   - Create or obtain your AWS credentials (Access Key ID, Secret Access Key, and optionally, a Session Token).
+   - Create or obtain your AWS credentials (Access Key ID, Secret Access Key, and a Session Token).
 
 4. **Configure the Code**
-   - Copy the region, access key ID, secret access key, session token, and queue URL into the code at `src/index.ts`.
+   - Copy the region, access key ID, secret access key, session token, and bucket name into the code at `src/index.ts`.
 
    ```typescript
    const client = new SQSClient({
