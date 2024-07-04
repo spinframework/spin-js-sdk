@@ -21,6 +21,7 @@
         "plugins/**/*",
         "lib/**/*",
         "bin/**/*",
-        "test/**/*"
+        "test/**/*",
+        "examples/**/*"
     ]
 }

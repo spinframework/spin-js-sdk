@@ -1,0 +1,19 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["karthik2804 <karthik.ganeshram@fermyon.com>"]
+description = ""
+name = "octokit-rest"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/..."
+component = "octokit-rest"
+
+[component.octokit-rest]
+source = "target/octokit-rest.wasm"
+exclude_files = ["**/node_modules"]
+allowed_outbound_hosts = ["https://api.github.com"]
+[component.octokit-rest.build]
+command = "npm run build"
+watch = ["src/**/*.ts", "package.json"]
