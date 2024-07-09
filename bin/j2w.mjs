@@ -30,7 +30,6 @@ const args = yargs(hideBin(process.argv))
     .option('trigger-type', {
         alias: '-n',
         describe: "Spin trigger to target",
-        choices: validSpinWorlds,
         demandOption: true
     })
     .argv;
@@ -50,6 +49,7 @@ const { component } = await componentize(source, {
     witPath: resolve(args.witPath),
     worldName: args.triggerType,
     disableFeatures: [],
+    enableFeatures: ["http"],
 });
 
 await writeFile(args.output, component);

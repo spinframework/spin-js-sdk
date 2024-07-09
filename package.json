@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "fmt": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "fmt-check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
-    "build": "tsc && cp -r src/types ./lib/"
+    "build": "tsc && cp -r src/types ./lib/",
+    "postinstall": "knitwit-postinstall"
   },
   "sideEffects": false,
   "author": "",
@@ -21,8 +22,16 @@
     "typescript": "^5.4.3"
   },
   "dependencies": {
-    "@bytecodealliance/componentize-js": "https://github.com/fermyon/ComponentizeJS#use_fetch_event",
+    "@bytecodealliance/componentize-js": "^0.10.1",
     "itty-router": "^3.0.12",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "@fermyon/knitwit": "https://github.com/fermyon/knitwit"
+  },
+  "config": {
+    "wit": "test",
+    "knitwit": {
+      "witPath": "../../bin/wit",
+      "world": "spin-imports"
+    }
   }
 }
