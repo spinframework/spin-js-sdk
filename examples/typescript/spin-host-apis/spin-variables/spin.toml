@@ -1,0 +1,20 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["karthik2804 <karthik.ganeshram@fermyon.com>"]
+description = ""
+name = "spin-variables"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/..."
+component = "spin-variables"
+
+[component.spin-variables]
+source = "target/spin-variables.wasm"
+exclude_files = ["**/node_modules"]
+[component.spin-variables.variables]
+my_variable = "Hello, World!"
+[component.spin-variables.build]
+command = "npm run build"
+watch = ["src/**/*.ts", "package.json"]
