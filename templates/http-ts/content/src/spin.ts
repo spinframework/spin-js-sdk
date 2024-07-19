@@ -19,13 +19,15 @@ async function handleEvent(event: FetchEvent) {
     let res = new ResponseBuilder(resolve);
 
     try {
-        // In case you want to do sonme work after the response is sent
+        // In case you want to do some work after the response is sent
         // uncomment the line below and comment out the line with 
-        // `await handler(event.request, res)
+        // await handler(event.request, res)
         // event.waitUntil(handler(event.request, res))
         await handler(event.request, res)
     } catch (e: any) {
-        res.status(500)
-        res.send(`error in handler: ${e}`)
+        if (res.getStatus() == 200) {
+            res.status(500);
+        }
+        res.send(`error in handler: ${e}`);
     }
 }
