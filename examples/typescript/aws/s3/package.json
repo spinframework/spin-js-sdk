@@ -19,6 +19,6 @@
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.600.0",
-        "@fermyon/spin-sdk": "^2.0.0-alpha.2"
+        "@fermyon/spin-sdk": "^2.0.0-alpha.3"
     }
 }
