@@ -1,6 +1,6 @@
 {
   "name": "@fermyon/spin-sdk",
-  "version": "2.0.0-alpha.2",
+  "version": "2.0.0-alpha.3",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -30,6 +30,11 @@
     "typedoc-plugin-missing-exports": "^3.0.0",
     "@fermyon/knitwit": "https://github.com/fermyon/knitwit"
   },
+  "files": [
+    "lib",
+    "bin",
+    "plugins"
+  ],
   "config": {
     "wit": "test",
     "knitwit": {

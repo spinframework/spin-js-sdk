@@ -18,6 +18,6 @@
         "webpack-cli": "^4.10.0"
     },
     "dependencies": {
-        "@fermyon/spin-sdk": "^2.0.0-alpha.2"
+        "@fermyon/spin-sdk": "^2.0.0-alpha.3"
     }
 }
