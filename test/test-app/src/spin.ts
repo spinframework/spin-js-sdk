@@ -20,9 +20,3 @@ async function handleEvent(event: FetchEvent) {
 
     await handler(event.request, res)
 }
-
-// Keep wizer happy during pre-init. Should go away
-// oncehttps://github.com/bytecodealliance/ComponentizeJS/issues/114 is resolved
-export const incomingHandler = {
-    handle() { }
-}
