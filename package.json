@@ -12,6 +12,7 @@
     "fmt": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "fmt-check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
     "build": "tsc && cp -r src/types ./lib/",
+    "build-docs": "typedoc  --plugin typedoc-plugin-missing-exports src/index.ts --out ./docs --excludeExternals --readme none",
     "postinstall": "knitwit-postinstall"
   },
   "sideEffects": false,
@@ -19,12 +20,14 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "prettier": "^3.2.5",
+    "typedoc": "^0.26.4",
     "typescript": "^5.4.3"
   },
   "dependencies": {
     "@bytecodealliance/componentize-js": "^0.10.1",
     "itty-router": "^3.0.12",
     "yargs": "^17.7.2",
+    "typedoc-plugin-missing-exports": "^3.0.0",
     "@fermyon/knitwit": "https://github.com/fermyon/knitwit"
   },
   "config": {

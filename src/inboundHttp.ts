@@ -1,5 +1,11 @@
+/**
+ * Type for the resolve function that handles sending the final Response.
+ */
 type ResolveFunction = (value: Response | PromiseLike<Response>) => void;
 
+/**
+ * Class for building HTTP responses.
+ */
 export class ResponseBuilder {
   headers: Headers = new Headers();
   statusCode: number = 200;
@@ -11,6 +17,12 @@ export class ResponseBuilder {
   constructor(resolve: ResolveFunction) {
     this.resolveFunction = resolve;
   }
+  /**
+   * Sets the HTTP status code for the response.
+   * @param code - The HTTP status code to set.
+   * @returns The current ResponseBuilder instance for chaining.
+   * @throws Error if headers have already been sent.
+   */
   status(code: number): ResponseBuilder {
     if (this.hasWrittenHeaders) {
       throw new Error('Headers and Status already sent');
@@ -18,9 +30,20 @@ export class ResponseBuilder {
     this.statusCode = code;
     return this;
   }
+  /**
+   * Gets the currently set HTTP status code.
+   * @returns The HTTP status code.
+   */
   getStatus(): number {
     return this.statusCode;
   }
+  /**
+   * Sets response headers.
+   * @param arg1 - Header name, object containing headers, or Headers instance.
+   * @param arg2 - Optional header value (if arg1 is a string).
+   * @returns The current ResponseBuilder instance for chaining.
+   * @throws Error if headers have already been sent or if arguments are invalid.
+   */
   set(
     arg1: string | { [key: string]: string } | Headers,
     arg2?: string,
@@ -43,6 +66,11 @@ export class ResponseBuilder {
     }
     return this;
   }
+  /**
+   * Sends the HTTP response.
+   * @param value - Optional body content to send with the response.
+   * @throws Error if the response has already been sent.
+   */
   send(value?: BodyInit) {
     if (this.hasSentResponse) {
       throw new Error('Response has already been sent');
@@ -64,6 +92,11 @@ export class ResponseBuilder {
     }
     this.hasSentResponse = true;
   }
+  /**
+   * Writes data to a streaming response.
+   * @param value - The data to write to the response.
+   * @throws Error if the response has already been sent.
+   */
   write(value: BodyInit) {
     if (this.hasSentResponse) {
       throw new Error('Response has already been sent');
@@ -83,6 +116,11 @@ export class ResponseBuilder {
     this.internalWriter!.write(contents);
     return;
   }
+  /**
+   * Ends a streaming response by closing the writer.
+   * If not already streaming, it sends the response.
+   * @throws Error if the response has already been sent.
+   */
   end() {
     if (this.hasSentResponse) {
       throw new Error('Response has already been sent');

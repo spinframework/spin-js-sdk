@@ -67,7 +67,10 @@ interface routerType {
   routes: RouteEntry[];
 }
 
-/** @internal */
+/**
+ * Creates a new router instance.
+ * @returns {routerType} The router instance.
+ */
 function Router(): routerType {
   let _spinRouter = _router();
 

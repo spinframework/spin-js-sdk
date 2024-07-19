@@ -22,6 +22,7 @@
         "lib/**/*",
         "bin/**/*",
         "test/**/*",
-        "examples/**/*"
+        "examples/**/*",
+        "docs/**/*",
     ]
 }
