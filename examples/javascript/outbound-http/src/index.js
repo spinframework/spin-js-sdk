@@ -6,8 +6,6 @@ export async function handleRequest(request) {
 
     const physicsFactBody = decoder.decode(await physicsFact.arrayBuffer() || new Uint8Array())
 
-    const env = JSON.stringify(process.env)
-
     const body = `Here's a physics fact: ${physicsFactBody}\n`
 
     return {
