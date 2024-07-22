@@ -1,0 +1,19 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["karthik2804 <karthik.ganeshram@fermyon.com>"]
+description = ""
+name = "spin-redis"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/..."
+component = "spin-redis"
+
+[component.spin-redis]
+source = "target/spin-redis.wasm"
+exclude_files = ["**/node_modules"]
+allowed_hosts = ["redis://*:*"]
+[component.spin-redis.build]
+command = "npm run build"
+watch = ["src/**/*.ts", "package.json"]

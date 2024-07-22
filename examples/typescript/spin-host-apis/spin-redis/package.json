@@ -1,10 +1,10 @@
 {
-    "name": "spin-variables",
+    "name": "spin-redis",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build": "npx webpack --mode=production && npx mkdirp target && npx j2w -i dist.js -n spin-http -o target/spin-variables.wasm",
+        "build": "npx webpack --mode=production && npx mkdirp target && npx j2w -i dist.js -n spin-http -o target/spin-redis.wasm",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
