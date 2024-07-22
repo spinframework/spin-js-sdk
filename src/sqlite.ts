@@ -25,6 +25,23 @@ export type ValueText = { tag: 'text'; val: string };
 export type ValueBlob = { tag: 'blob'; val: Uint8Array };
 export type ValueNull = { tag: 'null' };
 
+export interface ErrorNoSuchDatabase {
+  tag: 'no-such-database';
+}
+export interface ErrorAccessDenied {
+  tag: 'access-denied';
+}
+export interface ErrorInvalidConnection {
+  tag: 'invalid-connection';
+}
+export interface ErrorDatabaseFull {
+  tag: 'database-full';
+}
+export interface ErrorIo {
+  tag: 'io';
+  val: string;
+}
+
 /**
  * Interface representing the result of an SQLite query.
  * @interface SpinSqliteResult
@@ -56,6 +73,9 @@ export interface SqliteConnection {
    * Executes an SQLite statement with given parameters and returns the result.
    * @param {string} statement - The SQL statement to execute.
    * @param {ParameterValue[]} parameters - The parameters for the SQL statement.
+   * @throws {@link ErrorInvalidConnection} The provided connection is not valid.
+   * @throws {@link ErrorDatabaseFull} The database has reached its capacity.
+   * @throws {@link ErrorIo} Some implementation-specific error has occurred (e.g. I/O).
    * @returns {SqliteResult}
    */
   execute: (statement: string, parameters: ParameterValue[]) => SqliteResult;
@@ -93,6 +113,9 @@ function createSqliteConnection(
  * Opens a connection to the SQLite database with the specified label.
  * @param {string} label - The label of the database to connect to.
  * @returns {SqliteConnection} The SQLite connection object.
+ * @throws {@link ErrorNoSuchDatabase} The host does not recognize the database name requested.
+ * @throws {@link ErrorAccessDenied} The requesting component does not have access to the specified database (which may or may not exist).
+ * @throws {@link ErrorIo} Some implementation-specific error has occurred (e.g. I/O).
  */
 export function open(label: string): SqliteConnection {
   return createSqliteConnection(spinSqlite.Connection.open(label));
@@ -101,6 +124,9 @@ export function open(label: string): SqliteConnection {
 /**
  * Opens a connection to the default SQLite database.
  * @returns {SqliteConnection} The SQLite connection object.
+ * @throws {@link ErrorNoSuchDatabase} The host does not recognize the database name requested.
+ * @throws {@link ErrorAccessDenied} The requesting component does not have access to the specified database (which may or may not exist).
+ * @throws {@link ErrorIo} Some implementation-specific error has occurred (e.g. I/O).
  */
 export function openDefault(): SqliteConnection {
   return createSqliteConnection(spinSqlite.Connection.open('default'));

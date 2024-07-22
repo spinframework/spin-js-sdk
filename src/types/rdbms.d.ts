@@ -106,3 +106,24 @@ export enum RdbmsDataType {
   RdbmsBinary = 'binary',
   RdbmsOther = 'other',
 }
+
+export interface ErrorConnectionFailed {
+  tag: 'connection-failed';
+  val: string;
+}
+export interface ErrorBadParameter {
+  tag: 'bad-parameter';
+  val: string;
+}
+export interface ErrorQueryFailed {
+  tag: 'query-failed';
+  val: string;
+}
+export interface ErrorValueConversionFailed {
+  tag: 'value-conversion-failed';
+  val: string;
+}
+export interface ErrorOther {
+  tag: 'other';
+  val: string;
+}

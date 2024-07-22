@@ -88,6 +88,9 @@ export interface EmbeddingResult {
  * @param {InferencingModels | string} model - The model to use for inferencing.
  * @param {string} prompt - The prompt to use for inferencing.
  * @param {InferencingOptions} [options] - Optional settings for inferencing.
+ * @throws {model-not-supported} The specified model is not supported.
+ * @throws {runtime-error} A runtime error has occurred.
+ * @throws {invalid-input} The provided input is invalid.
  * @returns {InferenceResult} The result of the inference.
  */
 export function infer(
@@ -110,6 +113,9 @@ export function infer(
  * Generates embeddings for the given text using the specified model.
  * @param {EmbeddingModels | string} model - The model to use for generating embeddings.
  * @param {Array<string>} text - The text to generate embeddings for.
+ * @throws {@link ErrorModelNotSupported} The specified model is not supported.
+ * @throws {@link ErrorRuntimeError} A runtime error has occurred.
+ * @throws {@link ErrorInvalidInput} The provided input is invalid.
  * @returns {EmbeddingResult} The result of generating embeddings.
  */
 export const generateEmbeddings = (
@@ -118,3 +124,15 @@ export const generateEmbeddings = (
 ): EmbeddingResult => {
   return llmGenerateEmbeddings(model, text);
 };
+
+export interface ErrorModelNotSupported {
+  tag: 'model-not-supported';
+}
+export interface ErrorRuntimeError {
+  tag: 'runtime-error';
+  val: string;
+}
+export interface ErrorInvalidInput {
+  tag: 'invalid-input';
+  val: string;
+}

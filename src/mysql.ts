@@ -6,6 +6,13 @@ import {
   RdbmsRowSet,
   SpinRdbmsRowSet,
 } from './types/rdbms';
+export {
+  ErrorConnectionFailed,
+  ErrorBadParameter,
+  ErrorQueryFailed,
+  ErrorValueConversionFailed,
+  ErrorOther,
+} from './types/rdbms';
 import { convertRdbmsToWitTypes } from './rdbmsHelper';
 
 /**
@@ -13,7 +20,27 @@ import { convertRdbmsToWitTypes } from './rdbmsHelper';
  * @interface MysqlConnection
  */
 export interface MysqlConnection {
+  /**
+   * Executes a statement on the database with the specified parameters.
+   * @param {string} statement - The SQL statement to execute.
+   * @param {RdbmsParameterValue[]} params - The parameters for the SQL statement.
+   * @throws {@link ErrorBadParameter} A bad parameter was provided.
+   * @throws {@link ErrorQueryFailed} The query execution failed.
+   * @throws {@link ErrorValueConversionFailed} Value conversion failed.
+   * @throws {@link ErrorOther} Some other error occurred.
+   * @returns {number} The number of rows affected by the execution.
+   */
   query: (statement: string, params: RdbmsParameterValue[]) => RdbmsRowSet;
+  /**
+   * Executes a statement on the database with the specified parameters.
+   * @param {string} statement - The SQL statement to execute.
+   * @param {RdbmsParameterValue[]} params - The parameters for the SQL statement.
+   * @throws {@link ErrorBadParameter} A bad parameter was provided.
+   * @throws {@link ErrorQueryFailed} The query execution failed.
+   * @throws {@link ErrorValueConversionFailed} Value conversion failed.
+   * @throws {@link ErrorOther} Some other error occurred.
+   * @returns {number} The number of rows affected by the execution.
+   */
   execute: (statement: string, params: RdbmsParameterValue[]) => number;
 }
 
@@ -48,6 +75,11 @@ function createMysqlConnection(
 /**
  * Opens a MySQL connection to the specified address.
  * @param {string} address - The address of the MySQL server.
+ * @throws {@link ErrorConnectionFailed} Connection failure, e.g., address not allowed.
+ * @throws {@link ErrorBadParameter} A bad parameter was provided.
+ * @throws {@link ErrorQueryFailed} The query execution failed.
+ * @throws {@link ErrorValueConversionFailed} Value conversion failed.
+ * @throws {@link ErrorOther} Some other error occurred.
  * @returns {MysqlConnection} The MySQL connection object.
  */
 export function open(address: string): MysqlConnection {

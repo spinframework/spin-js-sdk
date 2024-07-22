@@ -24,6 +24,7 @@ export interface MqttConnection {
    * @param topic - The topic to publish the message to.
    * @param payload - The message payload as a Uint8Array.
    * @param qos - The Quality of Service level for message delivery.
+   * @throws {@link ErrorOther} Some other error occurred.
    */
   publish: (topic: string, payload: Uint8Array, qos: QoS) => void;
 }
@@ -34,6 +35,10 @@ export interface MqttConnection {
  * @param {string} username - The username for the MQTT connection.
  * @param {string} password - The password for the MQTT connection.
  * @param {number} keepAliveIntervalInSecs - The keep-alive interval in seconds.
+ * @throws {@link ErrorInvalidAddress} An invalid address string.
+ * @throws {@link ErrorTooManyConnections} There are too many open connections.
+ * @throws {@link ErrorConnectionFailed} Connection failure, e.g., address not allowed.
+ * @throws {@link ErrorOther} Some other error occurred.
  * @returns {MqttConnection} The MQTT connection object.
  */
 export function open(
@@ -48,4 +53,27 @@ export function open(
     password,
     keepAliveIntervalInSecs,
   );
+}
+export interface ErrorInvalidAddress {
+  tag: 'invalid-address';
+}
+/**
+ * There are too many open connections
+ */
+export interface ErrorTooManyConnections {
+  tag: 'too-many-connections';
+}
+/**
+ * Connection failure e.g. address not allowed.
+ */
+export interface ErrorConnectionFailed {
+  tag: 'connection-failed';
+  val: string;
+}
+/**
+ * Some other error occurred
+ */
+export interface ErrorOther {
+  tag: 'other';
+  val: string;
 }
