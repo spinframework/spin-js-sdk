@@ -29,17 +29,17 @@ npm install
    - Copy the region, access key ID, secret access key, session token, and bucket name into the code at `src/index.ts`.
 
    ```typescript
-   const client = new SQSClient({
-       region: "<region>",
+   const client = new S3Client({
+       region: "<>",
        credentials: {
-           accessKeyId: "<accessKeyId>",
-           secretAccessKey: "<secretAccessKey>",
-           sessionToken: "<sessionToken>"
+           accessKeyId: "<>>",
+           secretAccessKey: "<>",
+           sessionToken: "<>"
        },
    });
 
    const params = {
-      Bucket: "<bucketName>"
+       Bucket: "<>"
    };
    ```
 
@@ -50,4 +50,4 @@ spin build
 spin up
 ```
 
-Use e.g. curl -v http://127.0.0.1:3000/ to test the endpoint.
+Use e.g. `curl -v http://127.0.0.1:3000/` to test the endpoint.

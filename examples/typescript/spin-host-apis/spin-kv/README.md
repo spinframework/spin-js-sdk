@@ -11,7 +11,7 @@ $ npm install
 $ spin build --up
 ```
 
-the mapping between the request method and KV operation is as follows:
+The mapping between the request method and KV operation is as follows:
 ```bash
 GET -> kv.get(request.url)
 POST -> kv.set(request.uri, body)
@@ -19,10 +19,10 @@ HEAD -> kv.exists(request.uri)
 DELETE -> kv.delete(request.uri)
 ```
 
-The application can now receive requests on http://localhost:3000:
+The application can now receive requests on `http://localhost:3000`:
 
 ```bash
-$ curl -i -X POST -d "ok!" localhost:3000/test
+$ curl -i -X POST -d "ok" localhost:3000/test
 HTTP/1.1 200 OK
 content-length: 0
 date: Tue, 25 Apr 2023 14:25:43 GMT
