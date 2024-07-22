@@ -25,13 +25,13 @@ npm install
    - Copy the region, access key ID, secret access key, into the code at `src/index.ts`.
 
    ```typescript
-   const client = new SQSClient({
-        endpoint: "<backblaze b2 endpoint"
-        region: "<region>",
-        credentials: {
-            accessKeyId: "<accessKeyId>",
-            secretAccessKey: "<secretAccessKey>",
-        },
+   const s3 = new S3Client({
+     endpoint: '<Backblaze b2 endpoint>',
+     region: '<>',
+     credentials: {
+       accessKeyId: '<>',
+       secretAccessKey: '<>',
+     },
    });
    ```
 
@@ -42,4 +42,4 @@ spin build
 spin up
 ```
 
-Use e.g. curl -v http://127.0.0.1:3000/ to test the endpoint.
+Use e.g. `curl -v http://127.0.0.1:3000/` to test the endpoint.
