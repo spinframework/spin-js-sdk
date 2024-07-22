@@ -1,9 +1,37 @@
 //@ts-ignore
 import * as spinRedis from 'fermyon:spin/redis@2.0.0';
 
-export type payload = Uint8Array;
-export type redisParameter = number | Uint8Array;
-export type redisResult = number | Uint8Array | null | string;
+export type Payload = Uint8Array;
+export type RedisParameter = RedisParameterInt64 | RedisParameterBinary;
+export interface RedisParameterInt64 {
+  tag: 'int64';
+  val: bigint;
+}
+export interface RedisParameterBinary {
+  tag: 'binary';
+  val: Payload;
+}
+
+export type RedisResult =
+  | RedisResultNil
+  | RedisResultStatus
+  | RedisResultInt64
+  | RedisResultBinary;
+export interface RedisResultNil {
+  tag: 'nil';
+}
+export interface RedisResultStatus {
+  tag: 'status';
+  val: string;
+}
+export interface RedisResultInt64 {
+  tag: 'int64';
+  val: bigint;
+}
+export interface RedisResultBinary {
+  tag: 'binary';
+  val: Payload;
+}
 
 /**
  * Interface representing a Redis connection with various methods for interacting with Redis.
@@ -16,29 +44,29 @@ export interface RedisConnection {
    * @param {payload} payload - The message payload.
    * @returns {void}
    */
-  publish: (channel: string, payload: payload) => void;
+  publish: (channel: string, payload: Payload) => void;
 
   /**
    * Get a value for the given key. Returns null if the key does not exist.
    * @param {string} key - The key to retrieve the value for.
-   * @returns {payload | null}
+   * @returns {Payload | null}
    */
-  get: (key: string) => payload | null;
+  get: (key: string) => Payload | undefined;
 
   /**
    * Set a value for the given key.
    * @param {string} key - The key to set the value for.
-   * @param {payload} value - The value to set.
+   * @param {Payload} value - The value to set.
    * @returns {void}
    */
-  set: (key: string, value: payload) => void;
+  set: (key: string, value: Payload) => void;
 
   /**
    * Increment the value of a key.
    * @param {string} key - The key to increment.
    * @returns {number}
    */
-  incr: (key: string) => number;
+  incr: (key: string) => bigint;
 
   /**
    * Deletes the given key.
@@ -73,10 +101,10 @@ export interface RedisConnection {
   /**
    * Execute an arbitrary Redis command and receive the result.
    * @param {string} command - The Redis command to execute.
-   * @param {redisParameter[]} args - The arguments for the Redis command.
-   * @returns {redisResult[]}
+   * @param {RedisParameter[]} args - The arguments for the Redis command.
+   * @returns {RedisResult[]}
    */
-  execute: (command: string, args: redisParameter[]) => redisResult[];
+  execute: (command: string, args: RedisParameter[]) => RedisResult[];
 }
 
 /**
