@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "noImplicitAny": true,
+        "module": "es6",
+        "target": "es2020",
+        "jsx": "react",
+        "skipLibCheck": true,
+        "lib": [
+            "ES2015",
+            "WebWorker"
+        ],
+        "allowJs": true,
+        "strict": true,
+        "noImplicitReturns": true,
+        "moduleResolution": "node"
+    }
+}

@@ -1,0 +1,19 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["karthik2804 <karthik.ganeshram@fermyon.com>"]
+description = ""
+name = "spin-mqtt"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/..."
+component = "spin-mqtt"
+
+[component.spin-mqtt]
+source = "target/spin-mqtt.wasm"
+exclude_files = ["**/node_modules"]
+allowed_outbound_hosts = ["mqtt://*:*"]
+[component.spin-mqtt.build]
+command = "npm run build"
+watch = ["src/**/*.ts", "package.json"]
