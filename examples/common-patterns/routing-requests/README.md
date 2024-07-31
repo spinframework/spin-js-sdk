@@ -1,6 +1,6 @@
-# Using Outbound HTTP
+# Using the Router
 
-This example showcases making an outbound HTTP request and returning the response.
+This example showcases utilizing the `router` to respond to requests on different paths. 
 
 ## Install Dependencies
 Install the necessary npm packages:
@@ -16,4 +16,11 @@ spin build
 spin up
 ```
 
-Use e.g. `curl -v http://127.0.0.1:3000/` to test the endpoint.
+To test the different routes, run the following commands:
+
+```bash
+curl localhost:3000/
+# Hello from default route
+curl localhost:3000/home/123
+# Hello from home route with id: 123
+```

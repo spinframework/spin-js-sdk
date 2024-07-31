@@ -25,7 +25,7 @@
     "typescript": "^5.4.3"
   },
   "dependencies": {
-    "@bytecodealliance/componentize-js": "^0.10.1",
+    "@bytecodealliance/componentize-js": "^0.10.2",
     "itty-router": "^3.0.12",
     "yargs": "^17.7.2",
     "typedoc-plugin-missing-exports": "^3.0.0",
@@ -37,7 +37,6 @@
     "plugins"
   ],
   "config": {
-    "wit": "test",
     "knitwit": {
       "witPath": "../../bin/wit",
       "world": "spin-imports"
