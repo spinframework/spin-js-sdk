@@ -2,9 +2,9 @@ name: Test
 
 on:
   push:
-    branches: [ feat/sdk-v2 ]
+    branches: [ main ]
   pull_request:
-    branches: [ feat/sdk-v2 ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -29,6 +29,8 @@ jobs:
 
         - name: Setup `spin`
           uses: fermyon/actions/spin/setup@v1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
 
         - name: Run Test
           shell: bash
@@ -52,6 +54,8 @@ jobs:
 
         - name: Setup `spin`
           uses: fermyon/actions/spin/setup@v1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
               
         - name: Install templates
           run: spin templates install --dir .
