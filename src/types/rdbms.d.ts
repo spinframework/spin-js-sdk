@@ -40,7 +40,7 @@ export type RdbmsParameterValue =
 
 export interface RdbmsColumn {
   name: string;
-  dataType: RdbmsDataType[];
+  dataType: RdbmsDataType;
 }
 
 export type RdbmsRow = RdbmsDbValue[];
