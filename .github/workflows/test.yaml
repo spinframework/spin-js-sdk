@@ -1,0 +1,74 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  lint_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+        - uses: actions/checkout@v3
+
+        - name: Use Node.js 20
+          uses: actions/setup-node@v3
+          with:
+            node-version: 20
+
+        - name: Install depencies
+          shell: bash
+          run: npm install
+
+        - name: Run prettier check
+          shell: bash
+          run: npm run fmt-check
+
+        - name: Setup `spin`
+          uses: fermyon/actions/spin/setup@v1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Run Test
+          shell: bash
+          run: |
+            cd test
+            ./test.sh
+  
+  test_template:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+        - uses: actions/checkout@v3
+
+        - name: Use Node.js 20
+          uses: actions/setup-node@v3
+          with:
+            node-version: 20
+
+        - name: Setup `spin`
+          uses: fermyon/actions/spin/setup@v1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+              
+        - name: Install templates
+          run: spin templates install --dir .
+
+        - name: Create new project
+          run: spin new -t http-ts test-project -a
+
+        - name: Install dependencies of the test project
+          run: |
+            cd test-project
+            npm install
+        
+        - name: Build the application
+          run: |
+            cd test-project
+            npm run build
