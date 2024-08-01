@@ -1,6 +1,6 @@
 manifest_version = "1"
 id = "http-js"
-description = "HTTP request handler using Typescript"
+description = "HTTP request handler using JavaScript"
 
 [add_component]
 skip_files = ["spin.toml"]
