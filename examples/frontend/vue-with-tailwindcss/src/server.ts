@@ -1,17 +1,30 @@
-import { HttpHandler, HttpRequest, ResponseBuilder } from "@fermyon/spin-sdk"
+import { ResponseBuilder } from "@fermyon/spin-sdk"
 import { renderToString } from "@vue/server-renderer"
 import { createSSRApp } from "vue";
 import { initRouter } from "./router";
 import App from "./App.vue";
 
-class Handler extends HttpHandler {
-    async handleRequest(req: HttpRequest, res: ResponseBuilder) {
-        return handleRequest(req, res)
-    }
+//@ts-ignore
+addEventListener('fetch', (event: FetchEvent) => {
+    handleEvent(event);
+});
+
+async function handleEvent(event: FetchEvent) {
+    let resolve: any, reject: any;
+    let responsePromise = new Promise(async (res, rej) => {
+        resolve = res;
+        reject = rej;
+    });
+    //@ts-ignore
+    event.respondWith(responsePromise);
+
+    let res = new ResponseBuilder(resolve);
+
+    await handleRequest(event.request, res);
 }
 
-export default async function handleRequest(req: HttpRequest, res: ResponseBuilder) {
-    let path = "/" + req.uri.split("/").pop() || "/";
+export default async function handleRequest(req: Request, res: ResponseBuilder) {
+    let path = "/" + req.url.split("/").pop() || "/";
 
     const template = `<!DOCTYPE html>
 <html lang="en">
@@ -26,8 +39,7 @@ export default async function handleRequest(req: HttpRequest, res: ResponseBuild
     <div id="app"><!--app-html--></div>
     <script type="module" src="/static/client.js"></script>
 </body>
-</html>
-`
+</html>`
 
     try {
         const app = createSSRApp(App)
@@ -39,10 +51,9 @@ export default async function handleRequest(req: HttpRequest, res: ResponseBuild
         res.set('Content-Type', 'text/html')
         const html = template.replace("<!--app-html-->", rendered)
         res.send(html)
-    } catch (e) {
+    } catch (e: any) {
         console.log(e)
         res.status(500).send("Internal Server Error")
     }
 }
 
-export const incomingHandler = new Handler()
