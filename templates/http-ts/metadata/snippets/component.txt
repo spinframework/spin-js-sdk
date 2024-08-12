@@ -1,12 +1,11 @@
-manifest_version = "1"
-id = "http-js"
-description = "HTTP request handler using Javascript"
+[[trigger.http]]
+route = "{{http-path}}"
+component = "{{project-name | kebab_case}}"
 
-[add_component]
-skip_files = ["spin.toml"]
-[add_component.snippets]
-component = "component.txt"
+[component.{{project-name | kebab_case}}]
+source = "{{ output-path }}/target/{{project-name | kebab_case}}.wasm"
+allowed_outbound_hosts = []
 
-[parameters]
-project-description = { type = "string",  prompt = "Description", default = "" }
-http-path = { type = "string", prompt = "HTTP path", default = "/...", pattern = "^/\\S*$" }
+[component.{{project-name | kebab_case}}.build]
+command = "npm run build"
+workdir = "{{ output-path }}"
