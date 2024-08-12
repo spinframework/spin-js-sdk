@@ -67,8 +67,15 @@ jobs:
           run: |
             cd test-project
             npm install
+          
+        - name: Add new component to project
+          run: |
+            cd test-project
+            spin add -t http-ts new-component -a
+            cd new-component
+            npm install
         
         - name: Build the application
           run: |
             cd test-project
-            npm run build
+            spin build
