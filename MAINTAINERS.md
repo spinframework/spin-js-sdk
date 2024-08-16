@@ -4,12 +4,12 @@
 
 | GitHub Username | Name |
 | --- | --- |
-| **dicej** | Joel Dice |
-| **karthik2804** | Karthik Ganeshram |
-| **radu-matei** | Radu Matei |
-| **ThorstenHans** | Thorsten Hans |
-| **tschneidereit** | Till Schneidereit |
-| **vdice** | Vaughn Dice |
+| Joel Dice | dicej |
+| Karthik Ganeshram | karthik2804 |
+| Radu Matei | radu-matei |
+| Thorsten Hans | ThorstenHans |
+| Till Schneidereit | tschneidereit |
+| Vaughn Dice | vdice |
 
 ## Emeritus Maintainers
 
