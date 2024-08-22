@@ -2,7 +2,7 @@
 
 This is an SDK for Javascript and Typescript based on [ComponentizeJS](https://github.com/bytecodealliance/ComponentizeJS).
 
-Note that this SDK supersedes an earlier, experimental version, which may be found in the [sdk-v1](https://github.com/fermyon/spin-python-sdk/tree/old-sdk) branch.
+Note that this SDK supersedes an earlier, experimental version, which may be found in the [sdk-v1](https://github.com/fermyon/spin-js-sdk/tree/old-sdk) branch.
 
 ## [API Documentation](https://fermyon.github.io/spin-js-sdk)
 
@@ -31,7 +31,7 @@ cd hello-world
 Install the dependencies and build the app:
 ```bash
 npm install
-spin buiild
+spin build
 ```
 
 ## Running the app
@@ -51,10 +51,10 @@ If all goes well, you should see something like:
 ```
 HTTP/1.1 200 OK
 content-type: text/plain
-content-length: 18
+content-length: 14
 date: Thu, 11 Apr 2024 17:42:31 GMT
 
-Hello from Python!
+hello universe
 ```
 
 Please file an issue if you have any trouble.
