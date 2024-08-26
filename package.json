@@ -13,7 +13,7 @@
     "fmt-check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
     "build": "tsc && cp -r src/types ./lib/",
     "build-docs": "typedoc  --plugin typedoc-plugin-missing-exports src/index.ts --out ./docs --excludeExternals --readme none",
-    "postinstall": "knitwit-postinstall",
+    "postprepare": "knitwit-postinstall",
     "fmt-examples": "prettier --write \"examples/**/*.{ts,tsx,js,jsx}\" --ignore-patterm \"node_modules\""
   },
   "sideEffects": false,
