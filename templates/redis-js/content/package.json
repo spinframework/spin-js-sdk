@@ -1,0 +1,23 @@
+{
+    "name": "{{project-name | kebab_case}}",
+    "version": "1.0.0",
+    "description": "{{project-description}}",
+    "main": "index.js",
+    "scripts": {
+        "build": "npx webpack --mode=production && npx mkdirp target && npx j2w -i dist.js -d combined-wit -n combined -o target/{{project-name | kebab_case}}.wasm",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "postinstall": "knitwit"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "mkdirp": "^3.0.1",
+        "webpack": "^5.74.0",
+        "webpack-cli": "^4.10.0",
+        "@fermyon/knitwit": "https://github.com/fermyon/knitwit"
+    },
+    "dependencies": {
+        "@fermyon/spin-sdk": "^2.0.0"
+    }
+}
