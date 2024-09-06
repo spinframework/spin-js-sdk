@@ -14,6 +14,7 @@ skip_parameters = ["redis-address"]
 skip_snippets = ["application_trigger"]
 
 [parameters]
-project-description = { type = "string",  prompt = "Description", default = "" }
+project-description = { type = "string", prompt = "Description", default = "" }
 redis-address = { type = "string", prompt = "Redis address", default = "redis://localhost:6379" }
 redis-channel = { type = "string", prompt = "Redis channel" }
+enable-aot = { type = "string", prompt = "enable AoT Compilation [y/N]", default = "Y", pattern = "^[yYnN]$" }
