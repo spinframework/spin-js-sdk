@@ -18,6 +18,6 @@
         "@fermyon/knitwit": "https://github.com/fermyon/knitwit"
     },
     "dependencies": {
-        "@fermyon/spin-sdk": "^2.1.0"
+        "@fermyon/spin-sdk": "^2.2.0"
     }
 }
