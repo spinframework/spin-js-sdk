@@ -10,4 +10,4 @@ component = "component.txt"
 [parameters]
 project-description = { type = "string", prompt = "Description", default = "" }
 http-path = { type = "string", prompt = "HTTP path", default = "/...", pattern = "^/\\S*$" }
-# enable-experimental = { type = "string", prompt = "enable experimental interfaces [y/N]", default = "N", pattern = "^[yYnN]$" }
+enable-aot = { type = "string", prompt = "Enable AoT Compilation [y/N]", default = "N", pattern = "^[yYnN]$" }

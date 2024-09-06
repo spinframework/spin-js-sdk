@@ -30,6 +30,10 @@ const args = yargs(hideBin(process.argv))
         describe: "Spin trigger to target",
         demandOption: true
     })
+    .option('aot', {
+        describe: "Enable Ahead of Time compilation",
+        type: 'boolean',
+    })
     .argv;
 
 const src = args.input;
@@ -48,6 +52,7 @@ const { component } = await componentize(source, {
     worldName: args.triggerType,
     disableFeatures: [],
     enableFeatures: ["http"],
+    enableAot: args.aot
 });
 
 await writeFile(args.output, component);
