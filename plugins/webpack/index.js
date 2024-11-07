@@ -11,7 +11,9 @@ class SpinSdkPlugin {
             "fermyon:spin/sqlite@2.0.0": "fermyon:spin/sqlite@2.0.0",
             "fermyon:spin/postgres@2.0.0": "fermyon:spin/postgres@2.0.0",
             "fermyon:spin/mysql@2.0.0": "fermyon:spin/mysql@2.0.0",
-            "fermyon:spin/mqtt@2.0.0": "fermyon:spin/mqtt@2.0.0"
+            "fermyon:spin/mqtt@2.0.0": "fermyon:spin/mqtt@2.0.0",
+            "wasi:config/store@0.2.0-draft-2024-09-27": "wasi:config/store@0.2.0-draft-2024-09-27",
+            "spin:postgres/postgres@3.0.0": "spin:postgres/postgres@3.0.0",
         };
     }
 
