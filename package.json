@@ -1,6 +1,6 @@
 {
   "name": "@fermyon/spin-sdk",
-  "version": "2.2.0",
+  "version": "2.3.0-rc1",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -13,7 +13,7 @@
     "fmt-check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
     "build": "tsc && cp -r src/types ./lib/",
     "build-docs": "typedoc  --plugin typedoc-plugin-missing-exports src/index.ts --out ./docs --excludeExternals --readme none",
-    "postinstall": "knitwit-postinstall --wit-path ../../bin/wit --world spin-imports",
+    "postinstall": "knitwit-postinstall --wit-path ../../bin/wit --world spin3-imports",
     "fmt-examples": "prettier --write \"examples/**/*.{ts,tsx,js,jsx}\" --ignore-patterm \"node_modules\""
   },
   "sideEffects": false,
@@ -25,11 +25,11 @@
     "typescript": "^5.4.3"
   },
   "dependencies": {
-    "@bytecodealliance/componentize-js": "^0.12.0",
+    "@bytecodealliance/componentize-js": "^0.13.1",
     "itty-router": "^3.0.12",
     "yargs": "^17.7.2",
     "typedoc-plugin-missing-exports": "^3.0.0",
-    "@fermyon/knitwit": "https://github.com/fermyon/knitwit"
+    "@fermyon/knitwit": "0.2.1"
   },
   "files": [
     "lib",
@@ -39,7 +39,7 @@
   "config": {
     "knitwit": {
       "witPath": "../../bin/wit",
-      "world": "spin-imports"
+      "world": "spin3-imports"
     }
   }
 }

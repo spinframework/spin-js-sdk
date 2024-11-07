@@ -31,6 +31,7 @@ jobs:
           uses: fermyon/actions/spin/setup@v1
           with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
+            version: "v3.0.0-rc.1"
 
         - name: Run Test
           shell: bash
