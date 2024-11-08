@@ -35,6 +35,17 @@ async function kvTest(req: Request, res: ResponseBuilder) {
     let store = Kv.openDefault()
     store.set("test", "try")
     decoder.decode(store.get("test") || new Uint8Array()) == "try" ? res.status(200) : res.status(500)
+
+    // Test for setting uint*arrays directly
+    let arr = new Uint8Array([1, 2, 3])
+    store.set("arr", arr)
+    let ret = store.get("arr")
+
+    if (ret == null || !isEqualBytes(ret, arr)) {
+        res.status(500)
+        res.send()
+        return
+    }
     res.send()
 }
 
@@ -71,4 +82,24 @@ export {
     statusTest,
     outboundHttp,
     kvTest
+}
+
+function isEqualBytes(
+    bytes1: Uint8Array,
+    bytes2: Uint8Array
+
+): boolean {
+
+    if (bytes1.length !== bytes2.length) {
+        return false;
+    }
+
+    for (let i = 0; i < bytes1.length; i++) {
+        if (bytes1[i] !== bytes2[i]) {
+            return false;
+        }
+    }
+
+    return true;
+
 }
