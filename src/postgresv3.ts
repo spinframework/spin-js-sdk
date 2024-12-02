@@ -1,3 +1,11 @@
+/**
+ * PostgresV3 enables interacting with a Postgres database using Spin's v3 interface.
+ * To use this module you  need to add `spin3-imports` to your `knitwit.json` file and run
+ * `npx knitwit`.
+ *
+ * @module PostgresV3
+ */
+
 //@ts-ignore
 import * as spinPg from 'spin:postgres/postgres@3.0.0';
 

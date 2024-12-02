@@ -1,6 +1,6 @@
 {
   "name": "@fermyon/spin-sdk",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -13,7 +13,7 @@
     "fmt-check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
     "build": "tsc && cp -r src/types ./lib/",
     "build-docs": "typedoc  --plugin typedoc-plugin-missing-exports src/index.ts --out ./docs --excludeExternals --readme none",
-    "postinstall": "knitwit-postinstall --wit-path ../../bin/wit --world spin3-imports",
+    "postinstall": "knitwit-postinstall --wit-path ../../bin/wit --world spin-imports",
     "fmt-examples": "prettier --write \"examples/**/*.{ts,tsx,js,jsx}\" --ignore-patterm \"node_modules\""
   },
   "sideEffects": false,
