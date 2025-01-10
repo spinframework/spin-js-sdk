@@ -3,16 +3,16 @@ spin_manifest_version = 2
 [application]
 authors = ["karthik2804 <karthik.ganeshram@fermyon.com>"]
 description = ""
-name = "outbound-http"
+name = "routing-requests"
 version = "0.1.0"
 
 [[trigger.http]]
 route = "/..."
-component = "outbound-http"
+component = "routing-requests"
 
-[component.outbound-http]
-source = "target/outbound-http.wasm"
+[component.routing-requests]
+source = "target/routing-requests.wasm"
 exclude_files = ["**/node_modules"]
-[component.outbound-http.build]
+[component.routing-requests.build]
 command = "npm run build"
 watch = ["src/**/*.ts", "package.json"]
