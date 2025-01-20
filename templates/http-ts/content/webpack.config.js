@@ -19,8 +19,8 @@ module.exports = {
         extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
-        path: path.resolve(__dirname, './'),
-        filename: 'dist.js',
+        path: path.resolve(__dirname, './build'),
+        filename: 'bundle.js',
         module: true,
         library: {
             type: "module",
