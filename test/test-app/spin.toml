@@ -11,7 +11,7 @@ route = "/..."
 component = "test-app"
 
 [component.test-app]
-source = "target/test-app.wasm"
+source = "dist/test-app.wasm"
 exclude_files = ["**/node_modules"]
 allowed_outbound_hosts = ["http://localhost:3000"]
 key_value_stores = ["default"]

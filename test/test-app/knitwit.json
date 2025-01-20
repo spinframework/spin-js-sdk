@@ -2,13 +2,13 @@
   "version": 1,
   "project": {
     "worlds": [
-      "spin3-http"
+      "spin-http"
     ]
   },
   "packages": {
     "@fermyon/spin-sdk": {
       "witPath": "../../bin/wit",
-      "world": "spin3-imports"
+      "world": "spin-imports"
     }
   }
 }

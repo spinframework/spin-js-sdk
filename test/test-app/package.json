@@ -4,9 +4,9 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build": "npx webpack --mode=production && npx mkdirp target && npx j2w -i dist.js -d combined-wit -n combined -o target/test-app.wasm --aot",
+        "build": "npx webpack --mode=production && npx mkdirp dist && npx j2w -i build/bundle.js -d build/wit/knitwit -n combined -o dist/test-app.wasm --aot",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "postinstall": "knitwit"
+        "postinstall": "knitwit --out-dir build/wit/knitwit"
     },
     "keywords": [],
     "author": "",

@@ -4,3 +4,5 @@ target/
 .spin/
 combined-wit/
 dist.js
+dist/
+build/

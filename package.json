@@ -1,6 +1,6 @@
 {
   "name": "@fermyon/spin-sdk",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -29,7 +29,7 @@
     "itty-router": "^3.0.12",
     "yargs": "^17.7.2",
     "typedoc-plugin-missing-exports": "^3.0.0",
-    "@fermyon/knitwit": "0.2.1"
+    "@fermyon/knitwit": "^0.3.0"
   },
   "files": [
     "lib",
@@ -39,7 +39,7 @@
   "config": {
     "knitwit": {
       "witPath": "../../bin/wit",
-      "world": "spin3-imports"
+      "world": "spin-imports"
     }
   }
 }
