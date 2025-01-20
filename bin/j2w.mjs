@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 import { componentize } from "@bytecodealliance/componentize-js";
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, access } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { resolve, basename } from 'node:path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
@@ -37,23 +38,68 @@ const args = yargs(hideBin(process.argv))
     .argv;
 
 const src = args.input;
-const source = await readFile(src, 'utf8');
+const outputPath = args.output;
+const inputChecksumPath = `${src}.checksum`;
 
-// Check if a non default wit directory is supplied
-if (!args.witPath) {
-    args.witPath = path.join(__dirname, 'wit')
-} else {
-    console.log(`Using user provided wit in: ${args.witPath}`)
+// Function to calculate file checksum
+async function calculateChecksum(filePath) {
+    const fileBuffer = await readFile(filePath);
+    const hash = createHash('sha256');
+    hash.update(fileBuffer);
+    return hash.digest('hex');
 }
 
-const { component } = await componentize(source, {
-    sourceName: basename(src),
-    witPath: resolve(args.witPath),
-    worldName: args.triggerType,
-    disableFeatures: [],
-    enableFeatures: ["http"],
-    enableAot: args.aot
-});
+// Function to check if a file exists
+async function fileExists(filePath) {
+    try {
+        await access(filePath);
+        return true;
+    } catch {
+        return false;
+    }
+}
 
-await writeFile(args.output, component);
-console.log("Successfully written component");
+async function getExistingChecksum(checksumPath) {
+    if (await fileExists(checksumPath)) {
+        return await readFile(checksumPath, 'utf8');
+    }
+    return null;
+}
+
+async function saveChecksum(checksumPath, checksum) {
+    await writeFile(checksumPath, checksum);
+}
+
+(async () => {
+    const sourceChecksum = await calculateChecksum(src);
+    const existingChecksum = await getExistingChecksum(inputChecksumPath);
+
+    if ((existingChecksum === sourceChecksum) && fileExists(outputPath)) {
+        console.log("No changes detected in source file. Skipping componentization.");
+        return;
+    }
+
+    const source = await readFile(src, 'utf8');
+
+    // Check if a non-default wit directory is supplied
+    const witPath = args.witPath ? resolve(args.witPath) : path.join(__dirname, 'wit');
+    if (args.witPath) {
+        console.log(`Using user-provided wit in: ${witPath}`);
+    }
+
+    const { component } = await componentize(source, {
+        sourceName: basename(src),
+        witPath,
+        worldName: args.triggerType,
+        disableFeatures: [],
+        enableFeatures: ["http"],
+        enableAot: args.aot
+    });
+
+    await writeFile(outputPath, component);
+
+    // Save the checksum of the input file
+    await saveChecksum(inputChecksumPath, sourceChecksum);
+
+    console.log("Component successfully written.");
+})();
