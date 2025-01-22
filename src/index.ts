@@ -1,4 +1,3 @@
-import { ResponseBuilder } from './inboundHttp';
 import { RedisHandler } from './inboundRedis';
 import * as Llm from './llm';
 import * as Variables from './variables';
@@ -22,5 +21,4 @@ export {
   Mqtt,
   PostgresV3,
   RedisHandler,
-  ResponseBuilder,
 };

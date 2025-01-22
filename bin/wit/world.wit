@@ -14,7 +14,7 @@ world spin3-redis {
 
 world spin3-http {
   include spin3-imports;
-  export wasi:http/incoming-handler@0.2.0;
+  export wasi:http/incoming-handler@0.2.3;
 }
 
 world spin3-all {
