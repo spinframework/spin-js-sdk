@@ -1,11 +1,22 @@
-import { ResponseBuilder, Variables } from '@fermyon/spin-sdk';
+// https://itty.dev/itty-router/routers/autorouter
+import { AutoRouter } from 'itty-router';
+import { Variables } from '@fermyon/spin-sdk';
 
-export async function handler(_req: Request, res: ResponseBuilder) {
-  let val = Variables.get('my_variable');
-  if (!val) {
-    res.status(404);
-    res.send();
-    return;
-  }
-  res.send(val);
-}
+let router = AutoRouter();
+
+// Route ordering matters, the first route that matches will be used
+// Any route that does not return will be treated as a middleware
+// Any unmatched route will return a 404
+router
+    .get("/", () => {
+        let val = Variables.get('my_variable');
+        if (!val) {
+            return new Response(null, { status: 404 });
+        }
+        return new Response(val);
+    })
+
+//@ts-ignore
+addEventListener('fetch', async (event: FetchEvent) => {
+    event.respondWith(router.fetch(event.request));
+});

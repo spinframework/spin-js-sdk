@@ -2,13 +2,6 @@
 
 This example showcases using outbound PostgreSQL with the Spin SDK.
 
-## Install Dependencies
-Install the necessary npm packages:
-
-```bash
-npm install
-```
-
 ## Building and Running the Example
 
 Setup the PostgreSQL database instance running at `127.0.0.1`. Run the following commands after connecting to it:

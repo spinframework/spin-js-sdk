@@ -9,8 +9,8 @@ As a prerequisite, you will need to download the models and place them in a stru
 To build the app run the following commands:
 
 ```bash
-$ npm install
 $ spin build
+$ spin up
 ```
 
 Make a request using `curl`:

@@ -2,13 +2,6 @@
 
 This example showcases how to read Spin Variables.
 
-## Install Dependencies
-Install the necessary npm packages:
-
-```bash
-npm install
-```
-
 ## Building and Running the Example
 
 ```bash

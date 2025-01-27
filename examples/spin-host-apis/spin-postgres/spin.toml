@@ -11,9 +11,9 @@ route = "/..."
 component = "spin-postgres"
 
 [component.spin-postgres]
-source = "target/spin-postgres.wasm"
+source = "dist/spin-postgres.wasm"
 exclude_files = ["**/node_modules"]
-allowed_outbound_hosts = ["postgres://*:*"]
+allowed_outbound_hosts = ["postgres://localhost"]
 [component.spin-postgres.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

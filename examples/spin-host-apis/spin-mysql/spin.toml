@@ -11,9 +11,9 @@ route = "/..."
 component = "spin-mysql"
 
 [component.spin-mysql]
-source = "target/spin-mysql.wasm"
+source = "dist/spin-mysql.wasm"
 exclude_files = ["**/node_modules"]
-allowed_outbound_hosts = ["mysql://*:*"]
+allowed_outbound_hosts = ["mysql://localhost"]
 [component.spin-mysql.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

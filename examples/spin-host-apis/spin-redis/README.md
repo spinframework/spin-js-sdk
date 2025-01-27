@@ -2,13 +2,6 @@
 
 This example showcases using outbound Redis using the Spin SDK.
 
-## Install Dependencies
-Install the necessary npm packages:
-
-```bash
-npm install
-```
-
 ## Prerequisites
 
 - A Redis server is running at `localhost:6379`

@@ -11,9 +11,9 @@ route = "/..."
 component = "spin-mqtt"
 
 [component.spin-mqtt]
-source = "target/spin-mqtt.wasm"
+source = "dist/spin-mqtt.wasm"
 exclude_files = ["**/node_modules"]
 allowed_outbound_hosts = ["mqtt://*:*"]
 [component.spin-mqtt.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

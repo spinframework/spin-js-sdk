@@ -11,10 +11,10 @@ route = "/..."
 component = "spin-variables"
 
 [component.spin-variables]
-source = "target/spin-variables.wasm"
+source = "dist/spin-variables.wasm"
 exclude_files = ["**/node_modules"]
 [component.spin-variables.variables]
 my_variable = "Hello, World!"
 [component.spin-variables.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

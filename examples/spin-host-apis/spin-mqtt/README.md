@@ -2,13 +2,6 @@
 
 This example showcases using outbound MQTT with the Spin SDK.
 
-## Install Dependencies
-Install the necessary npm packages:
-
-```bash
-npm install
-```
-
 ## Building and Running the Example
 
 For this example, configure the app with the address, username password and topics in `src/index.ts`:
