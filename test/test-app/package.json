@@ -19,6 +19,7 @@
         "webpack-cli": "^4.10.0"
     },
     "dependencies": {
-        "@fermyon/spin-sdk": "file:../../"
+        "@fermyon/spin-sdk": "file:../../",
+        "itty-router": "^5.0.18"
     }
 }

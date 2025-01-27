@@ -1,4 +1,4 @@
-import { Router } from "@fermyon/spin-sdk"
+import { Router } from "itty-router"
 import { headersTest, health, kvTest, kvTestUint8Array, outboundHttp, statusTest, stream, streamTest, testFunctionality } from "./test";
 
 let router = Router()
