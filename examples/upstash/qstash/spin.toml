@@ -13,6 +13,7 @@ component = "qstash"
 [component.qstash]
 source = "dist/qstash.wasm"
 exclude_files = ["**/node_modules"]
+allowed_outbound_hosts = ["https://qstash.upstash.io:443"]
 [component.qstash.build]
 command = ["npm install", "npm run build"]
 watch = ["src/**/*.ts"]

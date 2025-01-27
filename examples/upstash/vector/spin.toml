@@ -13,6 +13,7 @@ component = "vector"
 [component.vector]
 source = "dist/vector.wasm"
 exclude_files = ["**/node_modules"]
+allowed_outbound_hosts = ["https://*.upstash.io"]
 [component.vector.build]
 command = ["npm install", "npm run build"]
 watch = ["src/**/*.ts"]
