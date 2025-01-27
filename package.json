@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@bytecodealliance/componentize-js": "^0.16.0",
-    "itty-router": "^5.0.18",
     "yargs": "^17.7.2",
     "typedoc-plugin-missing-exports": "^3.0.0",
     "@fermyon/knitwit": "^0.3.0"
