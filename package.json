@@ -1,6 +1,6 @@
 {
   "name": "@fermyon/spin-sdk",
-  "version": "3.0.0",
+  "version": "3.0.0-rc1",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
