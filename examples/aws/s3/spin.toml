@@ -11,9 +11,9 @@ route = "/..."
 component = "s3"
 
 [component.s3]
-source = "target/s3.wasm"
+source = "dist/s3.wasm"
 exclude_files = ["**/node_modules"]
-allowed_outbound_hosts = ["https://*:*"]
+allowed_outbound_hosts = ["https://*.s3.us-west-2.amazonaws.com"]
 [component.s3.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

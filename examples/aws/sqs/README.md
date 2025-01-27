@@ -4,14 +4,6 @@ This example showcases how to connect to and send messages using Amazon SQS with
 
 ## Prerequisites
 - `spin >=2.6.0`
-- 
-
-## Install Dependencies
-Install the necessary npm packages:
-
-```bash
-npm install
-```
 
 ## Setup the Example
 

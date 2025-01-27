@@ -4,14 +4,6 @@ This example showcases how to connect to and send messages using Amazon S3 with 
 
 ## Prerequisites
 - `spin >=2.6.0`
-- 
-
-## Install Dependencies
-Install the necessary npm packages:
-
-```bash
-npm install
-```
 
 ## Setup the Example
 
@@ -30,18 +22,15 @@ npm install
 
    ```typescript
    const client = new S3Client({
-       region: "<>",
+       region: "us-west-2",
        credentials: {
            accessKeyId: "<>>",
            secretAccessKey: "<>",
            sessionToken: "<>"
        },
    });
-
-   const params = {
-       Bucket: "<>"
-   };
    ```
+   *note*: The example assumes that the bucket is in the `us-west-2` region. If the object is in some other region modify the configuration of the client and also edit the `allowed_outbound_hosts` in the `spin.toml`.
 
 ## Building and Running the Example
 
@@ -50,4 +39,7 @@ spin build
 spin up
 ```
 
-Use e.g. `curl -v http://127.0.0.1:3000/` to test the endpoint.
+### Testing the different endpoints
+
+- `curl -v http://127.0.0.1:3000/list/<bucket name>` to list the objects stored in the given bucket.
+- `curl -v http://127.0.0.1:3000/stream/<bucket name>/<object key>`  to stream the object in the given bucket.
