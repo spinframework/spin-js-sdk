@@ -25,7 +25,7 @@ timeout 60s bash -c 'until curl --silent -f http://localhost:3000/health > /dev/
 
 # start the test
 echo "Starting test\n"
-curl -f http://localhost:3000 || isFailed=true
+curl -f http://localhost:3000/testFunctionality || isFailed=true
 echo "\n\nTest completed"
 
 # kill the spin app
