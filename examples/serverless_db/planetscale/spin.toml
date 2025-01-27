@@ -11,9 +11,9 @@ route = "/..."
 component = "planetscale"
 
 [component.planetscale]
-source = "target/planetscale.wasm"
+source = "dist/planetscale.wasm"
 exclude_files = ["**/node_modules"]
 allowed_outbound_hosts = ["https://aws.connect.psdb.cloud"]
 [component.planetscale.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]
