@@ -11,9 +11,9 @@ route = "/..."
 component = "outbound-http"
 
 [component.outbound-http]
-source = "target/outbound-http.wasm"
+source = "dist/outbound-http.wasm"
 exclude_files = ["**/node_modules"]
-allowed_outbound_hosts = ["*://*:*"]
+allowed_outbound_hosts = ["https://random-data-api.fermyon.app/"]
 [component.outbound-http.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

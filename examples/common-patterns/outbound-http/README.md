@@ -2,12 +2,9 @@
 
 This example showcases making an outbound HTTP request and returning the response.
 
-## Install Dependencies
-Install the necessary npm packages:
+## Configuring `allowed_outbound_hosts` in `spin.toml`
 
-```bash
-npm install
-```
+The `allowed_outbound_hosts` needs to include the address of the host to which the guest tried to call. In the case of this example, the host is `https://random-data-api.fermyon.app/` which is added in the `spin.toml`
 
 ## Building and Running the Example
 
