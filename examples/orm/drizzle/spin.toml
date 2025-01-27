@@ -11,9 +11,9 @@ route = "/..."
 component = "drizzle"
 
 [component.drizzle]
-source = "target/drizzle.wasm"
+source = "dist/drizzle.wasm"
 exclude_files = ["**/node_modules"]
 sqlite_databases = ["default"]
 [component.drizzle.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

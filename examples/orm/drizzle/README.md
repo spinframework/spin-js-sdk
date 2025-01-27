@@ -2,13 +2,6 @@
 
 This example showcases how to use [Drizzle ORM](https://orm.drizzle.team/) to generate database queries and execute it against Spin's SQLite database. 
 
-## Install Dependencies
-Install the necessary npm packages:
-
-```bash
-npm install
-```
-
 ## Building and Running the Example
 
 ```bash
