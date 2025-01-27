@@ -11,9 +11,9 @@ route = "/..."
 component = "octokit-rest"
 
 [component.octokit-rest]
-source = "target/octokit-rest.wasm"
+source = "dist/octokit-rest.wasm"
 exclude_files = ["**/node_modules"]
 allowed_outbound_hosts = ["https://api.github.com"]
 [component.octokit-rest.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]
