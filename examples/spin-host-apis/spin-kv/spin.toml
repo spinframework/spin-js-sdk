@@ -11,9 +11,9 @@ route = "/..."
 component = "spin-kv"
 
 [component.spin-kv]
-source = "target/spin-kv.wasm"
+source = "dist/spin-kv.wasm"
 exclude_files = ["**/node_modules"]
 key_value_stores = ["default"]
 [component.spin-kv.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

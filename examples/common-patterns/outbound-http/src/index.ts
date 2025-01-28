@@ -1,10 +1,22 @@
-import { ResponseBuilder } from '@fermyon/spin-sdk';
+// https://itty.dev/itty-router/routers/autorouter
+import { AutoRouter } from 'itty-router';
 
-export async function handler(_req: Request, res: ResponseBuilder) {
-  let response = await fetch(
-    'https://random-data-api.fermyon.app/physics/json',
-  );
-  let physicsFact = await response.text();
+let router = AutoRouter();
 
-  res.send(physicsFact);
+// Route ordering matters, the first route that matches will be used
+// Any route that does not return will be treated as a middleware
+// Any unmatched route will return a 404
+router
+    .get("*", getDataFromAPI)
+
+async function getDataFromAPI(_request: Request) {
+    let response = await fetch(
+        'https://random-data-api.fermyon.app/physics/json',
+    );
+    return response;
 }
+
+//@ts-ignore
+addEventListener('fetch', async (event: FetchEvent) => {
+    event.respondWith(router.fetch(event.request));
+});

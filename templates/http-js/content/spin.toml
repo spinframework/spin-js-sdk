@@ -14,5 +14,5 @@ component = "{{project-name | kebab_case}}"
 source = "dist/{{project-name | kebab_case}}.wasm"
 exclude_files = ["**/node_modules"]
 [component.{{project-name | kebab_case}}.build]
-command = "npm install && npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.js"]

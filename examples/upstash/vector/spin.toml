@@ -11,9 +11,9 @@ route = "/..."
 component = "vector"
 
 [component.vector]
-source = "target/vector.wasm"
+source = "dist/vector.wasm"
 exclude_files = ["**/node_modules"]
-allowed_outbound_hosts = ["https://*:*"]
+allowed_outbound_hosts = ["https://*.upstash.io"]
 [component.vector.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

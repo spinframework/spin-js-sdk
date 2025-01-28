@@ -11,9 +11,9 @@ route = "/..."
 component = "spin-llm"
 
 [component.spin-llm]
-source = "target/spin-llm.wasm"
+source = "dist/spin-llm.wasm"
 exclude_files = ["**/node_modules"]
 allowed_models = ["llama2-chat"]
 [component.spin-llm.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

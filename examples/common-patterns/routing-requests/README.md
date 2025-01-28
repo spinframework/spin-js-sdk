@@ -1,13 +1,6 @@
 # Using the Router
 
-This example showcases utilizing the `router` to respond to requests on different paths. 
-
-## Install Dependencies
-Install the necessary npm packages:
-
-```bash
-npm install
-```
+This example showcases utilizing the `itty-router` to respond to requests on different paths. 
 
 ## Building and Running the Example
 
@@ -20,7 +13,7 @@ To test the different routes, run the following commands:
 
 ```bash
 curl localhost:3000/
-# Hello from default route
-curl localhost:3000/home/123
-# Hello from home route with id: 123
+# hello universe
+curl localhost:3000/hello/spin
+# Hello spin
 ```

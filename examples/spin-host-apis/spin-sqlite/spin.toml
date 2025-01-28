@@ -11,9 +11,9 @@ route = "/..."
 component = "spin-sqlite"
 
 [component.spin-sqlite]
-source = "target/spin-sqlite.wasm"
+source = "dist/spin-sqlite.wasm"
 exclude_files = ["**/node_modules"]
 sqlite_databases = ["default"]
 [component.spin-sqlite.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

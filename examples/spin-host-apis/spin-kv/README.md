@@ -7,7 +7,6 @@ This is a simple example showcasing using Spin key-value storage with TypeScript
 To build the app run the following commands:
 
 ```bash
-$ npm install
 $ spin build --up
 ```
 

@@ -11,9 +11,9 @@ route = "/..."
 component = "spin-redis"
 
 [component.spin-redis]
-source = "target/spin-redis.wasm"
+source = "dist/spin-redis.wasm"
 exclude_files = ["**/node_modules"]
-allowed_hosts = ["redis://*:*"]
+allowed_outbound_hosts = ["redis://localhost:6379"]
 [component.spin-redis.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

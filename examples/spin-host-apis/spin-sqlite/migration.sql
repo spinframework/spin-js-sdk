@@ -1,2 +1,0 @@
-CREATE TABLE IF NOT EXISTS todos (id INTEGER PRIMARY KEY AUTOINCREMENT, description TEXT NOT NULL, due_date DATE, starred BOOLEAN DEFAULT 0, is_completed BOOLEAN DEFAULT 0);
-INSERT INTO todos (description, due_date, starred, is_completed) VALUES ('Dummy task', '2024-12-31', 1, 0);

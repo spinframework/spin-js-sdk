@@ -11,9 +11,9 @@ route = "/..."
 component = "neondb"
 
 [component.neondb]
-source = "target/neondb.wasm"
+source = "dist/neondb.wasm"
 exclude_files = ["**/node_modules"]
-allowed_outbound_hosts = ["https://*:*"]
+allowed_outbound_hosts = ["https://*.aws.neon.tech"]
 [component.neondb.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

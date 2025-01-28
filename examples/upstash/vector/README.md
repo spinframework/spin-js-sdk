@@ -2,13 +2,6 @@
 
 This example showcases how to connect to Upstash Vector, upsert vectors, and perform a query using the Upstash SDK.
 
-## Install Dependencies
-Install the necessary npm packages:
-
-```bash
-npm install
-```
-
 ## Setup the Example
 
 1. **Create an Upstash Account**

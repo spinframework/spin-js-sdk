@@ -1,20 +1,16 @@
-import { ResponseBuilder, Router } from '@fermyon/spin-sdk';
+// https://itty.dev/itty-router/routers/autorouter
+import { AutoRouter } from 'itty-router';
 
-let router = Router();
+let router = AutoRouter();
 
-router.get("/", (_, req, res) => { handleDefaultRoute(req, res) })
-router.get("/home/:id", (metadata, req, res) => { handleHomeRoute(req, res, metadata.params.id) })
+// Route ordering matters, the first route that matches will be used
+// Any route that does not return will be treated as a middleware
+// Any unmatched route will return a 404
+router
+    .get("/", () => new Response("hello universe"))
+    .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
 
-async function handleDefaultRoute(_req: Request, res: ResponseBuilder) {
-  res.set({ "content-type": "text/plain" });
-  res.send("Hello from default route");
-}
-
-async function handleHomeRoute(_req: Request, res: ResponseBuilder, id: string) {
-  res.set({ "content-type": "text/plain" });
-  res.send(`Hello from home route with id: ${id}`);
-}
-
-export async function handler(req: Request, res: ResponseBuilder) {
-  await router.handleRequest(req, res);
-}
+//@ts-ignore
+addEventListener('fetch', async (event: FetchEvent) => {
+    event.respondWith(router.fetch(event.request));
+});

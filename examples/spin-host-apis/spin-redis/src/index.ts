@@ -1,24 +1,32 @@
-import { ResponseBuilder, Redis } from '@fermyon/spin-sdk';
+// https://itty.dev/itty-router/routers/autorouter
+import { AutoRouter } from 'itty-router';
+import { Redis } from '@fermyon/spin-sdk';
 
 const encoder = new TextEncoder();
-const decoder = new TextDecoder();
 const redisAddress = 'redis://localhost:6379/';
 
-export async function handler(_req: Request, res: ResponseBuilder) {
-  try {
-    let db = Redis.open(redisAddress);
-    db.set('test', encoder.encode('Hello world'));
-    let val = db.get('test');
+let router = AutoRouter();
 
-    if (!val) {
-      res.status(404);
-      res.send();
-      return;
-    }
+// Route ordering matters, the first route that matches will be used
+// Any route that does not return will be treated as a middleware
+// Any unmatched route will return a 404
+router
+    .get("/", () => {
+        try {
+            let db = Redis.open(redisAddress);
+            db.set('test', encoder.encode('Hello world'));
+            let val = db.get('test');
 
-    res.send(val);
-  } catch (e: any) {
-    res.status(500);
-    res.send(`Error: ${JSON.stringify(e.payload)}`);
-  }
-}
+            if (!val) {
+                return new Response(null, { status: 404 });
+            }
+            return new Response(val);
+        } catch (e: any) {
+            return new Response(`Error: ${JSON.stringify(e.payload)}`, { status: 500 });
+        }
+    })
+
+//@ts-ignore
+addEventListener('fetch', async (event: FetchEvent) => {
+    event.respondWith(router.fetch(event.request));
+});

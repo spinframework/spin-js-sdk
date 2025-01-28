@@ -11,9 +11,9 @@ route = "/..."
 component = "backblaze"
 
 [component.backblaze]
-source = "target/backblaze.wasm"
+source = "dist/backblaze.wasm"
 exclude_files = ["**/node_modules"]
-allowed_outbound_hosts = ['https://*:*']
+allowed_outbound_hosts = ["https://*.backblazeb2.com"]
 [component.backblaze.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json"]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]

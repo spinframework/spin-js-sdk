@@ -2,13 +2,6 @@
 
 This example demonstrates how to connect to Upstash QStash, publish a JSON message with a delay, and handle an HTTP request using the Spin SDK.
 
-## Install Dependencies
-Install the necessary npm packages:
-
-```bash
-npm install
-```
-
 ## Setup the Example
 
 1. **Create an Upstash Account**
