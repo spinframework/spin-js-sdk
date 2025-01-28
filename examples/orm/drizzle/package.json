@@ -19,7 +19,7 @@
         "@fermyon/knitwit": "0.3.0"
     },
     "dependencies": {
-        "@fermyon/spin-sdk": "^3.0.0-rc1",
+        "@fermyon/spin-sdk": "^3.0.0",
         "itty-router": "^5.0.18",
         "drizzle-orm": "^0.31.2"
     }
