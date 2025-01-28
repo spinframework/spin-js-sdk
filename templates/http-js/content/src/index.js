@@ -1,4 +1,4 @@
-// https://itty.dev/itty-router/routers/autorouter
+// For AutoRouter documentation refer to https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
 
 let router = AutoRouter();
@@ -10,7 +10,6 @@ router
     .get("/", () => new Response("hello universe"))
     .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
 
-//@ts-ignore
 addEventListener('fetch', async (event) => {
     event.respondWith(router.fetch(event.request));
 });

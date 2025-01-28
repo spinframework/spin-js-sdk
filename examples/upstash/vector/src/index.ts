@@ -31,7 +31,7 @@ router
                 topK: 3,
                 includeMetadata: true,
             });
-            return new Response(JSON.stringify(data, null, 2), { status: 200 });
+            return new Response(JSON.stringify(data, null, 2), { status: 200, headers: { "Content-Type": "application/json" } });
         } catch (e: any) {
             return new Response(`error: ${e}`, { status: 500 });
         }

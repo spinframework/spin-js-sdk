@@ -24,7 +24,7 @@ This example showcases how to connect to and send messages using Amazon S3 with 
    const client = new S3Client({
        region: "us-west-2",
        credentials: {
-           accessKeyId: "<>>",
+           accessKeyId: "<>",
            secretAccessKey: "<>",
            sessionToken: "<>"
        },

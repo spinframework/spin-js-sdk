@@ -16,7 +16,7 @@ router
             delay: 2,
         });
 
-        return new Response(JSON.stringify(resp), { status: 200 });
+        return new Response(JSON.stringify(resp, null, 2), { status: 200, headers: { "Content-Type": "application/json" } });
     })
 
 //@ts-ignore

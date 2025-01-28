@@ -1,4 +1,4 @@
-// https://itty.dev/itty-router/routers/autorouter
+// For AutoRouter documentation refer to https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
 
 let router = AutoRouter();

@@ -13,7 +13,7 @@ router
     .get("*", async (req: Request) => {
         let store = Kv.openDefault();
         let status = 200;
-        let body;
+        let body = "Not Found";
 
         switch (req.method) {
             case 'POST':
