@@ -20,4 +20,7 @@ module.exports = {
     optimization: {
         minimize: false
     },
+    performance: {
+        hints: false,
+    }
 };
