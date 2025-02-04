@@ -7,6 +7,7 @@ import { resolve, basename } from 'node:path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import path from 'path';
+import { precompile } from "./precompile.mjs";
 
 const componentizeVersion = '0.16.0';
 const __filename = new URL(import.meta.url).pathname;
@@ -103,6 +104,7 @@ async function saveBuildData(buildDataPath, checksum, version) {
         }
 
         const source = await readFile(src, 'utf8');
+        const precompiledSource = precompile(source, src, true);
 
         // Check if a non-default wit directory is supplied
         const witPath = args.witPath ? resolve(args.witPath) : path.join(__dirname, 'wit');
@@ -110,7 +112,7 @@ async function saveBuildData(buildDataPath, checksum, version) {
             console.log(`Using user-provided wit in: ${witPath}`);
         }
 
-        const { component } = await componentize(source, {
+        const { component } = await componentize(precompiledSource, {
             sourceName: basename(src),
             witPath,
             worldName: args.triggerType,
