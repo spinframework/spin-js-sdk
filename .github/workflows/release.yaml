@@ -1,0 +1,51 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - "v*" 
+
+# Serialize workflow runs. Not strictly necessary, but to be on the safer side.
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the project
+        run: npm run build
+
+        # Determine if the tag is a release candidate or not
+      - name: Determine npm tag
+        id: npm_tag
+        run: |
+          if [[ "${{ github.ref_name }}" == *rc* ]]; then
+            echo "tag=next" >> $GITHUB_ENV
+          else
+            echo "tag=latest" >> $GITHUB_ENV
+            
+      - name: Publish to npm
+        run: npm publish --access=public --tag ${{ env.tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE_TAG=$(npm view . version)
+          RELEASE_URL="https://www.npmjs.com/package/$(jq -r .name package.json)/v/$RELEASE_TAG"
+          gh release create "v$RELEASE_TAG" --title "Release v$RELEASE_TAG" --notes "Published on npm: $RELEASE_URL"
