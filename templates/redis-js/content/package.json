@@ -4,13 +4,8 @@
     "description": "{{project-description}}",
     "main": "index.js",
     "scripts": {
-        {%- if package-manager == "npm" -%}
-        "build": "npx webpack --mode=production && npx mkdirp dist && npx j2w -i build/bundle.js -d build/wit/knitwit -n combined -o dist/{{project-name | kebab_case}}.wasm",
-        {%- else -%}
-        "build": "yarn exec webpack -- --mode=production && yarn exec mkdirp -- dist && yarn exec j2w -- -i build/bundle.js -d build/wit/knitwit -n combined -o dist/{{project-name | kebab_case}}.wasm",
-        {%- endif -%}
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "postinstall": "knitwit --out-dir build/wit/knitwit --out-world combined"
+        "build": "knitwit --out-dir build/wit/knitwit --out-world combined && webpack --mode=production && mkdirp dist && j2w -i build/bundle.js -d build/wit/knitwit -n combined -o dist/{{project-name | kebab_case}}.wasm",
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
     "author": "",
