@@ -1,23 +1,27 @@
 {
-    "name": "{{project-name | kebab_case}}",
-    "version": "1.0.0",
-    "description": "{{project-description}}",
-    "main": "index.js",
-    "scripts": {
+  "name": "{{project-name | kebab_case}}",
+  "version": "1.0.0",
+  "description": "{{project-description}}",
+  "main": "index.js",
+  "scripts": {
+    {%- if package-manager == "npm" -%}
         "build": "knitwit --out-dir build/wit/knitwit --out-world combined && npx webpack --mode=production && npx mkdirp dist && npx j2w -i build/bundle.js -d build/wit/knitwit -n combined -o dist/{{project-name | kebab_case}}.wasm",
+    {%- else -%}
+        "build": "knitwit --out-dir build/wit/knitwit --out-world combined && yarn exec webpack -- --mode=production && yarn exec mkdirp -- dist && yarn exec j2w -- -i build/bundle.js -d build/wit/knitwit -n combined -o dist/{{project-name | kebab_case}}.wasm",
+    {%- endif -%}
         "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "devDependencies": {
-        "mkdirp": "^3.0.1",
-        "webpack": "^5.74.0",
-        "webpack-cli": "^4.10.0",
-        "@fermyon/knitwit": "0.3.0"
-    },
-    "dependencies": {
-        "@fermyon/spin-sdk": "^3.0.0",
-        "itty-router": "^5.0.18"
-    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mkdirp": "^3.0.1",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "@fermyon/knitwit": "0.3.0"
+  },
+  "dependencies": {
+    "@fermyon/spin-sdk": "^3.0.0",
+    "itty-router": "^5.0.18"
+  }
 }

@@ -6,5 +6,5 @@ component = "{{project-name | kebab_case}}"
 source = "{{ output-path }}/dist/{{project-name | kebab_case}}.wasm"
 allowed_outbound_hosts = []
 [component.{{project-name | kebab_case}}.build]
-command = "npm install && npm run build"
+command = ["{{package-manager}} install", "{{package-manager}} run build"]
 workdir = "{{ output-path }}"
