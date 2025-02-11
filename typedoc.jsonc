@@ -7,7 +7,9 @@
         "typedoc-plugin-missing-exports",
         "@shipgirl/typedoc-plugin-versions"
       ],
-      "versions": {},
+      "versions": {
+        "makeRelativeLinks": true
+      },
       "excludeExternals": true,
       "readme": "none",
       "out": "./docs"
