@@ -22,6 +22,18 @@ jobs:
           node-version: 22
           registry-url: 'https://registry.npmjs.org/'
 
+      - name: Verify tag matches package version
+        run: |
+          PACKAGE_VERSION=$(jq -r .version package.json)
+          TAG_VERSION=${{ github.ref_name }}
+          # Remove 'v' prefix from the tag if it exists
+          TAG_VERSION=${TAG_VERSION#v}
+
+          if [[ "$PACKAGE_VERSION" != "$TAG_VERSION" ]]; then
+            echo "Error: Git tag ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)"
+            exit 1
+          fi   
+
       - name: Install dependencies
         run: npm ci
 
@@ -46,6 +58,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          RELEASE_TAG=$(npm view . version)
+          RELEASE_TAG=$(jq -r .version package.json)
           RELEASE_URL="https://www.npmjs.com/package/$(jq -r .name package.json)/v/$RELEASE_TAG"
           gh release create "v$RELEASE_TAG" --title "Release v$RELEASE_TAG" --notes "Published on npm: $RELEASE_URL"
