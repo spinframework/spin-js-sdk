@@ -1,0 +1,14 @@
+    {
+      "$schema": "https://typedoc.org/schema.json",
+      "entryPoints": [
+        "./src/index.ts"
+      ],
+      "plugin": [
+        "typedoc-plugin-missing-exports",
+        "@shipgirl/typedoc-plugin-versions"
+      ],
+      "versions": {},
+      "excludeExternals": true,
+      "readme": "none",
+      "out": "./docs"
+    }
