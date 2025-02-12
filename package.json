@@ -22,7 +22,8 @@
   "devDependencies": {
     "@shipgirl/typedoc-plugin-versions": "^0.3.0",
     "prettier": "^3.2.5",
-    "typedoc": "^0.26.11",
+    "typedoc": "^0.27.7",
+    "typedoc-plugin-missing-exports": "^3.1.0",
     "typescript": "^5.4.3"
   },
   "dependencies": {
@@ -32,7 +33,6 @@
     "acron": "^1.0.5",
     "magic-string": "^0.30.17",
     "regexpu-core": "^6.2.0",
-    "typedoc-plugin-missing-exports": "^3.0.0",
     "yargs": "^17.7.2"
   },
   "files": [
