@@ -1,0 +1,105 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  lint_and_test:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v3
+        - name: Install Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ env.NODE_VERSION }}
+        - name: Install Dependencies
+          shell: bash
+          run: npm install
+        - name: Run prettier check
+          shell: bash
+          run: npm run fmt-check
+        - name: Install latest Spin CLI
+          uses: fermyon/actions/spin/setup@v1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+        - name: Run Test
+          shell: bash
+          run: |
+            cd test
+            ./test.sh
+  
+  test_template:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v3
+        - name: Install Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ env.NODE_VERSION }}
+        - name: Install latest Spin CLI
+          uses: fermyon/actions/spin/setup@v1
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+        - name: Install templates
+          run: spin templates install --dir .
+        - name: Create new project
+          run: spin new -t http-ts test-project -a
+        - name: Install dependencies of the test project
+          run: |
+            cd test-project
+            npm install
+        - name: Add new component to project
+          run: |
+            cd test-project
+            spin add -t http-ts new-component -a
+            cd new-component
+            npm install
+        - name: Build the application
+          run: |
+            cd test-project
+            spin build
+  build_docs:
+    runs-on: ubuntu-latest
+    needs: lint_and_test # later we want this after publishing to npmjs
+    steps:
+        - name: Checkout Repository including Tags
+          uses: actions/checkout@v4
+        - name: Fetch Git tags
+          run: git fetch --tags
+        - name: Install Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ env.NODE_VERSION }}
+        - name: Generate Spin JS SDK Docs 
+          run: | 
+            ./scripts/build-docs.sh
+        - name: Upload Spin JS SDK Docs as Artifact
+          id: docs_deployment
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: docs/
+  deploy_docs:
+    if: (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch')
+    permissions:
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.docs_deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build_docs
+    steps:
+      - name: Deploy to GitHub Pages
+        id: docs_deployment
+        uses: actions/deploy-pages@v4
