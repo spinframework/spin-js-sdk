@@ -18,6 +18,7 @@ echo "built the test app successfully"
 # Start the spin app in the background
 echo "Starting Spin app"
 spin up &
+SPIN_PID=$!
 
 # wait for app to be up and running
 echo "Waiting for Spin app to be ready"
@@ -30,7 +31,7 @@ echo "\n\nTest completed"
 
 # kill the spin app
 echo "Stopping Spin"
-killall spin
+kill -9 $SPIN_PID
 
 
 if [ "$isFailed" = true ] ; then

@@ -23,6 +23,10 @@ const args = yargs(hideBin(process.argv))
         alias: 'd',
         describe: 'Path to wit file or folder',
     })
+    .option('runtime-path', {
+        alias: 'r',
+        describe: 'Path to a custom runtime wasm file',
+    })
     .option('output', {
         alias: 'o',
         describe: 'Path to the output file',
@@ -115,6 +119,7 @@ async function saveBuildData(buildDataPath, checksum, version) {
         const { component } = await componentize(precompiledSource, {
             sourceName: basename(src),
             witPath,
+            engine: args.runtimePath,
             worldName: args.triggerType,
             disableFeatures: [],
             enableFeatures: ["http"],
