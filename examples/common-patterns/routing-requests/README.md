@@ -52,5 +52,5 @@ curl -i -H 'x-spin-demo:hello spin' localhost:3000/reverse-header-value
 ```console
 # Passing a JSON payload
 curl -XPOST -H 'content-type:application/json' -d '{ "message": "hello"}' localhost:3000/items
-# Item stored
+# Item processed
 ```

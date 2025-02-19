@@ -11,7 +11,7 @@ router
   .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
   .get('/bye/:name', ({ name }) => sayGoodBye(name))
   .get('/reverse-header-value', req => reverseHeaderValue(req))
-  .post('/items', async (req) => storeItem(await req.arrayBuffer()));
+  .post('/items', async (req) => processItem(await req.arrayBuffer()));
 
 
 //@ts-ignore
@@ -43,7 +43,7 @@ const reverseHeaderValue = (req: Request): Response => {
   });
 }
 
-const storeItem = (requestBody: ArrayBuffer): Response => {
+const processItem = (requestBody: ArrayBuffer): Response => {
   const decoder = new TextDecoder();
   let payload;
   try {
@@ -52,6 +52,6 @@ const storeItem = (requestBody: ArrayBuffer): Response => {
   catch (error) {
     return new Response('Bad Request', { status: 400 });
   }
-  console.log(`Storing item ${JSON.stringify(payload)}`);
-  return new Response('Item stored', { status: 201 });
+  console.log(`Processing item ${JSON.stringify(payload)}`);
+  return new Response('Item processed', { status: 200 });
 };
