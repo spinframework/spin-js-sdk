@@ -10,6 +10,6 @@ router
     .get("/", () => new Response("hello universe"))
     .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
 
-addEventListener('fetch', async (event) => {
+addEventListener('fetch', (event) => {
     event.respondWith(router.fetch(event.request));
 });

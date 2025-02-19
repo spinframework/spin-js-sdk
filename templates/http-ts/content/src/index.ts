@@ -11,6 +11,6 @@ router
     .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
 
 //@ts-ignore
-addEventListener('fetch', async (event: FetchEvent) => {
+addEventListener('fetch', (event: FetchEvent) => {
     event.respondWith(router.fetch(event.request));
 });
