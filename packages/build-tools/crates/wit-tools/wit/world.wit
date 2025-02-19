@@ -1,0 +1,11 @@
+package spinframework:js-build;
+
+world tools{
+    record target-world {
+        package-name: string,
+        world-name: string,
+    }
+
+    export merge-wit: func(wit-paths: list<string>, worlds: list<target-world>, output-world: option<string>, output-package: option<string>) -> result<string, string>;
+    export get-wit-imports: func(wit-path: list<string>, worlds: list<target-world>) -> result<list<string>, string>;
+}

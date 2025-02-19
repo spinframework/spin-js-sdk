@@ -1,0 +1,35 @@
+{
+  "name": "@spinframework/build-tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "make && rm -rf dist && tsc && chmod +x dist/*",
+    "fmt": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\""
+  },
+  "bin": {
+    "j2w": "./dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "prettier": "^3.5.0",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@bytecodealliance/componentize-js": "^0.16.0",
+    "@kaciras/deasync": "^1.1.0",
+    "@types/yargs": "^17.0.33",
+    "deasync": "^0.1.30",
+    "make-synchronous": "^1.0.0",
+    "yargs": "^17.7.2"
+  },
+  "files": [
+    "lib",
+    "bin",
+    "plugins"
+  ]
+}

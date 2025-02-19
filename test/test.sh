@@ -2,8 +2,8 @@ set -euo pipefail
 
 # Build the npm package
 cd ..
-npm install 
-npm run build
+npm install --ws
+npm run build --ws
 cd -
 
 isFailed=false
@@ -22,11 +22,11 @@ SPIN_PID=$!
 
 # wait for app to be up and running
 echo "Waiting for Spin app to be ready"
-timeout 60s bash -c 'until curl --silent -f http://localhost:3000/health > /dev/null; do sleep 2; done'
+timeout 60s bash -c 'until curl --silent -f http://localhost:3000/ > /dev/null; do sleep 2; done'
 
 # start the test
 echo "Starting test\n"
-curl -f http://localhost:3000/testFunctionality || isFailed=true
+curl -f http://localhost:3000/ || isFailed=true
 echo "\n\nTest completed"
 
 # kill the spin app
