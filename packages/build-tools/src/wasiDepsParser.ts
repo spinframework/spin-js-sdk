@@ -38,13 +38,13 @@ type DependencyResult = {
 }[];
 
 // Reads and parses a package.json file
-function readPackageJson(packageJsonPath: string): PackageJson | null {
+export function readPackageJson(packageJsonPath: string): PackageJson | null {
     if (!fs.existsSync(packageJsonPath)) return null;
     return JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 }
 
 // Resolves the absolute path of a dependency, checking both node_modules
-function resolveDependencyPath(
+export function resolveDependencyPath(
     dir: string,
     dep: string,
     dependencies: Record<string, string>,
@@ -78,35 +78,26 @@ export function getPackagesWithWasiDeps(
 
     if (!packageJson) return [];
 
-    // Collect all dependencies from different sections of package.json
+    // Collect all dependencies of package.json
     const dependencies = {
         ...packageJson.dependencies,
-        ...packageJson.devDependencies,
-        ...packageJson.peerDependencies,
-        ...packageJson.optionalDependencies,
     };
 
     const result: DependencyResult = [];
 
     if (topLevel) {
         if (packageJson.config?.wasiDep) {
-            if (packageJson.config.wasiDep.witDeps) {
-                absolutizeWitPath(dir, packageJson);
+            if (packageJson.config.wasiDep.witDeps || packageJson.config.wasiDep.wellKnownWorlds) {
+                if (packageJson.config.wasiDep.witDeps) {
+                    absolutizeWitPath(dir, packageJson);
+                }
+
                 result.push({
                     name: packageJson.name,
                     config: {
                         wasiDep: {
-                            witDeps: packageJson.config.wasiDep.witDeps
-                        }
-                    }
-                });
-            }
-            if (packageJson.config.wasiDep.wellKnownWorlds) {
-                result.push({
-                    name: packageJson.name,
-                    config: {
-                        wasiDep: {
-                            wellKnownWorlds: packageJson.config.wasiDep.wellKnownWorlds,
+                            ...(packageJson.config.wasiDep.witDeps && { witDeps: packageJson.config.wasiDep.witDeps }),
+                            ...(packageJson.config.wasiDep.wellKnownWorlds && { wellKnownWorlds: packageJson.config.wasiDep.wellKnownWorlds }),
                         }
                     }
                 });
