@@ -45,15 +45,25 @@ export function readPackageJson(packageJsonPath: string): PackageJson | null {
 
 // Resolves the absolute path of a dependency, checking both node_modules
 export function resolveDependencyPath(
-    dir: string,
-    dep: string,
-    dependencies: Record<string, string>,
+    rootDir: string,
+    dep: string
 ): string {
-    let depPath = path.join(dir, "node_modules", dep);
-    if (!fs.existsSync(depPath)) {
-        depPath = path.resolve(dir, dependencies[dep]);
+    let currentDir = rootDir;
+
+    while (currentDir !== path.parse(currentDir).root) {
+        const depPath = path.join(currentDir, "node_modules", dep);
+        if (fs.existsSync(depPath)) {
+            return depPath;
+        }
+        currentDir = path.dirname(currentDir); // Move up one level
     }
-    return depPath;
+
+    // Fallback: Try Node.js module resolution logic
+    try {
+        return path.dirname(require.resolve(dep, { paths: [rootDir] }));
+    } catch {
+        throw new Error(`Dependency '${dep}' not found in '${rootDir}' or any parent node_modules`);
+    }
 }
 
 // Converts the 'witPath' inside the config section to an absolute path if it is relative
@@ -107,7 +117,7 @@ export function getPackagesWithWasiDeps(
 
     // Iterate over each dependency and process its package.json
     Object.keys(dependencies).forEach((dep) => {
-        const depPath = resolveDependencyPath(dir, dep, dependencies);
+        const depPath = resolveDependencyPath(dir, dep);
         const depPackageJsonPath = path.join(depPath, "package.json");
 
         if (fs.existsSync(depPackageJsonPath) && !visited.has(depPath)) {
@@ -115,13 +125,14 @@ export function getPackagesWithWasiDeps(
             const depPackageJson = readPackageJson(depPackageJsonPath);
             if (!depPackageJson) return;
 
-            // Convert relative 'witPath' to an absolute path relative to root of package
+            // Convert relative 'witPath' to absolute
             absolutizeWitPath(depPath, depPackageJson);
 
             // If the package has a 'knitwit' config, add it to the result
             if (depPackageJson.config?.wasiDep) {
                 result.push({
-                    name: dep, config: {
+                    name: dep,
+                    config: {
                         wasiDep: {
                             witDeps: depPackageJson.config.wasiDep.witDeps ?? undefined,
                             wellKnownWorlds: depPackageJson.config.wasiDep.wellKnownWorlds ?? undefined,
@@ -130,7 +141,7 @@ export function getPackagesWithWasiDeps(
                 });
             }
 
-            // Recursively check dependencies of this package
+            // Recursively check dependencies
             result.push(...getPackagesWithWasiDeps(depPath, visited, false));
         }
     });

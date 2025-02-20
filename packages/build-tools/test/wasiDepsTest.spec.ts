@@ -41,7 +41,7 @@ describe("resolveDependencyPath", () => {
     });
     it("should return node_modules path if dependency exists", () => {
         existsSyncStub.returns(true);
-        expect(resolveDependencyPath("/project", "dep", {})).to.equal("/project/node_modules/dep");
+        expect(resolveDependencyPath("/project", "dep")).to.equal("/project/node_modules/dep");
     });
 });
 
@@ -148,7 +148,9 @@ describe("getPackagesWithWasiDeps (recursive)", () => {
         const packageJson2 = {
             name: "package-2",
             dependencies: {
-                "package-3": "^1.0.0"
+                "package-3": "^1.0.0",
+                // This package is installed inside the node_modules of package-2
+                "package-4": "^1.0.0"
             },
             config: {
                 wasiDep: {
@@ -160,9 +162,30 @@ describe("getPackagesWithWasiDeps (recursive)", () => {
         // Simulate the third package (dependency of package-2)
         const packageJson3 = {
             name: "package-3",
+            dependencies: {
+                "package-5": "^1.0.0"
+            },
             config: {
                 wasiDep: {
                     witDeps: [{ witPath: "./test3.wit", package: "test-pkg-3", world: "world-3" }],
+                }
+            }
+        };
+
+        const packageJson4 = {
+            name: "package-4",
+            config: {
+                wasiDep: {
+                    witDeps: [{ witPath: "./test4.wit", package: "test-pkg-4", world: "world-4" }],
+                }
+            }
+        };
+
+        const packageJson5 = {
+            name: "package-5",
+            config: {
+                wasiDep: {
+                    witDeps: [{ witPath: "./test5.wit", package: "test-pkg-5", world: "world-5" }],
                 }
             }
         };
@@ -175,9 +198,17 @@ describe("getPackagesWithWasiDeps (recursive)", () => {
         existsSyncStub.withArgs("/project/node_modules/package-2/package.json").returns(true);
         readFileSyncStub.withArgs("/project/node_modules/package-2/package.json").returns(JSON.stringify(packageJson2));
 
-        existsSyncStub.withArgs("/project/node_modules/package-2/node_modules/package-3").returns(true);
-        existsSyncStub.withArgs("/project/node_modules/package-2/node_modules/package-3/package.json").returns(true);
-        readFileSyncStub.withArgs("/project/node_modules/package-2/node_modules/package-3/package.json").returns(JSON.stringify(packageJson3));
+        existsSyncStub.withArgs("/project/node_modules/package-3").returns(true);
+        existsSyncStub.withArgs("/project/node_modules/package-3/package.json").returns(true);
+        readFileSyncStub.withArgs("/project/node_modules/package-3/package.json").returns(JSON.stringify(packageJson3));
+
+        existsSyncStub.withArgs("/project/node_modules/package-2/node_modules/package-4").returns(true);
+        existsSyncStub.withArgs("/project/node_modules/package-2/node_modules/package-4/package.json").returns(true);
+        readFileSyncStub.withArgs("/project/node_modules/package-2/node_modules/package-4/package.json").returns(JSON.stringify(packageJson4));
+
+        existsSyncStub.withArgs("/project/node_modules/package-5").returns(true);
+        existsSyncStub.withArgs("/project/node_modules/package-5/package.json").returns(true);
+        readFileSyncStub.withArgs("/project/node_modules/package-5/package.json").returns(JSON.stringify(packageJson5));
 
         // Calling the function and asserting the result
         let visited: Set<string> = new Set()
@@ -188,18 +219,23 @@ describe("getPackagesWithWasiDeps (recursive)", () => {
         wellKnownWitPaths.forEach((witPath) => witPaths.push(witPath));
         wellKnownTargetWorlds.forEach((targetWorld) => targetWorlds.push(targetWorld));
 
-        expect(witPaths.length).to.equal(3);
-        expect(targetWorlds.length).to.equal(3);
+
+        expect(witPaths.length).to.equal(5);
+        expect(targetWorlds.length).to.equal(5);
         expect(wellKnownWitPaths.length).to.equal(0);
         expect(witPaths).to.deep.equal([
             "/project/test1.wit",
             "/project/node_modules/package-2/test2.wit",
-            "/project/node_modules/package-2/node_modules/package-3/test3.wit"
+            "/project/node_modules/package-3/test3.wit",
+            "/project/node_modules/package-5/test5.wit",
+            "/project/node_modules/package-2/node_modules/package-4/test4.wit"
         ]);
         expect(targetWorlds).to.deep.equal([
             { packageName: "test-pkg-1", worldName: "world-1" },
             { packageName: "test-pkg-2", worldName: "world-2" },
-            { packageName: "test-pkg-3", worldName: "world-3" }
+            { packageName: "test-pkg-3", worldName: "world-3" },
+            { packageName: "test-pkg-5", worldName: "world-5" },
+            { packageName: "test-pkg-4", worldName: "world-4" }
         ]);
     });
 });
