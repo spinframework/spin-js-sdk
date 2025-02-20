@@ -21,10 +21,7 @@
   },
   "dependencies": {
     "@bytecodealliance/componentize-js": "^0.16.0",
-    "@kaciras/deasync": "^1.1.0",
     "@types/yargs": "^17.0.33",
-    "deasync": "^0.1.30",
-    "make-synchronous": "^1.0.0",
     "yargs": "^17.7.2"
   },
   "files": [
