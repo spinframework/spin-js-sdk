@@ -4,6 +4,8 @@ import SpinSdkPlugin from "@spinframework/build-tools/plugins/webpack/index.js";
 const config = async () => {
     let SpinPlugin = await SpinSdkPlugin.init()
     return {
+        mode: 'production',
+        stats: 'errors-only',
         entry: './src/index.ts',
         experiments: {
             outputModule: true,

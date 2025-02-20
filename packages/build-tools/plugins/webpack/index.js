@@ -1,4 +1,4 @@
-import { getPackagesWithWasiDeps } from "../../dist/wasiDepsParser.js";
+import { getPackagesWithWasiDeps, processWasiDeps, processWellKnownWorlds } from "../../dist/wasiDepsParser.js";
 class SpinSdkPlugin {
     constructor() {
         this.externals = {};
@@ -8,31 +8,15 @@ class SpinSdkPlugin {
         const { getWitImports } = await import("../../lib/wit_tools.js");
         let plugin = new SpinSdkPlugin();
 
-        let wasiDeps = getPackagesWithWasiDeps(process.cwd());
-        let witPaths = [];
-        let targetWorlds = []
-        let wellKnownWorlds = []
-        wasiDeps.map((dep) => {
-            if (dep.config?.wasiDep?.witDeps) {
-                witPaths.push(dep.config.wasiDep.witDeps.witPath)
-                targetWorlds.push({ packageName: dep.config.wasiDep.witDeps.package, worldName: dep.config.wasiDep.witDeps.world })
-            }
-            if (dep.config?.wasiDep?.wellKnownWorlds) {
-                wellKnownWorlds.push(...dep.config.wasiDep.wellKnownWorlds)
-            }
+        let wasiDeps = getPackagesWithWasiDeps(process.cwd(), new Set(), true);
+        let { witPaths, targetWorlds, wellKnownWorlds } = processWasiDeps(wasiDeps)
+        let { witPaths: wellKnownWitPaths, targetWorlds: wellKnownTargetWorlds } = await processWellKnownWorlds(wellKnownWorlds);
+        wellKnownWitPaths.forEach((path) => {
+            witPaths.push(path)
         })
-
-        let wellKnwonDirectories = []
-        // If there any well known wits, add them to the witPaths and targetWorlds
-        for (let wellKnownWorld of wellKnownWorlds) {
-            let tempdir = fs.mkdtempSync("well-known-wits");
-            wellKnwonDirectories.push(tempdir);
-
-            let targetWorld = setupWellKnownWits(wellKnownWorld, tempdir);
-            witPaths.push(tempdir);
-            targetWorlds.push(targetWorld)
-        }
-
+        wellKnownTargetWorlds.forEach((target) => {
+            targetWorlds.push(target)
+        })
 
         let imports = getWitImports(witPaths, targetWorlds);
 
@@ -48,9 +32,6 @@ class SpinSdkPlugin {
             this.externals = Object.assign({}, compiler.options.externals, this.externals);
         }
         compiler.options.externals = this.externals;
-
-        console.log(compiler.options.externals)
-
     }
 }
 
