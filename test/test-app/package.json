@@ -20,6 +20,7 @@
   "dependencies": {
     "@spinframework/build-tools": "file:../../packages/build-tools",
     "@spinframework/spin-variables": "file:../../packages/spin-variables",
+    "@spinframework/spin-redis": "file:../../packages/spin-redis",
     "itty-router": "^5.0.18"
   },
   "config": {

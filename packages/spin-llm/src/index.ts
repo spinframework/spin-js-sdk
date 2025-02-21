@@ -1,11 +1,8 @@
 import {
     infer as llmInfer,
     generateEmbeddings as llmGenerateEmbeddings,
-    EmbeddingsResult, InferencingParams, InferencingResult, EmbeddingsUsage, InferencingUsage
 } from 'fermyon:spin/llm@2.0.0';
 
-
-// Re-exporting because the wit definition is a string
 /**
  * Enum representing the available models for inferencing.
  * @enum {string}
@@ -23,7 +20,67 @@ export enum EmbeddingModels {
     AllMiniLmL6V2 = 'all-minilm-l6-v2',
 }
 
+/**
+ * Interface representing options for inferencing.
+ * @interface InferencingOptions
+ */
+export interface InferencingOptions {
+    maxTokens?: number;
+    repeatPenalty?: number;
+    repeatPenaltyLastNTokenCount?: number;
+    temperature?: number;
+    topK?: number;
+    topP?: number;
+}
 
+/**
+ * Interface representing internal options for inferencing.
+ * @interface InternalInferencingOptions
+ */
+export interface InternalInferencingOptions {
+    maxTokens?: number;
+    repeatPenalty?: number;
+    repeatPenaltyLastNTokenCount?: number;
+    temperature?: number;
+    topK?: number;
+    topP?: number;
+}
+
+/**
+ * Interface representing usage statistics for inferencing.
+ * @interface InferenceUsage
+ */
+export interface InferenceUsage {
+    promptTokenCount: number;
+    generatedTokenCount: number;
+}
+
+/**
+ * Interface representing the result of an inference.
+ * @interface InferenceResult
+ */
+export interface InferenceResult {
+    text: string;
+    usage: InferenceUsage;
+}
+
+/**
+ * Interface representing usage statistics for generating embeddings.
+ * @interface EmbeddingUsage
+ */
+
+export interface EmbeddingUsage {
+    promptTokenCount: number;
+}
+
+/**
+ * Interface representing the result of generating embeddings.
+ * @interface EmbeddingResult
+ */
+export interface EmbeddingResult {
+    embeddings: Array<Float32Array>;
+    usage: EmbeddingUsage;
+}
 
 /**
  * Performs inferencing using the specified model and prompt, with optional settings.
@@ -35,17 +92,16 @@ export enum EmbeddingModels {
 export function infer(
     model: InferencingModels | string,
     prompt: string,
-    options?: InferencingParams,
-): InferencingResult {
-    let inference_options: InferencingParams = {
-        maxTokens: options?.maxTokens || 100,
-        repeatPenalty: options?.repeatPenalty || 1.1,
-        repeatPenaltyLastNTokenCount: options?.repeatPenaltyLastNTokenCount || 64,
-        temperature: options?.temperature || 0.8,
-        topK: options?.topK || 40,
-        topP: options?.topP || 0.9,
-    };
-    return llmInfer(model, prompt, inference_options);
+    options?: InferencingOptions,
+): InferenceResult {
+    return llmInfer(model, prompt, {
+        maxTokens: options?.maxTokens ?? 100,
+        repeatPenalty: options?.repeatPenalty ?? 1.1,
+        repeatPenaltyLastNTokenCount: options?.repeatPenaltyLastNTokenCount ?? 64,
+        temperature: options?.temperature ?? 0.8,
+        topK: options?.topK ?? 40,
+        topP: options?.topP ?? 0.9,
+    });
 }
 
 /**
@@ -57,8 +113,6 @@ export function infer(
 export const generateEmbeddings = (
     model: EmbeddingModels | string,
     text: Array<string>,
-): EmbeddingsResult => {
+): EmbeddingResult => {
     return llmGenerateEmbeddings(model, text);
 };
-
-export { EmbeddingsResult, InferencingParams, InferencingResult, EmbeddingsUsage, InferencingUsage }
