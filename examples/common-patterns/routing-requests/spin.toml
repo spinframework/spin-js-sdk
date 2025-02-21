@@ -13,6 +13,7 @@ component = "routing-requests"
 [component.routing-requests]
 source = "dist/routing-requests.wasm"
 exclude_files = ["**/node_modules"]
+
 [component.routing-requests.build]
 command = ["npm install", "npm run build"]
 watch = ["src/**/*.ts"]
