@@ -1,0 +1,28 @@
+{
+  "name": "@spinframework/spin-mysql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && cp -r types/* dist/ && cp -r src/types dist/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  },
+  "config": {
+    "wasiDep": {
+      "witDeps": [
+        {
+          "witPath": "./wit",
+          "package": "fermyon:spin@2.0.0",
+          "world": "spin-mysql"
+        }
+      ]
+    }
+  }
+}
