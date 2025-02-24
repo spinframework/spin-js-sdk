@@ -1,6 +1,7 @@
 package fermyon:spin@2.0.0;
 
 world spin-imports {
+  import wasi:cli/environment@0.2.3;
   import wasi:http/outgoing-handler@0.2.3;
   import llm;
   import redis;

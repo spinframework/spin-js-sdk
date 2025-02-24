@@ -37,9 +37,19 @@ const args = yargs(hideBin(process.argv))
         describe: "Spin trigger to target",
         demandOption: true
     })
+    .option('debug-build', {
+        describe: "Use debug build of the runtime",
+        type: 'boolean',
+    })
     .option('aot', {
         describe: "Enable Ahead of Time compilation",
         type: 'boolean',
+    })
+    .check((argv) => {
+        if (argv['debug-build'] && argv['runtime-path']) {
+            throw new Error("The --runtime-path option cannot be used when --debug-build is enabled.");
+        }
+        return true;
     })
     .argv;
 
@@ -123,6 +133,7 @@ async function saveBuildData(buildDataPath, checksum, version) {
             worldName: args.triggerType,
             disableFeatures: [],
             enableFeatures: ["http"],
+            debugBuild: args.debugBuild ?? false,
             enableAot: args.aot
         });
 
