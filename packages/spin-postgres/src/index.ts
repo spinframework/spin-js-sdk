@@ -5,7 +5,7 @@ import {
     RdbmsRowSet,
     SpinRdbmsRowSet,
 } from './types/rdbms';
-import { convertRdbmsToWitTypes } from './rdbmsHelper';
+import { convertRdbmsToWitTypes } from './rdbmsHelper.js';
 
 /**
  * Interface representing a PostgreSQL connection with methods for querying and executing statements.

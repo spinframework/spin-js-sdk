@@ -19,7 +19,7 @@
       "witDeps": [
         {
           "witPath": "./wit",
-          "package": "fermyon:spin@3.0.0",
+          "package": "spin:postgres@3.0.0",
           "world": "spin-postgres3"
         }
       ]
