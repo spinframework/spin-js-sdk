@@ -15,14 +15,12 @@
     "typescript": "^5.7.3"
   },
   "config": {
-    "wasiDep": {
-      "witDeps": [
-        {
-          "witPath": "./wit",
-          "package": "spin:postgres@3.0.0",
-          "world": "spin-postgres3"
-        }
-      ]
-    }
+    "witDeps": [
+      {
+        "witPath": "./wit",
+        "package": "spin:postgres@3.0.0",
+        "world": "spin-postgres3"
+      }
+    ]
   }
 }

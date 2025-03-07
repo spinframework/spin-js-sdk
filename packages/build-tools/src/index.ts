@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { componentize } from "@bytecodealliance/componentize-js";
-import { getPackagesWithWasiDeps, processWasiDeps, processWellKnownWorlds } from "./wasiDepsParser.js";
+import { getPackagesWithWasiDeps, processWasiDeps } from "./wasiDepsParser.js";
 import { basename } from 'node:path';
 
 import { calculateChecksum, getPackageVersion, saveBuildData } from "./utils.js";
@@ -30,17 +30,10 @@ async function main() {
     // generate wit world string
     let wasiDeps = getPackagesWithWasiDeps(process.cwd(), new Set(), true);
 
-    let { witPaths, targetWorlds, wellKnownWorlds } = processWasiDeps(wasiDeps)
-    let { witPaths: wellKnownWitPaths, targetWorlds: wellKnownTargetWorlds } = await processWellKnownWorlds(wellKnownWorlds);
-    wellKnownWitPaths.forEach((path) => {
-      witPaths.push(path)
-    })
-    wellKnownTargetWorlds.forEach((target) => {
-      targetWorlds.push(target)
-    })
+    let { witPaths, targetWorlds } = processWasiDeps(wasiDeps);
 
     // Get inline wit by merging the wits specified by all the dependencies
-    let inlineWit = mergeWit(witPaths, targetWorlds, "combined", "combined-wit:combined-wit@0.1.0")
+    let inlineWit = mergeWit(witPaths, targetWorlds, "combined", "combined-wit:combined-wit@0.1.0");
 
     const source = await readFile(src, 'utf8');
 

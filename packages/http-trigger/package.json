@@ -1,12 +1,12 @@
 {
-  "name": "@spinframework/spin-sqlite",
+  "name": "@spinframework/wasi-http-proxy",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc && cp -r types/* dist/"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -18,8 +18,8 @@
     "witDeps": [
       {
         "witPath": "./wit",
-        "package": "fermyon:spin@2.0.0",
-        "world": "spin-sqlite"
+        "package": "spinframework:http-trigger@0.2.3",
+        "world": "http-trigger"
       }
     ]
   }

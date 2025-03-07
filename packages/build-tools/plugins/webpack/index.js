@@ -1,4 +1,4 @@
-import { getPackagesWithWasiDeps, processWasiDeps, processWellKnownWorlds } from "../../dist/wasiDepsParser.js";
+import { getPackagesWithWasiDeps, processWasiDeps } from "../../dist/wasiDepsParser.js";
 class SpinSdkPlugin {
     constructor() {
         this.externals = {};
@@ -9,14 +9,7 @@ class SpinSdkPlugin {
         let plugin = new SpinSdkPlugin();
 
         let wasiDeps = getPackagesWithWasiDeps(process.cwd(), new Set(), true);
-        let { witPaths, targetWorlds, wellKnownWorlds } = processWasiDeps(wasiDeps)
-        let { witPaths: wellKnownWitPaths, targetWorlds: wellKnownTargetWorlds } = await processWellKnownWorlds(wellKnownWorlds);
-        wellKnownWitPaths.forEach((path) => {
-            witPaths.push(path)
-        })
-        wellKnownTargetWorlds.forEach((target) => {
-            targetWorlds.push(target)
-        })
+        let { witPaths, targetWorlds } = processWasiDeps(wasiDeps)
 
         let imports = getWitImports(witPaths, targetWorlds);
 

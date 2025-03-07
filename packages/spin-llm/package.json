@@ -15,14 +15,12 @@
     "typescript": "^5.7.3"
   },
   "config": {
-    "wasiDep": {
-      "witDeps": [
-        {
-          "witPath": "./wit",
-          "package": "fermyon:spin@2.0.0",
-          "world": "spin-llm"
-        }
-      ]
-    }
+    "witDeps": [
+      {
+        "witPath": "./wit",
+        "package": "fermyon:spin@2.0.0",
+        "world": "spin-llm"
+      }
+    ]
   }
 }

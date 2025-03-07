@@ -1,7 +1,6 @@
 import fs from "fs";
 import { TargetWorld } from "../lib/wit_tools.js";
 import path from "path";
-import { setupWellKnownWits } from "./wellKnownWits.js"
 
 
 // Define the structure of a package.json file
@@ -9,15 +8,9 @@ import { setupWellKnownWits } from "./wellKnownWits.js"
 type PackageJson = {
     name: string,
     dependencies?: Record<string, string>;
-    devDependencies?: Record<string, string>;
-    peerDependencies?: Record<string, string>;
-    optionalDependencies?: Record<string, string>;
     config?: {
-        wasiDep?: {
-            witDeps?: witDep[];
-            wellKnownWorlds?: string[];
-        };
-    };
+        witDeps?: witDep[];
+    }
 };
 
 type witDep = {
@@ -30,11 +23,8 @@ type witDep = {
 type DependencyResult = {
     name: string;
     config: {
-        wasiDep: {
-            witDeps?: witDep[];
-            wellKnownWorlds?: string[];
-        }
-    };
+        witDeps?: witDep[];
+    }
 }[];
 
 // Reads and parses a package.json file
@@ -68,8 +58,8 @@ export function resolveDependencyPath(
 
 // Converts the 'witPath' inside the config section to an absolute path if it is relative
 function absolutizeWitPath(depPackageJsonPath: string, depPackageJson: PackageJson): void {
-    if (depPackageJson.config?.wasiDep?.witDeps) {
-        depPackageJson.config.wasiDep.witDeps.forEach((witDep) => {
+    if (depPackageJson.config?.witDeps) {
+        depPackageJson.config.witDeps.forEach((witDep) => {
             if (!path.isAbsolute(witDep.witPath)) {
                 witDep.witPath = path.resolve(depPackageJsonPath, witDep.witPath);
             }
@@ -96,19 +86,16 @@ export function getPackagesWithWasiDeps(
     const result: DependencyResult = [];
 
     if (topLevel) {
-        if (packageJson.config?.wasiDep) {
-            if (packageJson.config.wasiDep.witDeps || packageJson.config.wasiDep.wellKnownWorlds) {
-                if (packageJson.config.wasiDep.witDeps) {
+        if (packageJson.config?.witDeps) {
+            if (packageJson.config.witDeps) {
+                if (packageJson.config.witDeps) {
                     absolutizeWitPath(dir, packageJson);
                 }
 
                 result.push({
                     name: packageJson.name,
                     config: {
-                        wasiDep: {
-                            ...(packageJson.config.wasiDep.witDeps && { witDeps: packageJson.config.wasiDep.witDeps }),
-                            ...(packageJson.config.wasiDep.wellKnownWorlds && { wellKnownWorlds: packageJson.config.wasiDep.wellKnownWorlds }),
-                        }
+                        witDeps: packageJson.config.witDeps
                     }
                 });
             }
@@ -129,14 +116,12 @@ export function getPackagesWithWasiDeps(
             absolutizeWitPath(depPath, depPackageJson);
 
             // If the package has a 'knitwit' config, add it to the result
-            if (depPackageJson.config?.wasiDep) {
+            if (depPackageJson.config?.witDeps) {
                 result.push({
                     name: dep,
                     config: {
-                        wasiDep: {
-                            witDeps: depPackageJson.config.wasiDep.witDeps ?? undefined,
-                            wellKnownWorlds: depPackageJson.config.wasiDep.wellKnownWorlds ?? undefined,
-                        }
+                        witDeps:
+                            depPackageJson.config.witDeps ?? [],
                     }
                 });
             }
@@ -153,32 +138,15 @@ export function getPackagesWithWasiDeps(
 export function processWasiDeps(wasiDeps: DependencyResult) {
     let witPaths: string[] = [];
     let targetWorlds: TargetWorld[] = [];
-    let wellKnownWorlds: string[] = [];
 
     wasiDeps.forEach((dep) => {
-        if (dep.config?.wasiDep?.witDeps) {
-            dep.config.wasiDep.witDeps.forEach((witDep) => {
+        if (dep.config?.witDeps) {
+            dep.config.witDeps.forEach((witDep) => {
                 witPaths.push(witDep.witPath!);
-                targetWorlds.push({ packageName: witDep.package, worldName: witDep.world });
+                targetWorlds.push({ packageName: witDep.package, worldName: witDep.world })
             });
         }
-        if (dep.config?.wasiDep?.wellKnownWorlds) {
-            wellKnownWorlds.push(...dep.config.wasiDep.wellKnownWorlds);
-        }
     });
-
-    return { witPaths, targetWorlds, wellKnownWorlds };
-}
-
-export async function processWellKnownWorlds(wellKnownWorlds: string[]) {
-    let witPaths: string[] = [];
-    let targetWorlds: TargetWorld[] = [];
-
-    for (let wellKnownWorld of wellKnownWorlds) {
-        let { withPath, targetWorld } = await setupWellKnownWits(wellKnownWorld);
-        witPaths.push(withPath);
-        targetWorlds.push(targetWorld);
-    }
 
     return { witPaths, targetWorlds };
 }

@@ -1,4 +1,4 @@
-package spinframework:http-trigger@0.1.0;
+package spinframework:http-trigger@0.2.3;
 
 world http-trigger {
   import wasi:io/poll@0.2.3;

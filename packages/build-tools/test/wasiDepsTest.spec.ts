@@ -1,5 +1,5 @@
 import fs from "fs";
-import { getPackagesWithWasiDeps, processWasiDeps, processWellKnownWorlds, readPackageJson, resolveDependencyPath } from "../dist/wasiDepsParser.js";
+import { getPackagesWithWasiDeps, processWasiDeps, readPackageJson, resolveDependencyPath } from "../dist/wasiDepsParser.js";
 import { expect } from "chai";
 import sinon from "sinon";
 
@@ -64,10 +64,7 @@ describe("getPackagesWithWasiDeps", () => {
         const packageJson = {
             name: "test-package",
             config: {
-                wasiDep: {
-                    witDeps: [{ witPath: "./test.wit", package: "test-pkg", world: "test-world" }],
-                    wellKnownWorlds: ["world-1"]
-                }
+                witDeps: [{ witPath: "./test.wit", package: "test-pkg", world: "test-world" }],
             }
         };
         existsSyncStub.returns(true);
@@ -76,11 +73,7 @@ describe("getPackagesWithWasiDeps", () => {
             {
                 name: "test-package",
                 config: {
-                    wasiDep: {
-                        // WitPath is resolved to an absolute path
-                        wellKnownWorlds: ["world-1"],
-                        witDeps: [{ witPath: "/project/test.wit", package: "test-pkg", world: "test-world" }]
-                    }
+                    witDeps: [{ witPath: "/project/test.wit", package: "test-pkg", world: "test-world" }]
                 }
             }
         ]);
@@ -93,28 +86,14 @@ describe("processWasiDeps", () => {
             {
                 name: "test-package",
                 config: {
-                    wasiDep: {
-                        witDeps: [{ witPath: "./test.wit", package: "test-pkg", world: "test-world" }],
-                        wellKnownWorlds: ["world-1"]
-                    }
+                    witDeps: [{ witPath: "./test.wit", package: "test-pkg", world: "test-world" }],
                 }
             }
         ];
         expect(processWasiDeps(wasiDeps)).to.deep.equal({
             witPaths: ["./test.wit"],
             targetWorlds: [{ packageName: "test-pkg", worldName: "test-world" }],
-            wellKnownWorlds: ["world-1"]
         });
-    });
-});
-
-describe("processWellKnownWorlds", () => {
-
-    it("should call setupWellKnownWits for each world", async () => {
-        const result = await processWellKnownWorlds(["http-trigger@0.2.3"]);
-        // get absolutized directory path from setupWellKnownWits module
-        let absolutePath = path.resolve(__dirname, '../dist/');
-        expect(result).to.deep.equal({ witPaths: [path.resolve(absolutePath, "../well-known-wits/wasi-http@0.2.3.wit")], targetWorlds: [{ packageName: "spinframework:http-trigger@0.1.0", worldName: "http-trigger" }] });
     });
 });
 
@@ -138,9 +117,7 @@ describe("getPackagesWithWasiDeps (recursive)", () => {
                 "package-2": "^1.0.0"
             },
             config: {
-                wasiDep: {
-                    witDeps: [{ witPath: "./test1.wit", package: "test-pkg-1", world: "world-1" }],
-                }
+                witDeps: [{ witPath: "./test1.wit", package: "test-pkg-1", world: "world-1" }],
             }
         };
 
@@ -153,9 +130,7 @@ describe("getPackagesWithWasiDeps (recursive)", () => {
                 "package-4": "^1.0.0"
             },
             config: {
-                wasiDep: {
-                    witDeps: [{ witPath: "./test2.wit", package: "test-pkg-2", world: "world-2" }],
-                }
+                witDeps: [{ witPath: "./test2.wit", package: "test-pkg-2", world: "world-2" }],
             }
         };
 
@@ -166,27 +141,21 @@ describe("getPackagesWithWasiDeps (recursive)", () => {
                 "package-5": "^1.0.0"
             },
             config: {
-                wasiDep: {
-                    witDeps: [{ witPath: "./test3.wit", package: "test-pkg-3", world: "world-3" }],
-                }
+                witDeps: [{ witPath: "./test3.wit", package: "test-pkg-3", world: "world-3" }],
             }
         };
 
         const packageJson4 = {
             name: "package-4",
             config: {
-                wasiDep: {
-                    witDeps: [{ witPath: "./test4.wit", package: "test-pkg-4", world: "world-4" }],
-                }
+                witDeps: [{ witPath: "./test4.wit", package: "test-pkg-4", world: "world-4" }],
             }
         };
 
         const packageJson5 = {
             name: "package-5",
             config: {
-                wasiDep: {
-                    witDeps: [{ witPath: "./test5.wit", package: "test-pkg-5", world: "world-5" }],
-                }
+                witDeps: [{ witPath: "./test5.wit", package: "test-pkg-5", world: "world-5" }],
             }
         };
 
@@ -214,15 +183,11 @@ describe("getPackagesWithWasiDeps (recursive)", () => {
         let visited: Set<string> = new Set()
         let result = getPackagesWithWasiDeps("/project", visited, true);
 
-        let { witPaths, targetWorlds, wellKnownWorlds } = processWasiDeps(result);
-        let { witPaths: wellKnownWitPaths, targetWorlds: wellKnownTargetWorlds } = await processWellKnownWorlds(wellKnownWorlds);
-        wellKnownWitPaths.forEach((witPath) => witPaths.push(witPath));
-        wellKnownTargetWorlds.forEach((targetWorld) => targetWorlds.push(targetWorld));
+        let { witPaths, targetWorlds } = processWasiDeps(result);
 
 
         expect(witPaths.length).to.equal(5);
         expect(targetWorlds.length).to.equal(5);
-        expect(wellKnownWitPaths.length).to.equal(0);
         expect(witPaths).to.deep.equal([
             "/project/test1.wit",
             "/project/node_modules/package-2/test2.wit",
