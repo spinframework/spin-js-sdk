@@ -13,6 +13,8 @@ component = "test-app"
 [component.test-app]
 source = "dist/test-app.wasm"
 exclude_files = ["**/node_modules"]
+allowed_outbound_hosts = ["http://localhost:3000"]
+key_value_stores = ["default"]
 [component.test-app.build]
 command = ["npm install", "npm run build"]
 watch = ["src/**/*.ts"]

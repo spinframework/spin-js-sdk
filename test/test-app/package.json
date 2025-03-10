@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@spinframework/build-tools": "file:../../packages/build-tools",
+    "@spinframework/spin-kv": "file:../../packages/spin-kv",
     "@spinframework/spin-variables": "file:../../packages/spin-variables",
-    "@spinframework/spin-redis": "file:../../packages/spin-redis",
     "@spinframework/wasi-http-proxy": "file:../../packages/http-trigger",
     "itty-router": "^5.0.18"
   },

@@ -1,18 +1,19 @@
-// For AutoRouter documentation refer to https://itty.dev/itty-router/routers/autorouter
-import { AutoRouter } from 'itty-router';
-import * as Variables from '@spinframework/spin-variables';
+import { AutoRouter } from "itty-router"
+import { headersTest, health, kvTest, kvTestUint8Array, outboundHttp, statusTest, stream, streamTest, testFunctionality } from "./test";
 
-let router = AutoRouter();
+let router = AutoRouter()
 
-// Route ordering matters, the first route that matches will be used
-// Any route that does not return will be treated as a middleware
-// Any unmatched route will return a 404
-router
-    .get("/", () => new Response("hello universe"))
-    .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
+router.get("/health", health)
+router.get("/stream", stream)
+router.get("/statusTest", statusTest)
+router.get("/headersTest", headersTest)
+router.get("/outboundHttp", outboundHttp)
+router.get("/kvTest", kvTest)
+router.get("/kvTestUint8Array", kvTestUint8Array)
+router.get("/streamTest", streamTest)
+router.get("/testFunctionality", testFunctionality)
 
 //@ts-ignore
 addEventListener('fetch', async (event: FetchEvent) => {
-    console.log(Variables.get('test'));
     event.respondWith(router.fetch(event.request));
 });
