@@ -5,12 +5,12 @@ import * as spinMqtt from 'fermyon:spin/mqtt@2.0.0';
  * @enum {string}
  */
 export enum QoS {
-    /** Messages are delivered at most once. */
-    AtMostOnce = 'at-most-once',
-    /** Messages are delivered at least once. */
-    AtLeastOnce = 'at-least-once',
-    /** Messages are delivered exactly once. */
-    ExactlyOnce = 'exactly-once',
+  /** Messages are delivered at most once. */
+  AtMostOnce = 'at-most-once',
+  /** Messages are delivered at least once. */
+  AtLeastOnce = 'at-least-once',
+  /** Messages are delivered exactly once. */
+  ExactlyOnce = 'exactly-once',
 }
 
 /**
@@ -18,13 +18,13 @@ export enum QoS {
  * @interface MqttConnection
  */
 export interface MqttConnection {
-    /**
-     * Publishes a message to the specified MQTT topic.
-     * @param topic - The topic to publish the message to.
-     * @param payload - The message payload as a Uint8Array.
-     * @param qos - The Quality of Service level for message delivery.
-     */
-    publish: (topic: string, payload: Uint8Array, qos: QoS) => void;
+  /**
+   * Publishes a message to the specified MQTT topic.
+   * @param topic - The topic to publish the message to.
+   * @param payload - The message payload as a Uint8Array.
+   * @param qos - The Quality of Service level for message delivery.
+   */
+  publish: (topic: string, payload: Uint8Array, qos: QoS) => void;
 }
 
 /**
@@ -36,15 +36,15 @@ export interface MqttConnection {
  * @returns {MqttConnection} The MQTT connection object.
  */
 export function open(
-    address: string,
-    username: string,
-    password: string,
-    keepAliveIntervalInSecs: bigint,
+  address: string,
+  username: string,
+  password: string,
+  keepAliveIntervalInSecs: bigint,
 ): MqttConnection {
-    return spinMqtt.Connection.open(
-        address,
-        username,
-        password,
-        keepAliveIntervalInSecs,
-    );
+  return spinMqtt.Connection.open(
+    address,
+    username,
+    password,
+    keepAliveIntervalInSecs,
+  );
 }

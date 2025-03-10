@@ -3,8 +3,8 @@
   "version": "3.1.0",
   "description": "",
   "scripts": {
-    "fmt": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
-    "fmt-check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\"",
+    "fmt": "prettier --write \"packages/**/*.{ts,tsx,js,jsx}\"",
+    "fmt-check": "prettier --check \"packages/**/*.{ts,tsx,js,jsx}\"",
     "fmt-examples": "prettier --write \"examples/**/*.{ts,tsx,js,jsx}\" --ignore-patterm \"node_modules\""
   },
   "sideEffects": false,
