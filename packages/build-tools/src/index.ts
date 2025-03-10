@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import { componentize } from "@bytecodealliance/componentize-js";
+//@ts-ignore https://github.com/bytecodealliance/ComponentizeJS/pull/198
+import { version } from "@bytecodealliance/componentize-js"
 import { getPackagesWithWasiDeps, processWasiDeps } from "./wasiDepsParser.js";
 import { basename } from 'node:path';
 
@@ -17,8 +19,8 @@ async function main() {
     let src = CliArgs.input;
     let outputPath = CliArgs.output;
 
-    // TODO: Once there is a new release of componentize-js, use the version exported from the module
-    let componentizeVersion = await getPackageVersion("@bytecodealliance/componentize-js");
+    // Can remove the explicit typing once https://github.com/bytecodealliance/ComponentizeJS/pull/198 is merged and released
+    let componentizeVersion = version as string;
 
     // Small optimization to skip componentization if the source file hasn't changed
     if (!await ShouldComponentize(src, outputPath, componentizeVersion)) {
