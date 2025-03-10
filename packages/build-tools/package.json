@@ -36,5 +36,14 @@
     "lib",
     "bin",
     "plugins"
-  ]
+  ],
+  "config": {
+    "witDeps": [
+      {
+        "witPath": "./wit",
+        "package": "spinframework:wasi-cli-environment@0.2.3",
+        "world": "wasi-cli"
+      }
+    ]
+  }
 }
