@@ -2,8 +2,8 @@ set -euo pipefail
 
 # Build the npm package
 cd ..
-npm install 
-npm run build
+npm install --ws
+npm run build --ws
 cd -
 
 isFailed=false
