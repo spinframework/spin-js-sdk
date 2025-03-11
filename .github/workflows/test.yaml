@@ -43,14 +43,19 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        package-manager: [npm, yarn]
 
     steps:
         - uses: actions/checkout@v3
 
-        - name: Use Node.js 20
+        - name: Use Node.js 22
           uses: actions/setup-node@v3
           with:
-            node-version: 20
+            node-version: 22
+
+        - name: Install Yarn (if needed)
+          if: matrix.package-manager == 'yarn'
+          run: npm install -g yarn
 
         - name: Setup `spin`
           uses: fermyon/actions/spin/setup@v1
@@ -61,19 +66,17 @@ jobs:
           run: spin templates install --dir .
 
         - name: Create new project
-          run: spin new -t http-ts test-project -a
+          run: spin new -t http-ts test-project -v package-manager=${{ matrix.package-manager }} -a
 
         - name: Install dependencies of the test project
           run: |
             cd test-project
-            npm install
           
         - name: Add new component to project
           run: |
             cd test-project
-            spin add -t http-ts new-component -a
+            spin add -t http-ts new-component -v package-manager=${{ matrix.package-manager }} -a
             cd new-component
-            npm install
         
         - name: Build the application
           run: |

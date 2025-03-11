@@ -4,7 +4,7 @@
     "description": "{{project-description}}",
     "main": "index.js",
     "scripts": {
-        "build": "knitwit --out-dir build/wit/knitwit --out-world combined && npx webpack --mode=production && npx mkdirp dist && npx j2w -i build/bundle.js -d build/wit/knitwit -n combined -o dist/{{ project-name | kebab_case }}.wasm",
+        "build": "knitwit --out-dir build/wit/knitwit --out-world combined && webpack --mode=production && mkdirp dist && j2w -i build/bundle.js -d build/wit/knitwit -n combined -o dist/{{ project-name | kebab_case }}.wasm",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
