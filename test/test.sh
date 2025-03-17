@@ -2,9 +2,14 @@ set -euo pipefail
 
 # Build the npm package
 cd ..
-npm install --ws
-npm run build --ws
-cd -
+for d in packages/*; do
+    echo "Building $d"
+    cd $d
+    npm install
+    npm run build
+    cd -
+done
+cd test
 
 isFailed=false
 # Build test app
