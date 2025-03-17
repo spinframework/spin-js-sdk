@@ -90,9 +90,13 @@ impl WitMerger {
                         imports.push(import_string);
                     }
                 }
-                // TODO: Figure out how to deal with functions
-                wit_parser::WorldItem::Function(_) => todo!(),
-                // Do nothing for types because COomponentizeJS does not
+
+                wit_parser::WorldItem::Function(f) => {
+                    if f.kind == wit_parser::FunctionKind::Freestanding {
+                        imports.push(f.item_name().to_string());
+                    }
+                }
+                // Do nothing for types because ComponentizeJS does not
                 // generate bindings for types
                 wit_parser::WorldItem::Type(_) => {}
             }
