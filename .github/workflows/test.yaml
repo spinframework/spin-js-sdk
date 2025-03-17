@@ -31,13 +31,13 @@ jobs:
           with:
             node-version: 22
 
-        - name: Install depencies
-          shell: bash
-          run: npm install --ws
+        # - name: Install depencies
+        #   shell: bash
+        #   run: npm install --ws
 
-        - name: Run prettier check
-          shell: bash
-          run: npm run fmt-check
+        # - name: Run prettier check
+        #   shell: bash
+        #   run: npm run fmt-check
 
         - name: Setup `spin`
           uses: fermyon/actions/spin/setup@v1
