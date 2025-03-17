@@ -15,8 +15,8 @@ isFailed=false
 # Build test app
 echo "Building the test app"
 cd test-app
-npm install > /dev/null
-spin build > /dev/null
+npm install 
+spin build
 echo "built the test app successfully"
 
 
