@@ -1,0 +1,12 @@
+manifest_version = "1"
+id = "http-hono-ts"
+description = "HTTP request handler using TypeScript and Hono"
+
+[add_component]
+skip_files = ["spin.toml"]
+[add_component.snippets]
+component = "component.txt"
+
+[parameters]
+project-description = { type = "string", prompt = "Description", default = "" }
+http-path = { type = "string", prompt = "HTTP path", default = "/...", pattern = "^/\\S*$" }
