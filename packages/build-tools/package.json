@@ -36,7 +36,9 @@
   "files": [
     "lib",
     "bin",
-    "plugins"
+    "plugins",
+    "dist",
+    "wit"
   ],
   "config": {
     "witDeps": [
