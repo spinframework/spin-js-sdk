@@ -1,6 +1,5 @@
-package fermyon:spin@2.0.0;
-
-interface mysql {
+interface rdbms-types {
+  /// Errors related to interacting with a database.
   variant error {
       connection-failed(string),
       bad-parameter(string),
@@ -78,20 +77,4 @@ interface mysql {
       columns: list<column>,
       rows: list<row>,
   }
-
-  /// A connection to a MySQL database.
-  resource connection {
-    /// Open a connection to the MySQL instance at `address`.
-    open: static func(address: string) -> result<connection, error>;
-
-    /// query the database: select
-    query: func(statement: string, params: list<parameter-value>) -> result<row-set, error>;
-
-    /// execute command to the database: insert, update, delete
-    execute: func(statement: string, params: list<parameter-value>) -> result<_, error>;
-  }
-}
-
-world spin-mysql {
-  import mysql;
 }

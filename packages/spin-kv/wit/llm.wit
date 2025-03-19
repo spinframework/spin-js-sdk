@@ -1,5 +1,3 @@
-package fermyon:spin@2.0.0;
-
 // A WASI interface dedicated to performing inferencing for Large Language Models.
 interface llm {
 	/// A Large Language Model.
@@ -69,8 +67,4 @@ interface llm {
 		/// Number of tokens in the prompt
 		prompt-token-count: u32,
 	}
-}
-
-world spin-llm{
-    import llm;
 }

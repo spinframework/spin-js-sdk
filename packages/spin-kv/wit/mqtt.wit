@@ -1,5 +1,3 @@
-package fermyon:spin@2.0.0;
-
 interface mqtt {
   /// Errors related to interacting with Mqtt
   variant error {
@@ -30,8 +28,4 @@ interface mqtt {
 
   /// The message payload.
   type payload = list<u8>;
-}
-
-world spin-mqtt {
-  import mqtt;
 }
