@@ -9,7 +9,7 @@
     "test": "npm run build && mocha --require ts-node/register test/**/*.spec.ts"
   },
   "bin": {
-    "j2w": "./dist/index.js"
+    "j2w": "dist/index.js"
   },
   "keywords": [],
   "author": "",
