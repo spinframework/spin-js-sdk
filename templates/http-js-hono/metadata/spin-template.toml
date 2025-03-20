@@ -1,6 +1,6 @@
 manifest_version = "1"
-id = "http-hono-ts"
-description = "HTTP request handler using TypeScript and Hono"
+id = "http-js-hono"
+description = "HTTP request handler using JavaScript and Hono"
 
 [add_component]
 skip_files = ["spin.toml"]
