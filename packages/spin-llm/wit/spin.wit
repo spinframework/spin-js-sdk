@@ -1,0 +1,5 @@
+package fermyon:spin@2.0.0;
+
+world spin-llm{
+    import llm;
+}
