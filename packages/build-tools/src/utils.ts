@@ -76,14 +76,13 @@ export async function getExistingBuildData(buildDataPath: string) {
 }
 
 export async function saveBuildData(
-  buildDataPath: string,
-  checksum: string,
-  version: string,
+buildDataPath: string, checksum: string, version: string, runtimeArgs: string,
 ) {
   try {
     const checksumData = {
       version,
       checksum,
+      runtimeArgs,
     };
     await writeFile(buildDataPath, JSON.stringify(checksumData, null, 2));
   } catch (error) {

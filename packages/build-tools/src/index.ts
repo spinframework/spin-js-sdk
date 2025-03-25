@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 import { componentize } from '@bytecodealliance/componentize-js';
-//@ts-ignore https://github.com/bytecodealliance/ComponentizeJS/pull/198
-import { version } from '@bytecodealliance/componentize-js';
+import { version as componentizeVersion } from '@bytecodealliance/componentize-js';
 import { getPackagesWithWasiDeps, processWasiDeps } from './wasiDepsParser.js';
 import { basename } from 'node:path';
 
@@ -22,12 +21,10 @@ async function main() {
     let CliArgs = getCliArgs();
     let src = CliArgs.input;
     let outputPath = CliArgs.output;
-
-    // Can remove the explicit typing once https://github.com/bytecodealliance/ComponentizeJS/pull/198 is merged and released
-    let componentizeVersion = version as string;
+    let runtimeArgs = CliArgs.debug ? '--enable-script-debugging' : '';
 
     // Small optimization to skip componentization if the source file hasn't changed
-    if (!(await ShouldComponentize(src, outputPath, componentizeVersion))) {
+    if (!(await ShouldComponentize(src, outputPath, componentizeVersion, runtimeArgs))) {
       console.log(
         'No changes detected in source file. Skipping componentization.',
       );
@@ -40,6 +37,15 @@ async function main() {
 
     let { witPaths, targetWorlds } = processWasiDeps(wasiDeps);
 
+    // Debugging requires some interfaces around reading env vars and making
+    // socket connections to be available.
+    if (CliArgs.debug) {
+      targetWorlds.push({
+        packageName: 'spinframework:http-trigger@0.2.3',
+        worldName: 'debugging-support',
+      });
+    }
+
     // Get inline wit by merging the wits specified by all the dependencies
     let inlineWit = mergeWit(
       witPaths,
@@ -48,13 +54,11 @@ async function main() {
       'combined-wit:combined-wit@0.1.0',
     );
 
-    const source = await readFile(src, 'utf8');
-
-    const { component } = await componentize(source, inlineWit, {
-      sourceName: basename(src),
-      // TODO: CHeck if we need to enable http
-      //@ts-ignore
-      enableFeatures: ['http'],
+    const { component } = await componentize({
+      sourcePath: src,
+      // @ts-ignore
+      witWorld: inlineWit,
+      runtimeArgs,
     });
 
     await writeFile(outputPath, component);
@@ -64,6 +68,7 @@ async function main() {
       getBuildDataPath(src),
       await calculateChecksum(src),
       componentizeVersion,
+      runtimeArgs,
     );
 
     console.log('Component successfully written.');

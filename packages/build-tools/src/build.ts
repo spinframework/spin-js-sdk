@@ -9,9 +9,7 @@ export function getBuildDataPath(src: string): string {
 }
 
 export async function ShouldComponentize(
-  src: string,
-  outputPath: string,
-  componentizeVersion: string,
+src: string, outputPath: string, componentizeVersion: string, runtimeArgs: string,
 ) {
   const sourceChecksum = await calculateChecksum(src);
   const existingBuildData = await getExistingBuildData(getBuildDataPath(src));
@@ -19,6 +17,7 @@ export async function ShouldComponentize(
   if (
     existingBuildData?.version == componentizeVersion &&
     existingBuildData?.checksum === sourceChecksum &&
+    existingBuildData?.runtimeArgs === runtimeArgs &&
     (await fileExists(outputPath))
   ) {
     return false;

@@ -8,6 +8,7 @@ export interface CliArgs {
   triggerType: string;
   witPath?: string;
   aot?: boolean;
+  debug?: boolean;
 }
 
 export function getCliArgs(): CliArgs {
@@ -18,7 +19,7 @@ export function getCliArgs(): CliArgs {
       demandOption: true,
     })
     .option('wit-path', {
-      alias: 'd',
+      alias: 'w',
       describe: 'Path to wit file or folder',
     })
     .option('output', {
@@ -27,14 +28,20 @@ export function getCliArgs(): CliArgs {
       default: 'component.wasm',
     })
     .option('trigger-type', {
-      alias: '-n',
+      alias: '-t',
       describe: 'Spin trigger to target',
       demandOption: true,
     })
     .option('aot', {
       describe: 'Enable Ahead of Time compilation',
       type: 'boolean',
-    }).argv as CliArgs;
+    })
+    .option('debug', {
+      alias: 'd',
+      describe: 'Enable JavaScript debugging',
+      type: 'boolean',
+    })
+    .argv as CliArgs;
 
   return args;
 }

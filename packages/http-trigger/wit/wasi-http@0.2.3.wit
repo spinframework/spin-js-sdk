@@ -9,6 +9,16 @@ world http-trigger {
 
   export wasi:http/incoming-handler@0.2.3;
 }
+
+/// The set of interfaces required for JS source debugging to work.
+world debugging-support {
+  import wasi:cli/environment@0.2.3;
+  import wasi:sockets/network@0.2.3;
+  import wasi:sockets/instance-network@0.2.3;
+  import wasi:sockets/tcp@0.2.3;
+  import wasi:sockets/tcp-create-socket@0.2.3;
+}
+
 package wasi:io@0.2.3 {
   @since(version = 0.2.0)
   interface error {
