@@ -3,11 +3,9 @@
 import { componentize } from '@bytecodealliance/componentize-js';
 import { version as componentizeVersion } from '@bytecodealliance/componentize-js';
 import { getPackagesWithWasiDeps, processWasiDeps } from './wasiDepsParser.js';
-import { basename } from 'node:path';
 
 import {
   calculateChecksum,
-  getPackageVersion,
   saveBuildData,
 } from './utils.js';
 import { getCliArgs } from './cli.js';
@@ -59,6 +57,7 @@ async function main() {
       // @ts-ignore
       witWorld: inlineWit,
       runtimeArgs,
+      enableAot: CliArgs.aot,
     });
 
     await writeFile(outputPath, component);

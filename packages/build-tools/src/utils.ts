@@ -1,40 +1,7 @@
 import { readFile } from 'fs/promises';
-import { fileURLToPath } from 'url';
-import path from 'path';
 import { createHash } from 'node:crypto';
 import { access, writeFile } from 'node:fs/promises';
 
-export const getPackageVersion = async (packageName: string) => {
-  try {
-    const resolvedPath = await import.meta.resolve(`${packageName}`);
-
-    let packageJsonPath = resolvedPath;
-    let parentDir = path.dirname(fileURLToPath(new URL(packageJsonPath)));
-
-    // Walk up the directory structure to find package.json
-    while (parentDir !== path.dirname(parentDir)) {
-      const potentialPackageJsonPath = path.join(parentDir, 'package.json');
-      try {
-        // Try reading the package.json file in this directory
-        const packageJsonContents = await readFile(
-          potentialPackageJsonPath,
-          'utf-8',
-        );
-        const packageJson = JSON.parse(packageJsonContents);
-
-        return packageJson.version;
-      } catch (error) {
-        parentDir = path.dirname(parentDir);
-      }
-    }
-
-    console.error(`Error: Could not find package.json for '${packageName}'`);
-    return null;
-  } catch (error) {
-    console.error(`Error: Could not find package '${packageName}'`, error);
-    return null;
-  }
-};
 
 // Function to calculate file checksum
 export async function calculateChecksum(filePath: string) {

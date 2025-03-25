@@ -1,5 +1,6 @@
 package spinframework:wasi-cli-environment@0.2.3;
 
+// Needed because of https://github.com/bytecodealliance/ComponentizeJS/issues/194
 world wasi-cli {
   import wasi:cli/environment@0.2.3;
 }

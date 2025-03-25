@@ -7,7 +7,7 @@
   "keywords": [],
   "license": "Apache-2.0",
   "scripts": {
-    "build": "npx webpack && mkdirp dist && j2w -i build/bundle.js -n combined -o dist/test-app.wasm",
+    "build": "npx webpack && mkdirp dist && j2w -i build/bundle.js -o dist/test-app.wasm",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
