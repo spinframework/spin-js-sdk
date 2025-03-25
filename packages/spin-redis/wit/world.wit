@@ -1,3 +1,5 @@
+package fermyon:spin@2.0.0;
+
 interface redis {
   /// Errors related to interacting with Redis
   variant error {
@@ -67,4 +69,8 @@ interface redis {
       int64(s64),
       binary(payload)
   }
+}
+
+world spin-redis {
+  import redis;
 }

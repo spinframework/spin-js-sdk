@@ -1,5 +1,0 @@
-package fermyon:spin@2.0.0;
-
-world spin-redis {
-  import redis;
-}

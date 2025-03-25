@@ -1,3 +1,5 @@
+package fermyon:spin@2.0.0;
+
 interface variables {
     /// Get an application variable value for the current component.
     ///
@@ -15,4 +17,8 @@ interface variables {
         /// Some implementation-specific error has occurred.
         other(string),
     }
+}
+
+world spin-variables{
+    import variables;
 }

@@ -1,3 +1,5 @@
+package fermyon:spin@2.0.0;
+
 interface sqlite {
   /// A handle to an open sqlite instance
   resource connection {
@@ -47,4 +49,8 @@ interface sqlite {
     blob(list<u8>),
     null
   }
+}
+
+world spin-sqlite {
+  import sqlite;
 }

@@ -1,4 +1,6 @@
-interface rdbms-types {
+package fermyon:spin@2.0.0;
+
+interface postgres {
   /// Errors related to interacting with a database.
   variant error {
       connection-failed(string),
@@ -77,4 +79,21 @@ interface rdbms-types {
       columns: list<column>,
       rows: list<row>,
   }
+
+
+  /// A connection to a postgres database.
+  resource connection {
+    /// Open a connection to the Postgres instance at `address`.
+    open: static func(address: string) -> result<connection, error>;
+
+    /// Query the database.
+    query: func(statement: string, params: list<parameter-value>) -> result<row-set, error>;
+
+    /// Execute command to the database.
+    execute: func(statement: string, params: list<parameter-value>) -> result<u64, error>;
+  }
+}
+
+world spin-postgres {
+  import postgres;
 }
