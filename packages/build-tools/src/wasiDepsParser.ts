@@ -68,7 +68,8 @@ function absolutizeWitPath(
   }
 }
 
-// Recursively retrieves dependencies that contain a 'knitwit' config section
+// Recursively retrieves dependencies that contain a "witDependencies field in
+// config section of the package.json
 export function getPackagesWithWasiDeps(
   dir: string,
   visited: Set<string> = new Set(),
