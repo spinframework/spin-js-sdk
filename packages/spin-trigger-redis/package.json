@@ -19,7 +19,7 @@
     "wit"
   ],
   "config": {
-    "witDeps": [
+    "witDependencies": [
       {
         "witPath": "./wit",
         "package": "fermyon:spin",

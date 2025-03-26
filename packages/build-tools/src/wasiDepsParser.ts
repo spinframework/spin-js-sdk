@@ -8,11 +8,11 @@ type PackageJson = {
   name: string;
   dependencies?: Record<string, string>;
   config?: {
-    witDeps?: witDep[];
+    witDependencies?: witDependency[];
   };
 };
 
-type witDep = {
+type witDependency = {
   witPath: string;
   package: string;
   world: string;
@@ -22,7 +22,7 @@ type witDep = {
 type DependencyResult = {
   name: string;
   config: {
-    witDeps?: witDep[];
+    witDependencies?: witDependency[];
   };
 }[];
 
@@ -59,8 +59,8 @@ function absolutizeWitPath(
   depPackageJsonPath: string,
   depPackageJson: PackageJson,
 ): void {
-  if (depPackageJson.config?.witDeps) {
-    depPackageJson.config.witDeps.forEach(witDep => {
+  if (depPackageJson.config?.witDependencies) {
+    depPackageJson.config.witDependencies.forEach(witDep => {
       if (!path.isAbsolute(witDep.witPath)) {
         witDep.witPath = path.resolve(depPackageJsonPath, witDep.witPath);
       }
@@ -87,16 +87,16 @@ export function getPackagesWithWasiDeps(
   const result: DependencyResult = [];
 
   if (topLevel) {
-    if (packageJson.config?.witDeps) {
-      if (packageJson.config.witDeps) {
-        if (packageJson.config.witDeps) {
+    if (packageJson.config?.witDependencies) {
+      if (packageJson.config.witDependencies) {
+        if (packageJson.config.witDependencies) {
           absolutizeWitPath(dir, packageJson);
         }
 
         result.push({
           name: packageJson.name,
           config: {
-            witDeps: packageJson.config.witDeps,
+            witDependencies: packageJson.config.witDependencies,
           },
         });
       }
@@ -117,11 +117,11 @@ export function getPackagesWithWasiDeps(
       absolutizeWitPath(depPath, depPackageJson);
 
       // If the package has a 'knitwit' config, add it to the result
-      if (depPackageJson.config?.witDeps) {
+      if (depPackageJson.config?.witDependencies) {
         result.push({
           name: dep,
           config: {
-            witDeps: depPackageJson.config.witDeps ?? [],
+            witDependencies: depPackageJson.config.witDependencies ?? [],
           },
         });
       }
@@ -139,8 +139,8 @@ export function processWasiDeps(wasiDeps: DependencyResult) {
   let targetWorlds: TargetWorld[] = [];
 
   wasiDeps.forEach(dep => {
-    if (dep.config?.witDeps) {
-      dep.config.witDeps.forEach(witDep => {
+    if (dep.config?.witDependencies) {
+      dep.config.witDependencies.forEach(witDep => {
         witPaths.push(witDep.witPath!);
         targetWorlds.push({
           packageName: witDep.package,

@@ -73,7 +73,7 @@ describe('getPackagesWithWasiDeps', () => {
     const packageJson = {
       name: 'test-package',
       config: {
-        witDeps: [
+        witDependencies: [
           { witPath: './test.wit', package: 'test-pkg', world: 'test-world' },
         ],
       },
@@ -84,7 +84,7 @@ describe('getPackagesWithWasiDeps', () => {
       {
         name: 'test-package',
         config: {
-          witDeps: [
+          witDependencies: [
             {
               witPath: '/project/test.wit',
               package: 'test-pkg',
@@ -103,7 +103,7 @@ describe('processWasiDeps', () => {
       {
         name: 'test-package',
         config: {
-          witDeps: [
+          witDependencies: [
             { witPath: './test.wit', package: 'test-pkg', world: 'test-world' },
           ],
         },
@@ -136,7 +136,7 @@ describe('getPackagesWithWasiDeps (recursive)', () => {
         'package-2': '^1.0.0',
       },
       config: {
-        witDeps: [
+        witDependencies: [
           { witPath: './test1.wit', package: 'test-pkg-1', world: 'world-1' },
         ],
       },
@@ -151,7 +151,7 @@ describe('getPackagesWithWasiDeps (recursive)', () => {
         'package-4': '^1.0.0',
       },
       config: {
-        witDeps: [
+        witDependencies: [
           { witPath: './test2.wit', package: 'test-pkg-2', world: 'world-2' },
         ],
       },
@@ -164,7 +164,7 @@ describe('getPackagesWithWasiDeps (recursive)', () => {
         'package-5': '^1.0.0',
       },
       config: {
-        witDeps: [
+        witDependencies: [
           { witPath: './test3.wit', package: 'test-pkg-3', world: 'world-3' },
         ],
       },
@@ -173,7 +173,7 @@ describe('getPackagesWithWasiDeps (recursive)', () => {
     const packageJson4 = {
       name: 'package-4',
       config: {
-        witDeps: [
+        witDependencies: [
           { witPath: './test4.wit', package: 'test-pkg-4', world: 'world-4' },
         ],
       },
@@ -182,7 +182,7 @@ describe('getPackagesWithWasiDeps (recursive)', () => {
     const packageJson5 = {
       name: 'package-5',
       config: {
-        witDeps: [
+        witDependencies: [
           { witPath: './test5.wit', package: 'test-pkg-5', world: 'world-5' },
         ],
       },
