@@ -38,7 +38,7 @@ function createMysqlConnection(
     },
     execute: (statement: string, params: RdbmsParameterValue[]) => {
       let santizedParams = convertRdbmsToWitTypes(params);
-      let ret = connection.execute(statement, santizedParams);
+      connection.execute(statement, santizedParams);
     },
   };
 }
