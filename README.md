@@ -62,3 +62,20 @@ Please file an issue if you have any trouble.
 See the [examples directory](https://github.com/fermyon/spin-js-sdk/tree/main/examples) in the repository for more examples.
 
 To learn more about the JS SDK checkout the [documentation](https://developer.fermyon.com/spin/v2/javascript-components)
+
+## Structure of this repository
+
+This repository contains multiple packages under the [`packages/`](./packages/) directory. Each pacakge contains that contains a `spin-` prefix hosts modules that can be used to enable access to the various Spin interfaces. There are other kind of packages as well, namely triggers and `build-tools`. 
+
+The `examples` directory contains various examples of common patterns and using popular SDKs.
+
+The `templates` directory contains all the Spin templates. It currently has four templates - `http-js`, `http-rs`, redis-js` and `redis-ts`.
+
+## Testing the packages together (integration testing)
+
+There is a test script [(`test.sh`)](./test/test.sh) that builds and runs a Spin app which tests itself for various functionalities by making fetch requests to various endpoints. To run:
+
+```bash
+cd test
+./test.sh
+``
