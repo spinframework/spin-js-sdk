@@ -2,6 +2,7 @@
 name = "wit-tools"
 version.workspace = true
 edition.workspace = true
+description = "package containing build tools to help with managing wit dependencies"
 
 [lib]
 crate-type = ["cdylib"]

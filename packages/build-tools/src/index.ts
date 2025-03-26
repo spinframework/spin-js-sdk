@@ -10,7 +10,7 @@ import {
 } from './utils.js';
 import { getCliArgs } from './cli.js';
 import { getBuildDataPath, ShouldComponentize } from './build.js';
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { mergeWit } from '../lib/wit_tools.js';
 
 async function main() {
@@ -32,12 +32,20 @@ async function main() {
 
     // generate wit world string
     let wasiDeps = getPackagesWithWasiDeps(process.cwd(), new Set(), true);
-
     let { witPaths, targetWorlds } = processWasiDeps(wasiDeps);
 
     // Debugging requires some interfaces around reading env vars and making
     // socket connections to be available.
     if (CliArgs.debug) {
+      // check if @spinframework/http-trigger is already in the targetWorlds
+      let httpTrigger = targetWorlds.find(
+        (world) => world.packageName === 'spinframework:http-trigger@0.2.3',
+      );
+      if (!httpTrigger) {
+        throw new Error(
+          'Debugging requires the @spinframework/http-trigger package to be included in the target worlds.',
+        );
+      }
       targetWorlds.push({
         packageName: 'spinframework:http-trigger@0.2.3',
         worldName: 'debugging-support',
@@ -49,7 +57,8 @@ async function main() {
       witPaths,
       targetWorlds,
       'combined',
-      'combined-wit:combined-wit@0.1.0',
+      // Hardcode the version to atleast 0.3.0 to deal with wasm-tools bug with "include" slurping original package when `@since` is present
+      'combined-wit:combined-wit@0.3.0',
     );
 
     const { component } = await componentize({
