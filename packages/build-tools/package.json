@@ -13,7 +13,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0 WITH LLVM-exception",
   "type": "module",
   "devDependencies": {
     "@types/chai": "^5.0.1",
