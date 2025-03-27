@@ -8,11 +8,11 @@ type PackageJson = {
   name: string;
   dependencies?: Record<string, string>;
   config?: {
-    witDependencies?: witDependency[];
+    witDependencies?: WitDependency[];
   };
 };
 
-type witDependency = {
+type WitDependency = {
   witPath: string;
   package: string;
   world: string;
@@ -22,7 +22,7 @@ type witDependency = {
 type DependencyResult = {
   name: string;
   config: {
-    witDependencies?: witDependency[];
+    witDependencies?: WitDependency[];
   };
 }[];
 
