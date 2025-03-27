@@ -7,6 +7,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+  RUST_VERSION: 1.84
+
 jobs:
   lint_and_test:
     runs-on: ubuntu-latest
@@ -14,18 +17,27 @@ jobs:
     steps:
         - uses: actions/checkout@v3
 
-        - name: Use Node.js 20
+        - name: Install Rust toolchain
+          shell: bash
+          run: |
+            rustup toolchain install ${{ env.RUST_VERSION }} --no-self-update
+            rustup default ${{ env.RUST_VERSION }}
+          
+        - name: "Install Wasm Rust target"
+          run: rustup target add wasm32-wasip1 wasm32-unknown-unknown --toolchain ${{ env.RUST_VERSION }}
+
+        - name: Use Node.js 22
           uses: actions/setup-node@v3
           with:
-            node-version: 20
+            node-version: 22
 
-        - name: Install depencies
-          shell: bash
-          run: npm install
+        # - name: Install dependencies
+        #   shell: bash
+        #   run: npm install --ws
 
-        - name: Run prettier check
-          shell: bash
-          run: npm run fmt-check
+        # - name: Run prettier check
+        #   shell: bash
+        #   run: npm run fmt-check
 
         - name: Setup `spin`
           uses: fermyon/actions/spin/setup@v1
@@ -47,10 +59,10 @@ jobs:
     steps:
         - uses: actions/checkout@v3
 
-        - name: Use Node.js 20
+        - name: Use Node.js 22
           uses: actions/setup-node@v3
           with:
-            node-version: 20
+            node-version: 22
 
         - name: Setup `spin`
           uses: fermyon/actions/spin/setup@v1

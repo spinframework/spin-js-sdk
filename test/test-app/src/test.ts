@@ -1,4 +1,4 @@
-import { Kv } from "@fermyon/spin-sdk";
+import * as Kv from "@spinframework/spin-kv";
 import { pushStreamChunks, isEqualBytes, readStreamChunks } from "./helpers";
 
 const decoder = new TextDecoder()

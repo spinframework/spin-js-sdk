@@ -1,0 +1,52 @@
+{
+  "name": "@spinframework/build-tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "make && rm -rf dist && tsc && chmod +x dist/*",
+    "fmt": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
+    "test": "npm run build && mocha --require ts-node/register test/**/*.spec.ts"
+  },
+  "bin": {
+    "j2w": "dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0 WITH LLVM-exception",
+  "type": "module",
+  "devDependencies": {
+    "@types/chai": "^5.0.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.13.1",
+    "@types/sinon": "^17.0.3",
+    "@types/yargs": "^17.0.33",
+    "chai": "^5.2.0",
+    "mocha": "^11.1.0",
+    "prettier": "^3.5.0",
+    "sinon": "^19.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@bytecodealliance/componentize-js": "^0.18.0",
+    "@bytecodealliance/jco": "^1.10.2",
+    "yargs": "^17.7.2"
+  },
+  "files": [
+    "lib",
+    "bin",
+    "plugins",
+    "dist",
+    "wit"
+  ],
+  "config": {
+    "witDependencies": [
+      {
+        "witPath": "./wit",
+        "package": "spinframework:wasi-cli-environment@0.2.3",
+        "world": "wasi-cli"
+      }
+    ]
+  }
+}

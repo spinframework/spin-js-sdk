@@ -1,0 +1,30 @@
+{
+  "name": "@spinframework/spin-redis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && cp types/fermyon-spin-redis.d.ts dist/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": " Apache-2.0 WITH LLVM-exception",
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  },
+  "files": [
+    "dist",
+    "wit"
+  ],
+  "config": {
+    "witDependencies": [
+      {
+        "witPath": "./wit",
+        "package": "fermyon:spin@2.0.0",
+        "world": "spin-redis"
+      }
+    ]
+  }
+}
