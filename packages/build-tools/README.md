@@ -19,7 +19,7 @@ Options:
   -d, --debug    Enable JavaScript debugging                           [boolean]
 ```
 
-**Note:** The input source should be Javascript. 
+**Note:** The input source must be JavaScript. Use `tsc` or a bundler to first translate source code in TypeScript or other languages.
 
 #### `wit-tools` crate
 

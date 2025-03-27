@@ -65,7 +65,9 @@ To learn more about the JS SDK checkout the [documentation](https://developer.fe
 
 ## Structure of this repository
 
-This repository contains multiple packages under the [`packages/`](./packages/) directory. Each pacakge contains that contains a `spin-` prefix hosts modules that can be used to enable access to the various Spin interfaces. There are other kind of packages as well, namely triggers and `build-tools`. 
+This repository contains multiple packages under the [`packages/`](./packages/) directory. Packages whose names start with `spin-` host provide access to Spin-specific interfaces, whereas the `http-trigger` package can be used for creating runtime-agnostic components that just rely on `wasi:http@0.2.3`.
+
+The `build-tools` package provides the tools for componentizing JavaScript/TypeScript source code, regardless of the interfaces used.
 
 The `examples` directory contains various examples of common patterns and using popular SDKs.
 

@@ -12,7 +12,7 @@ The `wit` world that the library implements is defined in the [`wit` directory](
 
 ### Building
 
-The component can be build by running 
+The component can be built by running 
 
 ```bash
 cargo build --release
