@@ -6,7 +6,7 @@ const config = async () => {
     return {
         mode: 'production',
         stats: 'errors-only',
-        entry: './src/index.ts',
+        entry: './src/index.js',
         experiments: {
             outputModule: true,
         },
