@@ -1,7 +1,6 @@
 // https://itty.dev/itty-router/routers/autorouter
-import { Sqlite } from '@fermyon/spin-sdk';
+import { Sqlite, ParameterValue } from '@spinframework/spin-sqlite';
 import { AutoRouter } from 'itty-router';
-import { ParameterValue } from '@fermyon/spin-sdk/lib/sqlite';
 import { eq } from 'drizzle-orm';
 import {
     sqliteTable,

@@ -1,6 +1,6 @@
 // https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
-import { Variables } from '@fermyon/spin-sdk';
+import { get } from '@spinframework/spin-variables';
 
 let router = AutoRouter();
 
@@ -9,7 +9,7 @@ let router = AutoRouter();
 // Any unmatched route will return a 404
 router
     .get("/", () => {
-        let val = Variables.get('my_variable');
+        let val = get('my_variable');
         if (!val) {
             return new Response(null, { status: 404 });
         }
