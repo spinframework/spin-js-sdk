@@ -1,6 +1,24 @@
 import fs from 'fs';
 import { TargetWorld } from '../lib/wit_tools.js';
 import path from 'path';
+import { resolve } from 'node:path';
+import { platform } from 'node:process';
+const isWindows = platform === 'win32';
+
+function maybeWindowsPath(path: string): string {
+  if (!path) return path;
+  const resolvedPath = resolve(path);
+  if (!isWindows) return resolvedPath;
+
+  // Strip any existing UNC prefix check both the format we add as well as what
+  //  the windows API returns when using path.resolve
+  let cleanPath = resolvedPath;
+  while (cleanPath.startsWith('\\\\?\\') || cleanPath.startsWith('//?/')) {
+    cleanPath = cleanPath.substring(4);
+  }
+
+  return '//?/' + cleanPath.replace(/\\/g, '/');
+}
 
 // Define the structure of a package.json file
 // Includes dependencies and an optional config section for 'knitwit'
@@ -62,7 +80,7 @@ function absolutizeWitPath(
   if (depPackageJson.config?.witDependencies) {
     depPackageJson.config.witDependencies.forEach(witDep => {
       if (!path.isAbsolute(witDep.witPath)) {
-        witDep.witPath = path.resolve(depPackageJsonPath, witDep.witPath);
+        witDep.witPath = maybeWindowsPath(path.resolve(depPackageJsonPath, witDep.witPath));
       }
     });
   }
