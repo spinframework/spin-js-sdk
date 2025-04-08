@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { platform } from 'node:process';
 const isWindows = platform === 'win32';
 
+// Copied from https://github.com/bytecodealliance/ComponentizeJS/blob/e5bb0da0c1ce1ee87eed45c970121ed5fe8cca3a/src/componentize.js#L26-L39
 function maybeWindowsPath(path: string): string {
   if (!path) return path;
   const resolvedPath = resolve(path);
