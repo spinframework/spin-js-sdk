@@ -18,14 +18,6 @@
     "dependencies": {
         "@spinframework/build-tools": "^1.0.1",
         "@spinframework/wasi-http-proxy": "1.0.0",
-        "@spinframework/spin-kv": "1.0.0",
-        "@spinframework/spin-llm": "1.0.0",
-        "@spinframework/spin-mqtt": "1.0.0",
-        "@spinframework/spin-mysql": "1.0.0",
-        "@spinframework/spin-postgres": "1.0.0",
-        "@spinframework/spin-redis": "1.0.0",
-        "@spinframework/spin-sqlite": "1.0.0",
-        "@spinframework/spin-variables": "1.0.0",
         "itty-router": "^5.0.18"
     }
 }
