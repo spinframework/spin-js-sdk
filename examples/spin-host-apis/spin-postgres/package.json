@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build": "knitwit --out-dir build/wit/knitwit --out-world combined && npx webpack --mode=production && npx mkdirp dist && npx j2w -i build/bundle.js -d build/wit/knitwit -n combined -o dist/spin-postgres.wasm",
+        "build": "npx webpack && mkdirp dist && j2w -i build/bundle.js -o dist/spin-postgres.wasm",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
@@ -19,7 +19,9 @@
         "@fermyon/knitwit": "0.3.0"
     },
     "dependencies": {
-        "@fermyon/spin-sdk": "^3.0.0",
+        "@spinframework/build-tools": "1.0.0",
+        "@spinframework/wasi-http-proxy": "1.0.0",
+        "@spinframework/spin-postgres": "1.0.0",
         "itty-router": "^5.0.18"
     }
 }

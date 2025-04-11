@@ -1,6 +1,6 @@
 // https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
-import { Sqlite } from '@fermyon/spin-sdk';
+import { openDefault } from '@fermyon/spin-sqlite';
 
 let router = AutoRouter();
 
@@ -10,7 +10,7 @@ let router = AutoRouter();
 router
     .get("/", () => {
         try {
-            let conn = Sqlite.openDefault();
+            let conn = openDefault();
             let result = conn.execute('SELECT * FROM todos WHERE id > (?);', [1]);
             return new Response(JSON.stringify(result));
         } catch (e: any) {

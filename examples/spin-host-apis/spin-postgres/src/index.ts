@@ -1,6 +1,6 @@
 // https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
-import { Postgres } from '@fermyon/spin-sdk';
+import { open } from '@spinframework/spin-postgres';
 
 const DB_URL = 'host=localhost user=postgres dbname=spin_dev';
 
@@ -11,7 +11,7 @@ let router = AutoRouter();
 // Any unmatched route will return a 404
 router
     .get("/", () => {
-        let conn = Postgres.open(DB_URL);
+        let conn = open(DB_URL);
         conn.execute('delete from test where id=4', []);
         conn.execute('insert into test values (4,5)', []);
         let ret = conn.query('select * from test', []);

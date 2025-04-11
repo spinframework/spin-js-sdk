@@ -1,6 +1,6 @@
 // https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
-import { Mysql } from '@fermyon/spin-sdk';
+import { open } from '@spinframework/spin-mysql';
 
 // Connects as the root user without a password
 const DB_URL = 'mysql://root:@127.0.0.1/spin_dev';
@@ -12,7 +12,7 @@ let router = AutoRouter();
 // Any unmatched route will return a 404
 router
     .get("/", () => {
-        let conn = Mysql.open(DB_URL);
+        let conn = open(DB_URL);
         conn.execute('delete from test where id=?', [4]);
         conn.execute('insert into test values (4,5)', []);
         let ret = conn.query('select * from test', []);
