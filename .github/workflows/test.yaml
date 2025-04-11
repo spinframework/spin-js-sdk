@@ -2,9 +2,9 @@ name: Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 env:
@@ -15,21 +15,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-        - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-        - name: Install Rust toolchain
-          shell: bash
-          run: |
-            rustup toolchain install ${{ env.RUST_VERSION }} --no-self-update
-            rustup default ${{ env.RUST_VERSION }}
-          
-        - name: "Install Wasm Rust target"
-          run: rustup target add wasm32-wasip1 wasm32-unknown-unknown --toolchain ${{ env.RUST_VERSION }}
+      - name: Install Rust toolchain
+        shell: bash
+        run: |
+          rustup toolchain install ${{ env.RUST_VERSION }} --no-self-update
+          rustup default ${{ env.RUST_VERSION }}
 
-        - name: Use Node.js 22
-          uses: actions/setup-node@v3
-          with:
-            node-version: 22
+      - name: 'Install Wasm Rust target'
+        run: rustup target add wasm32-wasip1 wasm32-unknown-unknown --toolchain ${{ env.RUST_VERSION }}
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
 
         # - name: Install dependencies
         #   shell: bash
@@ -39,55 +39,51 @@ jobs:
         #   shell: bash
         #   run: npm run fmt-check
 
-        - name: Setup `spin`
-          uses: fermyon/actions/spin/setup@v1
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup `spin`
+        uses: fermyon/actions/spin/setup@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Run Test
-          shell: bash
-          run: |
-            cd test
-            ./test.sh
-  
+      - name: Run Test
+        shell: bash
+        run: |
+          cd test
+          ./test.sh
+
   test_template:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        router: ['hono', 'itty', 'none']
 
     steps:
-        - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-        - name: Use Node.js 22
-          uses: actions/setup-node@v3
-          with:
-            node-version: 22
+      - name: Use Node.js 22
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
 
-        - name: Setup `spin`
-          uses: fermyon/actions/spin/setup@v1
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-              
-        - name: Install templates
-          run: spin templates install --dir .
+      - name: Setup `spin`
+        uses: fermyon/actions/spin/setup@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Create new project
-          run: spin new -t http-ts test-project -a
+      - name: Install templates
+        run: spin templates install --dir .
 
-        - name: Install dependencies of the test project
-          run: |
-            cd test-project
-            npm install
-          
-        - name: Add new component to project
-          run: |
-            cd test-project
-            spin add -t http-ts new-component -a
-            cd new-component
-            npm install
-        
-        - name: Build the application
-          run: |
-            cd test-project
-            spin build
+      - name: Create new project
+        run: spin new -t http-ts --value http-router=${{ matrix.router }} -a test-project
+
+      - name: Add new component to project
+        run: |
+          cd test-project
+          spin add -t http-ts --value http-router=${{ matrix.router }} -a new-component 
+          cd new-component
+          npm install
+
+      - name: Build the application
+        run: |
+          cd test-project
+          spin build
