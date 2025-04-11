@@ -16,7 +16,7 @@ app.use(async (c, next) => {
 })
 
 app.get('/', (c) => c.text('Hello, Spin!'));
-app.get('/:name', (c) => {
+app.get('/hello/:name', (c) => {
     return c.json({ message: `Hello, ${c.req.param('name')}` })
 });
 
@@ -42,7 +42,7 @@ function handle(_request) {
   return new Response("Hello, Spin!", {
     status: 200,
     headers: {
-      'content-type': 'application/json'
+      'content-type': 'text/plain'
     }
   })
 }
