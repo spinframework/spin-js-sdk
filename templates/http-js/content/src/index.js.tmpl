@@ -1,0 +1,53 @@
+{%- case http-router -%}
+{% when "hono" %}
+// For Hono documentation refer to https://hono.dev/docs/
+import { Hono } from 'hono';
+import { logger } from 'hono/logger';
+
+let app = new Hono();
+
+// Logging to stdout via built-in middleware
+app.use(logger())
+
+// Example of a custom middleware to set HTTP response header
+app.use(async (c, next) => {
+    c.header('server', 'Spin CLI')
+    await next();
+})
+
+app.get('/', (c) => c.text('Hello, Spin!'));
+app.get('/hello/:name', (c) => {
+    return c.json({ message: `Hello, ${c.req.param('name')}` })
+});
+
+app.fire();
+{% when "itty" %}
+// For AutoRouter documentation refer to https://itty.dev/itty-router/routers/autorouter
+import { AutoRouter } from 'itty-router';
+
+let router = AutoRouter();
+
+// Route ordering matters, the first route that matches will be used
+// Any route that does not return will be treated as a middleware
+// Any unmatched route will return a 404
+router
+    .get('/', () => new Response('Hello, Spin!'))
+    .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
+
+addEventListener('fetch', (event) => {
+    event.respondWith(router.fetch(event.request));
+});
+{% else %}
+function handle(_request) {
+  return new Response('Hello, Spin!', {
+    status: 200,
+    headers: {
+      'content-type': 'text/plain'
+    }
+  })
+}
+
+addEventListener('fetch', (event) => {
+  event.respondWith(handle(event.request));
+});
+{%- endcase %}
