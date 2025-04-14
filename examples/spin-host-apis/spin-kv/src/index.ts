@@ -1,6 +1,6 @@
 // https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
-import { Kv } from '@fermyon/spin-sdk';
+import { openDefault } from '@spinframework/spin-kv';
 
 const decoder = new TextDecoder();
 
@@ -11,7 +11,7 @@ let router = AutoRouter();
 // Any unmatched route will return a 404
 router
     .get("*", async (req: Request) => {
-        let store = Kv.openDefault();
+        let store = openDefault();
         let status = 200;
         let body = "Not Found";
 

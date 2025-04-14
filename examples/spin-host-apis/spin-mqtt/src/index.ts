@@ -1,7 +1,6 @@
 // https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
-import { Mqtt } from '@fermyon/spin-sdk';
-import { QoS } from '@fermyon/spin-sdk/lib/mqtt';
+import { Mqtt, QoS } from '@spinframework/spin-mqtt';
 
 const encoder = new TextEncoder();
 

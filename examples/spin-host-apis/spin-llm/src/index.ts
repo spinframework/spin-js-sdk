@@ -1,6 +1,6 @@
 // https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
-import { Llm } from '@fermyon/spin-sdk';
+import { infer } from '@spinframework/spin-llm';
 
 
 let router = AutoRouter();
@@ -11,7 +11,7 @@ let router = AutoRouter();
 router
     .get("/", () => {
         try {
-            let result = Llm.infer(Llm.InferencingModels.Llama2Chat, 'tell me a joke');
+            let result = infer(Llm.InferencingModels.Llama2Chat, 'tell me a joke');
             return new Response(JSON.stringify(result));
         } catch (e: any) {
             return new Response(e.message, { status: 500 });

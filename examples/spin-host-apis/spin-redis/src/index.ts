@@ -1,6 +1,6 @@
 // https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
-import { Redis } from '@fermyon/spin-sdk';
+import { open } from '@spinframework/spin-redis';
 
 const encoder = new TextEncoder();
 const redisAddress = 'redis://localhost:6379/';
