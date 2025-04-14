@@ -32,7 +32,7 @@ let router = AutoRouter();
 // Any route that does not return will be treated as a middleware
 // Any unmatched route will return a 404
 router
-  .get("/", () => new Response("Hello, Spin!"))
+  .get('/', () => new Response('Hello, Spin!'))
   .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
 
 //@ts-ignore
@@ -41,7 +41,7 @@ addEventListener('fetch', (event: FetchEvent) => {
 });
 {% else %}
 function handle(_request: Request): Response {
-  return new Response("Hello, Spin!", {
+  return new Response('Hello, Spin!', {
     status: 200,
     headers: {
       'content-type': 'text/plain'
