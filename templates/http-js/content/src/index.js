@@ -8,7 +8,7 @@ let router = AutoRouter();
 // Any unmatched route will return a 404
 router
     .get("/", () => new Response("hello universe"))
-    .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
+    .get("/hello/:name", ({ name }) => `Hello, ${name}!`)
 
 addEventListener('fetch', (event) => {
     event.respondWith(router.fetch(event.request));

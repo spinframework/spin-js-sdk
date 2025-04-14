@@ -18,6 +18,6 @@
     },
     "dependencies": {
         "@spinframework/build-tools": "^1.0.1",
-        "@spinframework/spin-trigger-redis": "1.0.0"
+        "@spinframework/spin-trigger-redis": "^1.0.0"
     }
 }
