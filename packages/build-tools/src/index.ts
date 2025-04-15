@@ -3,15 +3,16 @@
 import { componentize } from '@bytecodealliance/componentize-js';
 import { version as componentizeVersion } from '@bytecodealliance/componentize-js';
 import { getPackagesWithWasiDeps, processWasiDeps } from './wasiDepsParser.js';
-
 import {
   calculateChecksum,
   saveBuildData,
 } from './utils.js';
 import { getCliArgs } from './cli.js';
 import { getBuildDataPath, ShouldComponentize } from './build.js';
-import { writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { mergeWit } from '../lib/wit_tools.js';
+//@ts-ignore
+import { precompile } from "./precompile.js"
 
 async function main() {
   try {
@@ -61,10 +62,12 @@ async function main() {
       'combined-wit:combined-wit@0.3.0',
     );
 
-    const { component } = await componentize({
-      sourcePath: src,
-      // @ts-ignore
-      witWorld: inlineWit,
+    const source = await readFile(src, 'utf8');
+    const precompiledSource = precompile(source, src, true) as string;
+
+    // Using the old syntax because the new sytnax does not allow passing in the precompiled string
+    //@ts-ignore
+    const { component } = await componentize(precompiledSource, inlineWit, {
       runtimeArgs,
       enableAot: CliArgs.aot,
     });
