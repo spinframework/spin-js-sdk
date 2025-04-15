@@ -1,0 +1,27 @@
+{
+  "name": "spin-js-sdk",
+  "version": "1.0.0",
+  "description": "This package is currently used only for generating documentation. It is not a library and does not contain any code.",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "docs": "typedoc",
+    "test": "cd test && ./test.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spinframework/spin-js-sdk.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0 WITH LLVM-exception",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/spinframework/spin-js-sdk/issues"
+  },
+  "homepage": "https://github.com/spinframework/spin-js-sdk#readme",
+  "devDependencies": {
+    "typedoc": "^0.28.2",
+    "typedoc-plugin-missing-exports": "^4.0.0"
+  }
+}
