@@ -65,7 +65,7 @@ async function main() {
     const source = await readFile(src, 'utf8');
     const precompiledSource = precompile(source, src, true) as string;
 
-    // Using the old syntax because the new sytnax does not allow passing in the precompiled string
+    // Using the old syntax because the new syntax does not allow passing in the precompiled string
     //@ts-ignore
     const { component } = await componentize(precompiledSource, inlineWit, {
       runtimeArgs,
