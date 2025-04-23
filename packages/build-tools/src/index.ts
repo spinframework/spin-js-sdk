@@ -13,6 +13,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { mergeWit } from '../lib/wit_tools.js';
 //@ts-ignore
 import { precompile } from "./precompile.js"
+import path from 'node:path'
 
 async function main() {
   try {
@@ -65,9 +66,16 @@ async function main() {
     const source = await readFile(src, 'utf8');
     const precompiledSource = precompile(source, src, true) as string;
 
-    // Using the old syntax because the new syntax does not allow passing in the precompiled string
-    //@ts-ignore
-    const { component } = await componentize(precompiledSource, inlineWit, {
+    // Write precompiled source to disk for debugging purposes In the future we
+    // will also write a source map to make debugging easier
+    let srcDir = path.dirname(src);
+    let precompiledSourcePath = path.join(srcDir, 'precompiled-source.js');
+    await writeFile(precompiledSourcePath, precompiledSource);
+
+    const { component } = await componentize({
+      sourcePath: precompiledSourcePath,
+      // @ts-ignore
+      witWorld: inlineWit,
       runtimeArgs,
       enableAot: CliArgs.aot,
     });
