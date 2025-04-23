@@ -3,15 +3,17 @@
 import { componentize } from '@bytecodealliance/componentize-js';
 import { version as componentizeVersion } from '@bytecodealliance/componentize-js';
 import { getPackagesWithWasiDeps, processWasiDeps } from './wasiDepsParser.js';
-
 import {
   calculateChecksum,
   saveBuildData,
 } from './utils.js';
 import { getCliArgs } from './cli.js';
 import { getBuildDataPath, ShouldComponentize } from './build.js';
-import { writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { mergeWit } from '../lib/wit_tools.js';
+//@ts-ignore
+import { precompile } from "./precompile.js"
+import path from 'node:path'
 
 async function main() {
   try {
@@ -61,8 +63,17 @@ async function main() {
       'combined-wit:combined-wit@0.3.0',
     );
 
+    const source = await readFile(src, 'utf8');
+    const precompiledSource = precompile(source, src, true) as string;
+
+    // Write precompiled source to disk for debugging purposes In the future we
+    // will also write a source map to make debugging easier
+    let srcDir = path.dirname(src);
+    let precompiledSourcePath = path.join(srcDir, 'precompiled-source.js');
+    await writeFile(precompiledSourcePath, precompiledSource);
+
     const { component } = await componentize({
-      sourcePath: src,
+      sourcePath: precompiledSourcePath,
       // @ts-ignore
       witWorld: inlineWit,
       runtimeArgs,

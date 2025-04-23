@@ -1,10 +1,10 @@
 {
   "name": "@spinframework/build-tools",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "make && rm -rf dist && tsc && chmod +x dist/*",
+    "build": "make && rm -rf dist && tsc && chmod +x dist/* && cp src/*.js dist/",
     "fmt": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "test": "npm run build && mocha --require ts-node/register test/**/*.spec.ts"
   },
@@ -31,7 +31,11 @@
   "dependencies": {
     "@bytecodealliance/componentize-js": "^0.18.1",
     "@bytecodealliance/jco": "^1.10.2",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "acorn-walk": "^8.3.4",
+    "acron": "^1.0.5",
+    "magic-string": "^0.30.17",
+    "regexpu-core": "^6.2.0"
   },
   "files": [
     "lib",
