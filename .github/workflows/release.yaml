@@ -86,7 +86,17 @@ jobs:
           with:
             node-version: ${{ env.NODE_VERSION }}   
         - name: Install npm dependencies
-          run: npm install
+          run: | 
+            # Install dependecies for generating docs
+            npm install 
+            # Install dependecies for all the packages
+            for d in packages/*; do
+              echo "Building $d"
+              cd $d
+              npm install
+              npm run build
+              cd -
+            done
         - name: Generate Spin JS SDK Docs 
           run: npm run docs
         - name: Upload Spin JS SDK Docs as Artifact
