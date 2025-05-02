@@ -81,6 +81,15 @@ jobs:
         - name: Checkout Repository including Tags
           uses: actions/checkout@v4
 
+        - name: Install Rust toolchain
+          shell: bash
+          run: |
+            rustup toolchain install ${{ env.RUST_VERSION }} --no-self-update
+            rustup default ${{ env.RUST_VERSION }}
+
+        - name: Install Rust toolchain 
+          run: rustup target add wasm32-wasip1 wasm32-unknown-unknown --toolchain ${{ env.RUST_VERSION }}
+
         - name: Install Node.js
           uses: actions/setup-node@v3
           with:
