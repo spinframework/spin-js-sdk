@@ -1,16 +1,17 @@
-    {
-      "$schema": "https://typedoc.org/schema.json",
-      "entryPoints": [
-        "./src/index.ts"
-      ],
-      "plugin": [
-        "typedoc-plugin-missing-exports",
-        "@shipgirl/typedoc-plugin-versions"
-      ],
-      "versions": {
-        "makeRelativeLinks": true
-      },
-      "excludeExternals": true,
-      "readme": "none",
-      "out": "./docs"
-    }
+{
+  "entryPoints": [
+    "packages/*"
+  ],
+  "entryPointStrategy": "packages",
+  "includeVersion": false,
+  "plugin": [
+    "typedoc-plugin-missing-exports"
+  ],
+  "readme": "none",
+  "packageOptions": {
+    "includeVersion": true,
+    "entryPoints": [
+      "src/index.ts"
+    ]
+  }
+}

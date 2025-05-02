@@ -20,12 +20,6 @@ jobs:
           uses: actions/setup-node@v3
           with:
             node-version: ${{ env.NODE_VERSION }}
-        - name: Install Dependencies
-          shell: bash
-          run: npm install
-        - name: Run prettier check
-          shell: bash
-          run: npm run fmt-check
         - name: Install latest Spin CLI
           uses: fermyon/actions/spin/setup@v1
           with:
@@ -76,15 +70,13 @@ jobs:
     steps:
         - name: Checkout Repository including Tags
           uses: actions/checkout@v4
-        - name: Fetch Git tags
-          run: git fetch --tags
+
         - name: Install Node.js
           uses: actions/setup-node@v3
           with:
             node-version: ${{ env.NODE_VERSION }}
         - name: Generate Spin JS SDK Docs 
-          run: | 
-            ./scripts/build-docs.sh
+          run: npm run docs
         - name: Upload Spin JS SDK Docs as Artifact
           id: docs_deployment
           uses: actions/upload-pages-artifact@v3
