@@ -23,15 +23,6 @@ async function main() {
     let outputPath = CliArgs.output;
     let runtimeArgs = CliArgs.debug ? '--enable-script-debugging' : '';
 
-    // Small optimization to skip componentization if the source file hasn't changed
-    if (!(await ShouldComponentize(src, outputPath, componentizeVersion, runtimeArgs))) {
-      console.log(
-        'No changes detected in source file. Skipping componentization.',
-      );
-      return;
-    }
-    console.log('Componentizing...');
-
     // generate wit world string
     let wasiDeps = getPackagesWithWasiDeps(process.cwd(), new Set(), true);
     let { witPaths, targetWorlds } = processWasiDeps(wasiDeps);
@@ -63,6 +54,16 @@ async function main() {
       'combined-wit:combined-wit@0.3.0',
     );
 
+    let inlineWitChecksum = await calculateChecksum(inlineWit);
+    // Small optimization to skip componentization if the source file hasn't changed
+    if (!(await ShouldComponentize(src, outputPath, componentizeVersion, runtimeArgs, inlineWitChecksum))) {
+      console.log(
+        'No changes detected in source file and target World. Skipping componentization.',
+      );
+      return;
+    }
+    console.log('Componentizing...');
+
     const source = await readFile(src, 'utf8');
     const precompiledSource = precompile(source, src, true) as string;
 
@@ -85,9 +86,10 @@ async function main() {
     // Save the checksum of the input file along with the componentize version
     await saveBuildData(
       getBuildDataPath(src),
-      await calculateChecksum(src),
+      await calculateChecksum(await readFile(src)),
       componentizeVersion,
       runtimeArgs,
+      inlineWitChecksum,
     );
 
     console.log('Component successfully written.');
