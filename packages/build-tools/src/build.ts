@@ -1,5 +1,6 @@
+import { readFile } from 'node:fs/promises';
 import {
-  calculateFileChecksum,
+  calculateChecksum,
   fileExists,
   getExistingBuildData,
 } from './utils.js';
@@ -11,7 +12,7 @@ export function getBuildDataPath(src: string): string {
 export async function ShouldComponentize(
   src: string, outputPath: string, componentizeVersion: string, runtimeArgs: string, targetWitChecksum: string
 ) {
-  const sourceChecksum = await calculateFileChecksum(src);
+  const sourceChecksum = await calculateChecksum(await readFile(src));
   const existingBuildData = await getExistingBuildData(getBuildDataPath(src));
 
   if (

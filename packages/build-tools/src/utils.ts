@@ -4,23 +4,17 @@ import { access, writeFile } from 'node:fs/promises';
 
 
 // Function to calculate file checksum
-export async function calculateFileChecksum(filePath: string) {
+export async function calculateChecksum(content: string | Buffer) {
   try {
-    const fileBuffer = await readFile(filePath);
     const hash = createHash('sha256');
-    hash.update(fileBuffer);
+    hash.update(content);
     return hash.digest('hex');
   } catch (error) {
-    console.error(`Error calculating checksum for file ${filePath}:`, error);
+    console.error(`Error calculating checksum:`, error);
     throw error;
   }
 }
 
-export function calculateCheckSum(data: string | Buffer): string {
-  const hash = createHash('sha256');
-  hash.update(data);
-  return hash.digest('hex');
-}
 
 // Function to check if a file exists
 export async function fileExists(filePath: string) {

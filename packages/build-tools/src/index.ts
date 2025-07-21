@@ -4,8 +4,7 @@ import { componentize } from '@bytecodealliance/componentize-js';
 import { version as componentizeVersion } from '@bytecodealliance/componentize-js';
 import { getPackagesWithWasiDeps, processWasiDeps } from './wasiDepsParser.js';
 import {
-  calculateCheckSum,
-  calculateFileChecksum,
+  calculateChecksum,
   saveBuildData,
 } from './utils.js';
 import { getCliArgs } from './cli.js';
@@ -55,8 +54,7 @@ async function main() {
       'combined-wit:combined-wit@0.3.0',
     );
 
-    // Calcuilate the checksum of the inline wit
-    let inlineWitChecksum = await calculateCheckSum(inlineWit);
+    let inlineWitChecksum = await calculateChecksum(inlineWit);
     // Small optimization to skip componentization if the source file hasn't changed
     if (!(await ShouldComponentize(src, outputPath, componentizeVersion, runtimeArgs, inlineWitChecksum))) {
       console.log(
@@ -88,7 +86,7 @@ async function main() {
     // Save the checksum of the input file along with the componentize version
     await saveBuildData(
       getBuildDataPath(src),
-      await calculateFileChecksum(src),
+      await calculateChecksum(await readFile(src)),
       componentizeVersion,
       runtimeArgs,
       inlineWitChecksum,
