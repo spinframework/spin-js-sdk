@@ -17,7 +17,7 @@ const POSTAMBLE = '}';
 /// will intern regular expressions, duplicating them at the top level and testing them with both
 /// an ascii and utf8 string should ensure that they won't be re-compiled when run in the fetch
 /// handler.
-export function precompile(source, filename = '<input>', moduleMode = false) {
+export function precompile(source, filename = '<input>', moduleMode = false, precompiledFileName = 'precompiled-source.js') {
     const magicString = new MagicString(source, {
         filename,
     });
@@ -52,11 +52,11 @@ export function precompile(source, filename = '<input>', moduleMode = false) {
     magicString.prepend(`${PREAMBLE}${precompileCalls.join('\n')}${POSTAMBLE}`);
 
     // When we're ready to pipe in source maps:
-    // const map = magicString.generateMap({
-    //   source: 'source.js',
-    //   file: 'converted.js.map',
-    //   includeContent: true
-    // });
+    const map = magicString.generateMap({
+        source: filename,
+        file: `${precompiledFileName}.map`,
+        includeContent: true
+    });
 
-    return magicString.toString();
+    return { content: magicString.toString(), sourceMap: map };
 }

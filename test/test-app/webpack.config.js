@@ -7,6 +7,7 @@ const config = async () => {
         mode: 'production',
         stats: 'errors-only',
         entry: './src/index.ts',
+        devtool: 'source-map',
         experiments: {
             outputModule: true,
         },

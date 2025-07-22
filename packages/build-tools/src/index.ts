@@ -5,6 +5,8 @@ import { version as componentizeVersion } from '@bytecodealliance/componentize-j
 import { getPackagesWithWasiDeps, processWasiDeps } from './wasiDepsParser.js';
 import {
   calculateChecksum,
+  chainSourceMaps,
+  fileExists,
   saveBuildData,
 } from './utils.js';
 import { getCliArgs } from './cli.js';
@@ -14,6 +16,7 @@ import { mergeWit } from '../lib/wit_tools.js';
 //@ts-ignore
 import { precompile } from "./precompile.js"
 import path from 'node:path'
+import { SourceMapInput } from '@ampproject/remapping';
 
 async function main() {
   try {
@@ -65,13 +68,20 @@ async function main() {
     console.log('Componentizing...');
 
     const source = await readFile(src, 'utf8');
-    const precompiledSource = precompile(source, src, true) as string;
+    let { content: precompiledSource, sourceMap: precompiledSourceMap } = precompile(source, src, true, 'precompiled-source.js') as { content: string; sourceMap: SourceMapInput };
+    // Check if input file has a source map because if we does, we need to chain it with the precompiled source map
+    if (await fileExists(src + '.map')) {
+      const inputSourceMap = JSON.parse(await readFile(src + '.map', 'utf8')) as SourceMapInput;
+      precompiledSourceMap = chainSourceMaps(precompiledSourceMap, { src: inputSourceMap }) as SourceMapInput;
+    }
 
-    // Write precompiled source to disk for debugging purposes In the future we
-    // will also write a source map to make debugging easier
+    // Write precompiled source to disk for debugging purposes.
     let srcDir = path.dirname(src);
     let precompiledSourcePath = path.join(srcDir, 'precompiled-source.js');
     await writeFile(precompiledSourcePath, precompiledSource);
+    if (precompiledSourceMap) {
+      await writeFile(precompiledSourcePath + '.map', JSON.stringify(precompiledSourceMap, null, 2));
+    }
 
     const { component } = await componentize({
       sourcePath: precompiledSourcePath,

@@ -1,9 +1,24 @@
 import { readFile } from 'fs/promises';
 import { createHash } from 'node:crypto';
 import { access, writeFile } from 'node:fs/promises';
+import remapping, { SourceMapInput } from '@ampproject/remapping';
 
+type FileName = string;
+type SourceMapLookup = Record<FileName, SourceMapInput>;
 
-// Function to calculate file checksum
+export function chainSourceMaps(finalMap: SourceMapInput, sourceMapLookup: SourceMapLookup) {
+  return remapping(finalMap, (source) => {
+    const sourceMap = sourceMapLookup[source];
+    if (sourceMap) {
+      return sourceMap;
+    }
+    // If not the source, we do not want to traverse it further so we return null.
+    // This is because sometimes npm packages have their own source maps but do
+    // not have the original source files.
+    return null;
+  });
+}
+
 export async function calculateChecksum(content: string | Buffer) {
   try {
     const hash = createHash('sha256');
