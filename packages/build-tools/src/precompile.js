@@ -51,6 +51,17 @@ export function precompile(source, filename = '<input>', moduleMode = false, pre
 
     magicString.prepend(`${PREAMBLE}${precompileCalls.join('\n')}${POSTAMBLE}`);
 
+    const sourceMapRegex = /\/\/# sourceMappingURL=.*$/gm;
+
+    let match;
+    while ((match = sourceMapRegex.exec(source))) {
+        const start = match.index;
+        const end = start + match[0].length;
+        magicString.remove(start, end);
+    }
+
+    const precompiledSource = magicString.toString() + `\n//# sourceMappingURL=${precompiledFileName}.map\n`;
+
     // When we're ready to pipe in source maps:
     const map = magicString.generateMap({
         source: filename,
@@ -58,5 +69,5 @@ export function precompile(source, filename = '<input>', moduleMode = false, pre
         includeContent: true
     });
 
-    return { content: magicString.toString(), sourceMap: map };
+    return { content: precompiledSource, sourceMap: map };
 }

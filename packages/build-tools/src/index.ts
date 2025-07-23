@@ -70,9 +70,10 @@ async function main() {
     const source = await readFile(src, 'utf8');
     let { content: precompiledSource, sourceMap: precompiledSourceMap } = precompile(source, src, true, 'precompiled-source.js') as { content: string; sourceMap: SourceMapInput };
     // Check if input file has a source map because if we does, we need to chain it with the precompiled source map
+    // TODO: check using the sourcemap comment instead of the file existence and also deal with base64 encoded source maps
     if (await fileExists(src + '.map')) {
       const inputSourceMap = JSON.parse(await readFile(src + '.map', 'utf8')) as SourceMapInput;
-      precompiledSourceMap = chainSourceMaps(precompiledSourceMap, { src: inputSourceMap }) as SourceMapInput;
+      precompiledSourceMap = chainSourceMaps(precompiledSourceMap, { [src]: inputSourceMap }) as SourceMapInput;
     }
 
     // Write precompiled source to disk for debugging purposes.
