@@ -6,6 +6,10 @@ import fs from 'fs';
 
 const spinPlugin = await SpinEsbuildPlugin();
 
+// plugin to handle vendor files in node_modules that may not be bundled.
+// Instead of generating a real source map for these files, it appends a minimal
+// inline source map pointing to an empty source. This avoids errors and ensures
+// source maps exist even for unbundled vendor code.
 let SourceMapPlugin = {
     name: 'excludeVendorFromSourceMap',
     setup(build) {

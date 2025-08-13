@@ -62,7 +62,6 @@ export function precompile(source, filename = '<input>', moduleMode = false, pre
 
     const precompiledSource = magicString.toString() + `\n//# sourceMappingURL=${precompiledFileName}.map\n`;
 
-    // When we're ready to pipe in source maps:
     const map = magicString.generateMap({
         source: filename,
         file: `${precompiledFileName}.map`,
