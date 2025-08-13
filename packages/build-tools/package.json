@@ -29,13 +29,14 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@ampproject/remapping": "^2.3.0",
     "@bytecodealliance/componentize-js": "^0.18.1",
     "@bytecodealliance/jco": "^1.10.2",
-    "yargs": "^17.7.2",
     "acorn-walk": "^8.3.4",
     "acron": "^1.0.5",
     "magic-string": "^0.30.17",
-    "regexpu-core": "^6.2.0"
+    "regexpu-core": "^6.2.0",
+    "yargs": "^17.7.2"
   },
   "files": [
     "lib",

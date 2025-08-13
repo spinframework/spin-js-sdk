@@ -1,9 +1,25 @@
 import { readFile } from 'fs/promises';
 import { createHash } from 'node:crypto';
 import { access, writeFile } from 'node:fs/promises';
+import remapping, { SourceMapInput } from '@ampproject/remapping';
+import path from 'path';
 
+type FileName = string;
+type SourceMapLookup = Record<FileName, SourceMapInput>;
 
-// Function to calculate file checksum
+export function chainSourceMaps(finalMap: SourceMapInput, sourceMapLookup: SourceMapLookup) {
+  return remapping(finalMap, (source) => {
+    const sourceMap = sourceMapLookup[source];
+    if (sourceMap) {
+      return sourceMap;
+    }
+    // If not the source, we do not want to traverse it further so we return null.
+    // This is because sometimes npm packages have their own source maps but do
+    // not have the original source files.
+    return null;
+  });
+}
+
 export async function calculateChecksum(content: string | Buffer) {
   try {
     const hash = createHash('sha256');
@@ -56,5 +72,37 @@ export async function saveBuildData(
   } catch (error) {
     console.error(`Error saving checksum file at ${buildDataPath}:`, error);
     throw error;
+  }
+}
+
+export async function getSourceMapFromFile(filePath: string): Promise<SourceMapInput | null> {
+  try {
+    const content = await readFile(filePath, 'utf8');
+
+    // Look for the sourceMappingURL comment
+    const sourceMapRegex = /\/\/[#@]\s*sourceMappingURL=(.+)$/m;
+    const match = content.match(sourceMapRegex);
+
+    if (!match) return null;
+
+    const sourceMapUrl = match[1].trim();
+
+    if (sourceMapUrl.startsWith('data:application/json;base64,')) {
+      // Inline base64-encoded source map
+      const base64 = sourceMapUrl.slice('data:application/json;base64,'.length);
+      const rawMap = Buffer.from(base64, 'base64').toString('utf8');
+      return JSON.parse(rawMap);
+    } else {
+      // External .map file
+      const mapPath = path.resolve(path.dirname(filePath), sourceMapUrl);
+      try {
+        const rawMap = await readFile(mapPath, 'utf8');
+        return JSON.parse(rawMap);
+      } catch (e) {
+        return null; // map file not found or invalid
+      }
+    }
+  } catch (err) {
+    return null; // file doesn't exist or can't be read
   }
 }
