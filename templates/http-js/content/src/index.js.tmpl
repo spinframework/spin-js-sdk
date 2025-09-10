@@ -1,26 +1,26 @@
 {%- case http-router -%}
-{% when "hono" %}
-// For Hono documentation refer to https://hono.dev/docs/
+{% when "hono" %}// For Hono documentation refer to https://hono.dev/docs/
 import { Hono } from 'hono';
+import { fire } from 'hono/service-worker';
 import { logger } from 'hono/logger';
 
 let app = new Hono();
 
 // Logging to stdout via built-in middleware
-app.use(logger())
+app.use(logger());
 
 // Example of a custom middleware to set HTTP response header
 app.use(async (c, next) => {
-    c.header('server', 'Spin CLI')
+    c.header('server', 'Spin CLI');
     await next();
 })
 
 app.get('/', (c) => c.text('Hello, Spin!'));
 app.get('/hello/:name', (c) => {
-    return c.json({ message: `Hello, ${c.req.param('name')}` })
+    return c.json({ message: `Hello, ${c.req.param('name')}` });
 });
 
-app.fire();
+fire(app);
 {% when "itty" %}
 // For AutoRouter documentation refer to https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
@@ -44,7 +44,7 @@ function handle(_request) {
     headers: {
       'content-type': 'text/plain'
     }
-  })
+  });
 }
 
 addEventListener('fetch', (event) => {
