@@ -2,6 +2,7 @@
 {% when "hono" %}
 // For Hono documentation refer to https://hono.dev/docs/
 import { Hono } from 'hono';
+import { fire } from "hono/service-worker"
 import { logger } from 'hono/logger';
 
 let app = new Hono();
@@ -20,7 +21,7 @@ app.get('/hello/:name', (c) => {
     return c.json({ message: `Hello, ${c.req.param('name')}` })
 });
 
-app.fire();
+fire(app);
 {% when "itty" %}
 // For AutoRouter documentation refer to https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';

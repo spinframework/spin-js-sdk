@@ -2,6 +2,7 @@
 {% when "hono" %}
 // For Hono documentation refer to https://hono.dev/docs/
 import { Hono } from 'hono';
+import { fire } from "hono/service-worker"
 import type { Context, Next } from 'hono'
 import { logger } from 'hono/logger';
 
@@ -21,7 +22,7 @@ app.get('/hello/:name', (c: Context) => {
   return c.json({ message: `Hello, ${c.req.param('name')}!` })
 });
 
-app.fire();
+fire(app);
 {% when "itty" %}
 // For AutoRouter documentation refer to https://itty.dev/itty-router/routers/autorouter
 import { AutoRouter } from 'itty-router';
