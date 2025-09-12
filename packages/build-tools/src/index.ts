@@ -85,6 +85,14 @@ async function main() {
       await writeFile(precompiledSourcePath + '.map', JSON.stringify(precompiledSourceMap, null, 2));
     }
 
+    // if aot is enabled, warn that it has been temporarily disabled
+    if (CliArgs.aot) {
+      console.warn(
+        'Warning: AOT compilation is temporarily disabled due to issues with componentize-js. Proceeding without AOT. It may be removed in future releases.',
+      );
+      CliArgs.aot = false;
+    }
+
     const { component } = await componentize({
       sourcePath: precompiledSourcePath,
       // @ts-ignore
