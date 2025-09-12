@@ -1,14 +1,16 @@
 import { readFile } from 'fs/promises';
 import { createHash } from 'node:crypto';
 import { access, writeFile } from 'node:fs/promises';
-import remapping, { SourceMapInput } from '@ampproject/remapping';
+import remapping from '@ampproject/remapping';
+import type { SourceMapInput } from '@ampproject/remapping';
 import path from 'path';
 
 type FileName = string;
 type SourceMapLookup = Record<FileName, SourceMapInput>;
 
 export function chainSourceMaps(finalMap: SourceMapInput, sourceMapLookup: SourceMapLookup) {
-  return remapping(finalMap, (source) => {
+  // @ts-ignore
+  return remapping(finalMap, (source: FileName) => {
     const sourceMap = sourceMapLookup[source];
     if (sourceMap) {
       return sourceMap;
