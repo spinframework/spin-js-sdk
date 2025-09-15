@@ -85,6 +85,13 @@ async function main() {
       await writeFile(precompiledSourcePath + '.map', JSON.stringify(precompiledSourceMap, null, 2));
     }
 
+    // if aot is enabled, warn that it has been temporarily disabled
+    if (CliArgs.aot) {
+      throw new Error(
+        'AOT compilation is currently unavailable. Remove the `aot` option to proceed.',
+      );
+    }
+
     const { component } = await componentize({
       sourcePath: precompiledSourcePath,
       // @ts-ignore
