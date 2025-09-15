@@ -87,10 +87,9 @@ async function main() {
 
     // if aot is enabled, warn that it has been temporarily disabled
     if (CliArgs.aot) {
-      console.warn(
-        'Warning: AOT compilation is temporarily disabled due to issues with componentize-js. Proceeding without AOT. It may be removed in future releases.',
+      throw new Error(
+        'AOT compilation is currently unavailable. Remove the `aot` option to proceed.',
       );
-      CliArgs.aot = false;
     }
 
     const { component } = await componentize({

@@ -23,6 +23,7 @@ export function getCliArgs(): CliArgs {
     .option('aot', {
       describe: 'Enable Ahead of Time compilation',
       type: 'boolean',
+      hidden: true,
     })
     .option('debug', {
       alias: 'd',
