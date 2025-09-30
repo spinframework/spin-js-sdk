@@ -59,6 +59,8 @@ function createKvStore(store: spinKv.Store): Store {
       if (!(value instanceof Uint8Array)) {
         if (typeof value === 'string') {
           value = encoder.encode(value);
+        } else if (value instanceof ArrayBuffer) {
+          value = new Uint8Array(value);
         } else if (typeof value === 'object') {
           value = encoder.encode(JSON.stringify(value));
         }
@@ -90,7 +92,15 @@ function createKvStore(store: spinKv.Store): Store {
  * @returns {Store} The key-value store object.
  */
 export function open(label: string): Store {
-  return createKvStore(spinKv.Store.open(label));
+  try {
+    return createKvStore(spinKv.Store.open(label));
+  } catch (error: any) {
+    // Wrapping the Spin KV error in a plain JS Error prevents cyclic object issues
+    // that occur if the original ComponentError is thrown or spread directly.
+    const e = new Error(error);
+    (e as any).payload = error.payload ?? { tag: 'unknown', val: String(error) };
+    throw e;
+  }
 }
 
 /**
@@ -98,5 +108,13 @@ export function open(label: string): Store {
  * @returns {Store} The default key-value store object.
  */
 export function openDefault(): Store {
-  return createKvStore(spinKv.Store.open('default'));
+  try {
+    return createKvStore(spinKv.Store.open('default'));
+  } catch (error: any) {
+    // Wrapping the Spin KV error in a plain JS Error prevents cyclic object issues
+    // that occur if the original ComponentError is thrown or spread directly.
+    const e = new Error(error);
+    (e as any).payload = error.payload ?? { tag: 'unknown', val: String(error) };
+    throw e;
+  }
 }
