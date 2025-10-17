@@ -5,7 +5,9 @@ const decoder = new TextDecoder()
 const streamingChunks = ["chunk1", "chunk2", "chunk3", "chunk4", "chunk5"]
 
 function health(req: Request) {
-    return new Response("Healthy", { status: 200 })
+    let a = 5;
+    console.log(a)
+    return new Response("Healthy" + a, { status: 200 })
 }
 
 function stream(req: Request) {
