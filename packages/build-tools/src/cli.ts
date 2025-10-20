@@ -6,6 +6,7 @@ export interface CliArgs {
   output: string;
   aot?: boolean;
   debug?: boolean;
+  initLocation?: string;
 }
 
 export function getCliArgs(): CliArgs {
@@ -29,6 +30,10 @@ export function getCliArgs(): CliArgs {
       alias: 'd',
       describe: 'Enable JavaScript debugging',
       type: 'boolean',
+    })
+    .option('initLocation', {
+      describe: 'Location during top level initialization',
+      type: 'string',
     })
     .argv as CliArgs;
 
