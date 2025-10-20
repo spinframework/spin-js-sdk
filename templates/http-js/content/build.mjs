@@ -38,6 +38,5 @@ await build({
         '.tsx': 'tsx',
     },
     resolveExtensions: ['.ts', '.tsx', '.js'],
-    // This prevents sourcemaps from traversing into node_modules
     sourceRoot: path.resolve(process.cwd(), 'src'),
 });
