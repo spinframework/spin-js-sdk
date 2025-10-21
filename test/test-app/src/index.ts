@@ -3,9 +3,9 @@ import { headersTest, health, kvTest, kvTestUint8Array, outboundHttp, statusTest
 
 // Verify top level init location
 if (globalThis.location.href != "http://foo.bar/") {
-    throw new Error(`Expected top-level init location to be "top-level", got "${globalThis.location}"`);
+    throw new Error(`Expected top-level init location to be "http://foo.bar/", got "${globalThis.location}"`);
 } else {
-    console.log("Top-level init location verified:", globalThis.location.href);
+    console.log(`Top-level init location verified:, ${globalThis.location.href}`);
 }
 
 let router = AutoRouter()
