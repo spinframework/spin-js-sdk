@@ -32,7 +32,7 @@ export function getCliArgs(): CliArgs {
       type: 'boolean',
     })
     .option('initLocation', {
-      describe: 'Location during top level initialization',
+      describe: 'URL used for the "Location" builtin during top level initialization',
       type: 'string',
     })
     .argv as CliArgs;

@@ -26,10 +26,9 @@ async function main() {
     let CliArgs = getCliArgs();
     let src = CliArgs.input;
     let outputPath = CliArgs.output;
-    let runtimeArgs = [
-      CliArgs.debug && '--enable-script-debugging',
-      CliArgs.initLocation && `--init-location ${CliArgs.initLocation}`
-    ].filter(Boolean).join(' ');
+    let runtimeArgs = []
+    CliArgs.debug && runtimeArgs.push('--enable-script-debugging');
+    CliArgs.initLocation && runtimeArgs.push(`--init-location ${CliArgs.initLocation}`);
 
     // generate wit world string
     let wasiDeps = getPackagesWithWasiDeps(process.cwd(), new Set(), true);
@@ -64,7 +63,7 @@ async function main() {
 
     let inlineWitChecksum = await calculateChecksum(inlineWit);
     // Small optimization to skip componentization if the source file hasn't changed
-    if (!(await ShouldComponentize(src, outputPath, componentizeVersion, runtimeArgs, inlineWitChecksum))) {
+    if (!(await ShouldComponentize(src, outputPath, componentizeVersion, runtimeArgs.join(" "), inlineWitChecksum))) {
       console.log(
         'No changes detected in source file and target World. Skipping componentization.',
       );
@@ -99,7 +98,7 @@ async function main() {
       sourcePath: precompiledSourcePath,
       // @ts-ignore
       witWorld: inlineWit,
-      runtimeArgs,
+      runtimeArgs: runtimeArgs.join(" "),
       enableAot: CliArgs.aot,
     });
 
@@ -110,7 +109,7 @@ async function main() {
       getBuildDataPath(src),
       await calculateChecksum(await readFile(src)),
       componentizeVersion,
-      runtimeArgs,
+      runtimeArgs.join(" "),
       inlineWitChecksum,
     );
 
