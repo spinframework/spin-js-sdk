@@ -26,7 +26,10 @@ async function main() {
     let CliArgs = getCliArgs();
     let src = CliArgs.input;
     let outputPath = CliArgs.output;
-    let runtimeArgs = CliArgs.debug ? '--enable-script-debugging' : '';
+    let runtimeArgs = [
+      CliArgs.debug && '--enable-script-debugging',
+      CliArgs.initLocation && `--init-location ${CliArgs.initLocation}`
+    ].filter(Boolean).join(' ');
 
     // generate wit world string
     let wasiDeps = getPackagesWithWasiDeps(process.cwd(), new Set(), true);

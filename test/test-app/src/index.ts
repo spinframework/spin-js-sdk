@@ -1,6 +1,13 @@
 import { AutoRouter } from "itty-router"
 import { headersTest, health, kvTest, kvTestUint8Array, outboundHttp, statusTest, stream, streamTest, testFunctionality } from "./test";
 
+// Verify top level init location
+if (globalThis.location.href != "http://foo.bar/") {
+    throw new Error(`Expected top-level init location to be "http://foo.bar/", got "${globalThis.location}"`);
+} else {
+    console.log(`Top-level init location verified:, ${globalThis.location.href}`);
+}
+
 let router = AutoRouter()
 
 router.get("/health", health)
