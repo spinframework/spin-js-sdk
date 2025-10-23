@@ -8,3 +8,4 @@ dist.js
 dist/
 build/
 docs/
+!templates/**/.vscode/
