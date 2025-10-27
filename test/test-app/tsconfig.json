@@ -2,7 +2,7 @@
     "compilerOptions": {
         "outDir": "./dist/",
         "noImplicitAny": true,
-        "module": "es6",
+        "module": "nodenext",
         "target": "es2020",
         "jsx": "react",
         "skipLibCheck": true,
@@ -13,6 +13,6 @@
         "allowJs": true,
         "strict": true,
         "noImplicitReturns": true,
-        "moduleResolution": "node"
+        "moduleResolution": "nodenext"
     }
 }

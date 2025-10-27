@@ -46,6 +46,18 @@ function kvTest(req: Request) {
     return new Response("failed", { status: 500 })
 }
 
+function kvTestArrayBuffer(req: Request) {
+    let store = Kv.openDefault()
+
+    let arr = new Uint8Array([1, 2, 3])
+    store.set("arr", arr.buffer)
+    let ret = store.get("arr")
+    if (ret == null || !isEqualBytes(new Uint8Array(ret), arr)) {
+        return new Response("failed", { status: 500 })
+    }
+    return new Response("success", { status: 200 })
+}
+
 function kvTestUint8Array(req: Request) {
     let store = Kv.openDefault()
 
@@ -87,6 +99,7 @@ async function testFunctionality(req: Request) {
         { name: "headersTest", validate: (resp: Response) => resp.status === 200 && resp.headers.get("Content-Type") === "text/html" },
         { name: "outboundHttp", validate: (resp: Response) => resp.status === 200 },
         { name: "kvTest", validate: (resp: Response) => resp.status === 200 },
+        { name: "kvTestArrayBuffer", validate: (resp: Response) => resp.status === 200 },
         { name: "kvTestUint8Array", validate: (resp: Response) => resp.status === 200 },
         { name: "streamTest", validate: (resp: Response) => resp.status === 200 },
     ];
@@ -112,6 +125,7 @@ export {
     statusTest,
     outboundHttp,
     kvTest,
+    kvTestArrayBuffer,
     kvTestUint8Array,
     streamTest
 }
