@@ -1,0 +1,18 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["Karthik Ganeshram <karthik.ganeshram@fermyon.com>"]
+description = ""
+name = "test-empty-precompile"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/..."
+component = "test-empty-precompile"
+
+[component.test-empty-precompile]
+source = "dist/test-empty-precompile.wasm"
+exclude_files = ["**/node_modules"]
+[component.test-empty-precompile.build]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.js"]
