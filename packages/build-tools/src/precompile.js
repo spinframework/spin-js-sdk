@@ -47,7 +47,13 @@ export function precompile(source, filename = '<input>', moduleMode = false, pre
         },
     });
 
-    if (!precompileCalls.length) return source;
+    if (!precompileCalls.length) {
+        // No regex to precompile so return original source.
+        return {
+            content: source,
+            sourceMap: null
+        };
+    }
 
     magicString.prepend(`${PREAMBLE}${precompileCalls.join('\n')}${POSTAMBLE}`);
 
