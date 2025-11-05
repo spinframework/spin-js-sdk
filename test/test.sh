@@ -6,6 +6,7 @@ for d in packages/*; do
     echo "Building $d"
     cd $d
     npm install
+    npm audit
     npm run build
     cd -
 done
