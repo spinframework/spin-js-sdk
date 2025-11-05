@@ -43,3 +43,25 @@ if [ "$isFailed" = true ] ; then
     echo "Some tests failed"
     exit 1
 fi
+
+# return back to test folder
+cd ..
+
+# Test the no regex precompile
+
+cd test-empty-precompile
+spin build
+spin up &
+echo "Teting app with no regex to precompile"
+
+if ! timeout 60s bash -c '
+  until status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/health) && [ "$status" -eq 200 ]; do
+    echo "Current status: $status, waiting..."
+    sleep 2
+  done
+'; then
+  echo "Spin app did not return HTTP 200 in 60 seconds"
+  exit 1
+fi
+
+killall spin
