@@ -24,7 +24,7 @@ let SourceMapPlugin = {
 }
 
 await build({
-    entryPoints: ['./src/index.ts'],
+    entryPoints: ['./src/index.js'],
     outfile: './build/bundle.js',
     bundle: true,
     format: 'esm',

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node build.mjs && mkdirp dist && j2w -i build/bundle.js --initLocation http://{{project-name | kebab_case}}.localhost -o dist/{{ project-name | kebab_case }}.wasm",
+    "build:debug": "node build.mjs && mkdirp dist && j2w -d -i build/bundle.js --initLocation http://{{project-name | kebab_case}}.localhost -o dist/{{ project-name | kebab_case }}.wasm",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
