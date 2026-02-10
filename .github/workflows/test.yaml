@@ -44,11 +44,37 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Cache Docker images
+        uses: actions/cache@v3
+        with:
+          path: /tmp/docker-images
+          key: docker-${{ runner.os }}-postgres15-mysql8
+          restore-keys: |
+            docker-${{ runner.os }}-
+
+      - name: Load Docker images
+        run: |
+          if [ -f /tmp/docker-images/postgres.tar ]; then
+            docker load -i /tmp/docker-images/postgres.tar
+          fi
+          if [ -f /tmp/docker-images/mysql.tar ]; then
+            docker load -i /tmp/docker-images/mysql.tar
+          fi
+
       - name: Run Test
         shell: bash
         run: |
           cd test
-          ./test.sh
+          npm run test
+
+      - name: Save Docker images
+        if: always()
+        run: |
+          mkdir -p /tmp/docker-images
+          docker pull postgres:15 2>/dev/null || true
+          docker pull mysql:8.0 2>/dev/null || true
+          docker save postgres:15 -o /tmp/docker-images/postgres.tar 2>/dev/null || true
+          docker save mysql:8.0 -o /tmp/docker-images/mysql.tar 2>/dev/null || true
 
   test_template:
     runs-on: ${{ matrix.os }}

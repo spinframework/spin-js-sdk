@@ -1,6 +1,6 @@
-# `http-js` Template
+# `http-ts` Template
 
-A starter template for building JavaScript HTTP applications with Spin.
+A starter template for building TypeScript HTTP applications with Spin.
 
 ## Getting Started
 
@@ -30,3 +30,10 @@ To use additional Spin interfaces, install the corresponding packages:
 | Redis         | `@spinframework/spin-redis`     |
 | SQLite        | `@spinframework/spin-sqlite`    |
 | Variables     | `@spinframework/spin-variables` |
+
+## Using the StarlingMonkey Debugger for VS Code
+
+1. First install the [StarlingMonkey Debugger](https://marketplace.visualstudio.com/items?itemName=BytecodeAlliance.starlingmonkey-debugger) extension.
+2. Build the component using the debug command `npm run build:debug`.
+3. Uncomment `tcp://127.0.0.1:*` in the `allowed_outbound_hosts` field in the `spin.toml`.
+4. Start the debugger in VS Code which should start Spin and attach the debugger. The debugger needs to be restarted for each http call.
