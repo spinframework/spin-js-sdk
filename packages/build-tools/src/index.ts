@@ -72,19 +72,25 @@ async function main() {
     console.log('Componentizing...');
 
     const source = await readFile(src, 'utf8');
-    let { content: precompiledSource, sourceMap: precompiledSourceMap } = precompile(source, src, true, 'precompiled-source.js') as { content: string; sourceMap: SourceMapInput };
-    // Check if input file has a source map because if we does, we need to chain it with the precompiled source map
+    let { content: precompiledSource, sourceMap: precompiledSourceMap } = precompile(source, src, true, 'precompiled-source.js') as { content: string; sourceMap: SourceMapInput | null };
+    // Resolve the final source map by combining precompiled and input source maps as needed
     let inputSourceMap = await getSourceMapFromFile(src);
-    if (inputSourceMap) {
-      precompiledSourceMap = chainSourceMaps(precompiledSourceMap, { [src]: inputSourceMap }) as SourceMapInput;
+    let finalSourceMap: SourceMapInput | null = null;
+    if (precompiledSourceMap && inputSourceMap) {
+      finalSourceMap = chainSourceMaps(precompiledSourceMap, { [src]: inputSourceMap }) as SourceMapInput;
+    } else if (inputSourceMap) {
+      // Precompiled source map is empty (no relevant transformations) — use the input source map directly
+      finalSourceMap = inputSourceMap;
+    } else if (precompiledSourceMap) {
+      finalSourceMap = precompiledSourceMap;
     }
 
     // Write precompiled source to disk for debugging purposes.
     let srcDir = path.dirname(src);
     let precompiledSourcePath = path.join(srcDir, 'precompiled-source.js');
     await writeFile(precompiledSourcePath, precompiledSource);
-    if (precompiledSourceMap) {
-      await writeFile(precompiledSourcePath + '.map', JSON.stringify(precompiledSourceMap, null, 2));
+    if (finalSourceMap) {
+      await writeFile(precompiledSourcePath + '.map', JSON.stringify(finalSourceMap, null, 2));
     }
 
     // if aot is enabled, warn that it has been temporarily disabled

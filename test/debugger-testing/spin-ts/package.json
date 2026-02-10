@@ -18,7 +18,7 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
-    "@spinframework/build-tools": "^1.0.1",
-    "@spinframework/wasi-http-proxy": "^1.0.0"
+    "@spinframework/build-tools": "file:../../../packages/build-tools",
+    "@spinframework/wasi-http-proxy": "file:../../../packages/http-trigger"
   }
 }
