@@ -2,18 +2,18 @@
 
 This is an SDK for Javascript and Typescript based on [ComponentizeJS](https://github.com/bytecodealliance/ComponentizeJS).
 
-Note that this SDK supersedes an earlier, experimental version, which may be found in the [sdk-v1](https://github.com/fermyon/spin-js-sdk/tree/old-sdk) branch.
+Note that this SDK supersedes an earlier, experimental version, which may be found in the [sdk-v1](https://github.com/spinframework/spin-js-sdk/tree/old-sdk) branch.
 
-## [API Documentation](https://fermyon.github.io/spin-js-sdk)
+## [API Documentation](https://spinframework.github.io/spin-js-sdk/)
 
 ## Installing the templates
 
-[Spin](https://github.com/fermyon/spin) is a prerequisite. 
+[Spin](https://github.com/spinframework/spin) is a prerequisite. 
 
 The templates can be installed with the following command:
 
 ```bash
-spin templates install --update --git https://github.com/fermyon/spin-js-sdk 
+spin templates install --update --git https://github.com/spinframework/spin-js-sdk 
 ```
 
 ## Creating and building a new app
@@ -59,9 +59,9 @@ hello universe
 
 Please file an issue if you have any trouble.
 
-See the [examples directory](https://github.com/fermyon/spin-js-sdk/tree/main/examples) in the repository for more examples.
+See the [examples directory](https://github.com/spinframework/spin-js-sdk/tree/main/examples) in the repository for more examples.
 
-To learn more about the JS SDK checkout the [documentation](https://developer.fermyon.com/spin/v2/javascript-components)
+To learn more about the JS SDK checkout the [documentation](https://spinframework.dev/v3/javascript-components)
 
 ## Structure of this repository
 
