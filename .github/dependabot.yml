@@ -1,0 +1,24 @@
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directories:
+      - "/packages/**"
+      - "/examples/**"
+      - "/test/**"
+    schedule:
+      interval: "daily"
+    # Group patch and minor npm updates into a single PR
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
