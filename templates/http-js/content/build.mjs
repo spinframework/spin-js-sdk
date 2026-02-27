@@ -28,7 +28,7 @@ await build({
     outfile: './build/bundle.js',
     bundle: true,
     format: 'esm',
-    platform: 'node',
+    platform: 'browser',
     sourcemap: true,
     minify: false,
     plugins: [spinPlugin, SourceMapPlugin],
