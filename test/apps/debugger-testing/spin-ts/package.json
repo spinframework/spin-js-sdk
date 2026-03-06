@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "mkdirp dist && tsc && j2w -d -i dist/index.js -o dist/spin-ts.wasm",
+    "build": "mkdirp dist && tsc && j2w -i dist/index.js -o dist/spin-ts.wasm",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,7 +18,7 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
-    "@spinframework/build-tools": "file:../../../packages/build-tools",
-    "@spinframework/wasi-http-proxy": "file:../../../packages/http-trigger"
+    "@spinframework/build-tools": "file:../../../../packages/build-tools",
+    "@spinframework/wasi-http-proxy": "file:../../../../packages/http-trigger"
   }
 }

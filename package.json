@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "docs": "typedoc",
-    "test": "cd test && ./test.sh"
+    "test": "cd test && npm run test"
   },
   "repository": {
     "type": "git",
