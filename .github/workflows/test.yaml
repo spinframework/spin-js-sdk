@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Install Rust toolchain
         shell: bash
@@ -58,7 +58,7 @@ jobs:
         router: ['hono', 'itty', 'none']
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Use Node.js 22
         uses: actions/setup-node@v3
