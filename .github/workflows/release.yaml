@@ -110,7 +110,7 @@ jobs:
           run: npm run docs
         - name: Upload Spin JS SDK Docs as Artifact
           id: docs_deployment
-          uses: actions/upload-pages-artifact@v3
+          uses: actions/upload-pages-artifact@v4
           with:
             path: docs/
   deploy_docs:
