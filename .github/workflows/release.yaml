@@ -27,7 +27,7 @@ jobs:
           run: rustup target add wasm32-wasip1 wasm32-unknown-unknown --toolchain ${{ env.RUST_VERSION }}
       
         - name: Install Node.js
-          uses: actions/setup-node@v3
+          uses: actions/setup-node@v6
           with:
             node-version: ${{ env.NODE_VERSION }}
         - name: Install latest Spin CLI
@@ -49,7 +49,7 @@ jobs:
         - name: Checkout Repository
           uses: actions/checkout@v3
         - name: Install Node.js
-          uses: actions/setup-node@v3
+          uses: actions/setup-node@v6
           with:
             node-version: ${{ env.NODE_VERSION }}
         - name: Install latest Spin CLI
@@ -91,7 +91,7 @@ jobs:
           run: rustup target add wasm32-wasip1 wasm32-unknown-unknown --toolchain ${{ env.RUST_VERSION }}
 
         - name: Install Node.js
-          uses: actions/setup-node@v3
+          uses: actions/setup-node@v6
           with:
             node-version: ${{ env.NODE_VERSION }}   
         - name: Install npm dependencies
