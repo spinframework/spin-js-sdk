@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "nodenext",
+        "lib": [
+            "ESNext",
+            "WebWorker"
+        ],
+        "moduleResolution": "nodenext",
+        "declaration": true,
+        "outDir": "dist",
+        "strict": true,
+        "esModuleInterop": true,
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
