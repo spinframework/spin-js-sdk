@@ -8,7 +8,7 @@ resolver = "2"
 
 [workspace.dependencies]
 anyhow = "1.0.86"
-wit-bindgen = "0.27.0"
-wit-bindgen-core = "0.27.0"
-wit-component = "0.219.1"
-wit-parser = "0.219.1"
+wit-bindgen = "0.55.0"
+wit-bindgen-core = "0.55.0"
+wit-component = "0.246.2"
+wit-parser = "0.246.2"
