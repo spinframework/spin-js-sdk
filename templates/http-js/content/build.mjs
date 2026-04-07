@@ -13,7 +13,9 @@ const spinPlugin = await SpinEsbuildPlugin();
 let SourceMapPlugin = {
     name: 'excludeVendorFromSourceMap',
     setup(build) {
-        build.onLoad({ filter: /node_modules/ }, args => {
+        // Only append JS-style sourceMappingURL comments to JS/TS sources.
+        // Appending this to JSON files breaks esbuild parsing.
+        build.onLoad({ filter: /node_modules\/.*\.(?:[cm]?js|tsx?)$/ }, args => {
             return {
                 contents: fs.readFileSync(args.path, 'utf8')
                     + '\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIiJdLCJtYXBwaW5ncyI6IkEifQ==',
