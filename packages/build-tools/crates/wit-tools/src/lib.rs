@@ -1,7 +1,7 @@
 use anyhow::anyhow;
 use std::path::{Path, PathBuf};
 use wit_component::WitPrinter;
-use wit_parser::{PackageId, Resolve};
+use wit_parser::{CloneMaps, PackageId, Resolve};
 
 wit_bindgen::generate!({
     world: "tools",
@@ -61,10 +61,11 @@ impl WitMerger {
             .base_world_id
             .ok_or_else(|| anyhow!("Base world not initialized"))?;
 
+        let mut clone_maps = CloneMaps::default();
         for target in worlds {
             let (_pkg_id, world_id) = self.find_target_world(&target)?;
             self.resolve
-                .merge_worlds(world_id, base_world)
+                .merge_worlds(world_id, base_world, &mut clone_maps)
                 .map_err(|e| {
                     anyhow!(
                         "Failed to merge world '{}/{}': {}",
@@ -85,7 +86,7 @@ impl WitMerger {
         let mut imports = Vec::new();
         for (_, item) in self.resolve.worlds[base_world].imports.iter() {
             match item {
-                wit_parser::WorldItem::Interface { id, stability: _ } => {
+                wit_parser::WorldItem::Interface { id, .. } => {
                     if let Some(import_string) = self.format_interface_import(id) {
                         imports.push(import_string);
                     }
@@ -98,7 +99,7 @@ impl WitMerger {
                 }
                 // Do nothing for types because ComponentizeJS does not
                 // generate bindings for types
-                wit_parser::WorldItem::Type(_) => {}
+                wit_parser::WorldItem::Type { .. } => {}
             }
         }
         Ok(imports)
@@ -247,7 +248,8 @@ fn generate_wit_output(resolve: &Resolve, package_id: PackageId) -> anyhow::Resu
         .filter(|id| *id != package_id)
         .collect();
 
-    printer.print(resolve, package_id, &excluded_ids)
+    printer.print(resolve, package_id, &excluded_ids)?;
+    Ok(printer.output.into())
 }
 
 export!(BuildTools);
