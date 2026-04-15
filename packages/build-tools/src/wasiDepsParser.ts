@@ -108,18 +108,14 @@ export function getPackagesWithWasiDeps(
 
   if (topLevel) {
     if (packageJson.config?.witDependencies) {
-      if (packageJson.config.witDependencies) {
-        if (packageJson.config.witDependencies) {
-          absolutizeWitPath(dir, packageJson);
-        }
+      absolutizeWitPath(dir, packageJson);
 
-        result.push({
-          name: packageJson.name,
-          config: {
-            witDependencies: packageJson.config.witDependencies,
-          },
-        });
-      }
+      result.push({
+        name: packageJson.name,
+        config: {
+          witDependencies: packageJson.config.witDependencies,
+        },
+      });
     }
   }
 

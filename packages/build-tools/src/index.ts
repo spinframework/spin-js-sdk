@@ -18,7 +18,6 @@ import { mergeWit } from '../lib/wit_tools.js';
 import { precompile } from "./precompile.js"
 import path from 'node:path'
 import { SourceMapInput } from '@ampproject/remapping';
-import { get } from 'node:http';
 
 async function main() {
   try {
