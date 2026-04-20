@@ -26,8 +26,13 @@ async function main() {
     let src = CliArgs.input;
     let outputPath = CliArgs.output;
     let runtimeArgs = []
+    let features = new Set<string>();
     CliArgs.debug && runtimeArgs.push('--enable-script-debugging');
     CliArgs.initLocation && runtimeArgs.push(`--init-location ${CliArgs.initLocation}`);
+
+    if (CliArgs.aot) {
+      features.add('aot');
+    }
 
     // generate wit world string
     let wasiDeps = getPackagesWithWasiDeps(process.cwd(), new Set(), true);
@@ -38,7 +43,7 @@ async function main() {
     if (CliArgs.debug) {
       // check if @spinframework/http-trigger is already in the targetWorlds
       let httpTrigger = targetWorlds.find(
-        (world) => world.packageName === 'spinframework:http-trigger@0.2.3',
+        (world) => world.packageName === 'spinframework:http-trigger@0.2.10',
       );
       if (!httpTrigger) {
         throw new Error(
@@ -46,7 +51,7 @@ async function main() {
         );
       }
       targetWorlds.push({
-        packageName: 'spinframework:http-trigger@0.2.3',
+        packageName: 'spinframework:http-trigger@0.2.10',
         worldName: 'debugging-support',
       });
     }
@@ -62,7 +67,7 @@ async function main() {
 
     let inlineWitChecksum = await calculateChecksum(inlineWit);
     // Small optimization to skip componentization if the source file hasn't changed
-    if (!(await ShouldComponentize(src, outputPath, componentizeVersion, runtimeArgs.join(" "), inlineWitChecksum))) {
+    if (!(await ShouldComponentize(src, outputPath, componentizeVersion, runtimeArgs.join(" "), inlineWitChecksum, features))) {
       console.log(
         'No changes detected in source file and target World. Skipping componentization.',
       );
@@ -92,13 +97,6 @@ async function main() {
       await writeFile(precompiledSourcePath + '.map', JSON.stringify(finalSourceMap, null, 2));
     }
 
-    // if aot is enabled, warn that it has been temporarily disabled
-    if (CliArgs.aot) {
-      throw new Error(
-        'AOT compilation is currently unavailable. Remove the `aot` option to proceed.',
-      );
-    }
-
     const { component } = await componentize({
       sourcePath: precompiledSourcePath,
       // @ts-ignore
@@ -116,6 +114,7 @@ async function main() {
       componentizeVersion,
       runtimeArgs.join(" "),
       inlineWitChecksum,
+      features
     );
 
     console.log('Component successfully written.');

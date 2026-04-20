@@ -1,0 +1,26 @@
+{
+  "name": "aot-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build.mjs && mkdirp dist && j2w -i build/bundle.js --initLocation http://aot-test.localhost -o dist/aot-test.wasm --aot",
+    "build:debug": "node build.mjs && mkdirp dist && j2w -d -i build/bundle.js --initLocation http://aot-test.localhost -o dist/aot-test.wasm",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@bytecodealliance/jco": "^1.17.6",
+    "esbuild": "^0.25.8",
+    "mkdirp": "^3.0.1",
+    "ts-loader": "^9.4.1",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@spinframework/build-tools": "file:../../packages/build-tools",
+    "@spinframework/wasi-http-proxy": "file:../../packages/http-trigger",
+    "itty-router": "^5.0.18"
+  }
+}

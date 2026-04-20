@@ -1,6 +1,6 @@
 {
   "name": "@spinframework/build-tools",
-  "version": "1.0.7",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
   "devDependencies": {
     "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.13.1",
+    "@types/node": "^22.19.17",
     "@types/sinon": "^21.0.0",
     "@types/yargs": "^17.0.33",
     "chai": "^5.2.0",
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@ampproject/remapping": "^2.3.0",
-    "@bytecodealliance/componentize-js": "^0.19.2",
+    "@bytecodealliance/componentize-js": "^0.20.0",
     "@bytecodealliance/jco": "^1.10.2",
     "acorn-walk": "^8.3.4",
     "acron": "^1.0.5",
@@ -44,14 +44,5 @@
     "plugins",
     "dist",
     "wit"
-  ],
-  "config": {
-    "witDependencies": [
-      {
-        "witPath": "./wit",
-        "package": "spinframework:wasi-cli-environment@0.2.3",
-        "world": "wasi-cli"
-      }
-    ]
-  }
+  ]
 }
