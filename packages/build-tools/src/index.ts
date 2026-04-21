@@ -18,6 +18,7 @@ import { mergeWit } from '../lib/wit_tools.js';
 import { precompile } from "./precompile.js"
 import path from 'node:path'
 import { SourceMapInput } from '@ampproject/remapping';
+import { getSpinComponentDependencies } from './spinComponentDeps.js';
 
 async function main() {
   try {
@@ -55,6 +56,18 @@ async function main() {
         worldName: 'debugging-support',
       });
     }
+
+    // Handle spin-dependencies.wit which will be present if component has dependencies defined in spin.toml
+    let spinComponentDeps = getSpinComponentDependencies();
+    if (spinComponentDeps) {
+      console.log('Found Spin component dependencies');
+      witPaths.push(spinComponentDeps.witPath);
+      targetWorlds.push({
+        packageName: spinComponentDeps.packageName,
+        worldName: spinComponentDeps.worldName,
+      });
+    }
+
 
     // Get inline wit by merging the wits specified by all the dependencies
     let inlineWit = mergeWit(

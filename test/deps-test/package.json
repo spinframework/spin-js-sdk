@@ -1,0 +1,26 @@
+{
+  "name": "deps-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run generate-dependency-types && node build.mjs && mkdirp dist && j2w -i build/bundle.js --initLocation http://test-deps.localhost -o dist/deps-test.wasm",
+    "build:debug": "npm run generate-dependency-types && node build.mjs && mkdirp dist && j2w -d -i build/bundle.js --initLocation http://test-deps.localhost -o dist/deps-test.wasm",
+    "generate-dependency-types": "node -e \"if (!require('fs').existsSync('spin-dependencies.wit')) process.exit(1)\" && jco guest-types spin-dependencies.wit -n root || node -e \"process.exit(0)\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@bytecodealliance/jco": "^1.17.6",
+    "mkdirp": "^3.0.1",
+    "ts-loader": "^9.4.1",
+    "typescript": "^4.8.4",
+    "esbuild": "^0.25.8"
+  },
+  "dependencies": {
+    "@spinframework/build-tools": "file:../../packages/build-tools",
+    "@spinframework/wasi-http-proxy": "file:../../packages/http-trigger"
+  }
+}

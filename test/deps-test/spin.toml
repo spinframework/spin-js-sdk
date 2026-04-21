@@ -1,0 +1,24 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["Karthik Ganeshram <kganeshr@akamai.com>"]
+description = ""
+name = "deps-test"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/..."
+component = "deps-test"
+
+[component.deps-test]
+source = "dist/deps-test.wasm"
+exclude_files = ["**/node_modules"]
+allowed_outbound_hosts = [
+    # "tcp://127.0.0.1:*", # Uncomment this line to while using the StarlingMonkey Debugger
+]
+[component.deps-test.build]
+command = ["npm install", "npm run build"]
+watch = ["src/**/*.ts"]
+
+[component.deps-test.dependencies]
+"component:fibonacci/utils" = {path = "./fibonacci.wasm"}
