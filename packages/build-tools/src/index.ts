@@ -60,7 +60,6 @@ async function main() {
     // Handle spin-dependencies.wit which will be present if component has dependencies defined in spin.toml
     let spinComponentDeps = getSpinComponentDependencies();
     if (spinComponentDeps) {
-      console.log('Found Spin component dependencies');
       witPaths.push(spinComponentDeps.witPath);
       targetWorlds.push({
         packageName: spinComponentDeps.packageName,

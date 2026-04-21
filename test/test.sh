@@ -91,6 +91,8 @@ killall spin
 
 # Test the component dependencies
 cd ../deps-test
+npm install
+npm run build-dependency-component
 spin build
 spin up &
 echo "Testing component dependencies"

@@ -21,4 +21,4 @@ command = ["npm install", "npm run build"]
 watch = ["src/**/*.ts"]
 
 [component.deps-test.dependencies]
-"component:fibonacci/utils" = {path = "./fibonacci.wasm"}
+"component:greeter" = {path = "./greeter-component.wasm"}
