@@ -1,0 +1,8 @@
+node_modules
+dist
+target
+.spin/
+build/
+spin-dependencies.wit
+types/
+*.wasm
