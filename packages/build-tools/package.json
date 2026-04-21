@@ -18,7 +18,7 @@
   "devDependencies": {
     "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.19.17",
+    "@types/node": "^25.6.0",
     "@types/sinon": "^21.0.0",
     "@types/yargs": "^17.0.33",
     "chai": "^5.2.0",
