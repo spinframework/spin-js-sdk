@@ -10,7 +10,7 @@ on:
 
 env:
   NODE_VERSION: "22"
-  RUST_VERSION: 1.84
+  RUST_VERSION: 1.94
 
 jobs:
   lint_and_test:

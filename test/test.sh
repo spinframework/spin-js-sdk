@@ -65,3 +65,25 @@ if ! timeout 60s bash -c '
 fi
 
 killall spin
+
+# Test the AOT compilation
+
+cd ../aot-test
+spin build
+spin up &
+echo "Testing app with AOT compilation"
+if ! timeout 60s bash -c '
+  until status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/.well-known/spin/health) && [ "$status" -eq 200 ]; do
+    echo "Current status: $status, waiting..."
+    sleep 2
+  done
+'; then
+  echo "Spin app did not return HTTP 200 in 60 seconds"
+  exit 1
+fi
+
+# test the fibonacci function for 32
+response=$(curl -s http://localhost:3000/fibonacci/32) 
+echo "Fibonacci(32) = $response"
+
+killall spin

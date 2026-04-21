@@ -61,7 +61,7 @@ export async function getExistingBuildData(buildDataPath: string) {
 }
 
 export async function saveBuildData(
-  buildDataPath: string, checksum: string, version: string, runtimeArgs: string, targetWitChecksum: string
+  buildDataPath: string, checksum: string, version: string, runtimeArgs: string, targetWitChecksum: string, features: Set<string>
 ) {
   try {
     const checksumData = {
@@ -69,6 +69,7 @@ export async function saveBuildData(
       checksum,
       runtimeArgs,
       targetWitChecksum,
+      features: Array.from(features),
     };
     await writeFile(buildDataPath, JSON.stringify(checksumData, null, 2));
   } catch (error) {
@@ -107,4 +108,12 @@ export async function getSourceMapFromFile(filePath: string): Promise<SourceMapI
   } catch (err) {
     return null; // file doesn't exist or can't be read
   }
+}
+
+export function areEqualSets<T>(setA: Set<T>, setB: Set<T>): boolean {
+  if (setA.size !== setB.size) return false;
+  for (let item of setA) {
+    if (!setB.has(item)) return false;
+  }
+  return true;
 }
