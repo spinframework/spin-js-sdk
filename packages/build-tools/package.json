@@ -36,7 +36,7 @@
     "acron": "^1.0.5",
     "magic-string": "^0.30.17",
     "regexpu-core": "^6.2.0",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "files": [
     "lib",
