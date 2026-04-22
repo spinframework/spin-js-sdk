@@ -12,7 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "mkdirp": "^3.0.1",
-    "webpack": "^5.105.4",
+    "webpack": "^5.106.2",
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
