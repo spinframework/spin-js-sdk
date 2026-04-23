@@ -1,4 +1,4 @@
-import { RdbmsParameterValue, SpinRdbmsParameterValue } from './types/rdbms';
+import { RdbmsParameterValue, SpinRdbmsParameterValue } from './types/rdbms.js';
 
 export function convertRdbmsToWitTypes(
   parameters: RdbmsParameterValue[],

@@ -4,7 +4,7 @@ import {
   RdbmsRow,
   RdbmsRowSet,
   SpinRdbmsRowSet,
-} from './types/rdbms';
+} from './types/rdbms.js';
 import { convertRdbmsToWitTypes } from './rdbmsHelper.js';
 
 /**

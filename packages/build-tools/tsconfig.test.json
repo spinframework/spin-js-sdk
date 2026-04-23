@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "rootDir": "./",
+        "declaration": false,
+        "types": ["node", "mocha", "sinon", "chai"],
+        "skipLibCheck": true
+    },
+    "include": ["src", "test"],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
