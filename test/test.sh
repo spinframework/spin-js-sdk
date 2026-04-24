@@ -5,7 +5,9 @@ cd ..
 for d in packages/*; do
     echo "Building $d"
     cd $d
-    npm install
+    # Using legacy-peer-deps here is okay because, we do not need the `build-tools` package to build the packages.
+    # We only need it when we build apps that consume said packages.
+    npm install --legacy-peer-deps
     npm audit
     npm run build
     cd -
