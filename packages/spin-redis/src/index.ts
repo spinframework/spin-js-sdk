@@ -69,11 +69,11 @@ export interface RedisConnection {
   incr: (key: string) => bigint;
 
   /**
-   * Deletes the given key.
-   * @param {string} key - The key to delete.
+   * Deletes the given keys.
+   * @param {string[]} keys - The keys to delete.
    * @returns {number}
    */
-  del: (key: string) => number;
+  del: (keys: string[]) => number;
 
   /**
    * Adds a value to a set.
