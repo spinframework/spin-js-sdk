@@ -5,7 +5,9 @@ cd ..
 for d in packages/*; do
     echo "Building $d"
     cd $d
-    npm install
+    # Legacy peer deps will allow us to ignore the unmet peer dependency warning for build-tools, which is not needed for building the packages themselves.
+    # We only need it when we build apps that consume said packages.
+    npm install --legacy-peer-deps
     npm audit
     npm run build
     cd -

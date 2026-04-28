@@ -14,6 +14,9 @@
   "devDependencies": {
     "typescript": "^6.0.3"
   },
+  "peerDependencies": {
+    "@spinframework/build-tools": "^2.0.0"
+  },
   "files": [
     "dist",
     "wit"
