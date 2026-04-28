@@ -97,12 +97,13 @@ jobs:
         - name: Install npm dependencies
           run: | 
             # Install dependecies for generating docs
-            npm install 
+            npm install
             # Install dependecies for all the packages
             for d in packages/*; do
               echo "Building $d"
               cd $d
-              npm install
+              # Legacy peer deps will allow us to ignore the unmet peer dependency warning for build-tools, which is not needed for building the packages themselves.
+              npm install --legacy-peer-deps
               npm run build
               cd -
             done
