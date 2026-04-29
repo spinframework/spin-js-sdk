@@ -25,22 +25,19 @@ jobs:
           echo "Ref: $GITHUB_REF"
           TAG=${GITHUB_REF#refs/tags/}
           echo "Tag: $TAG"
-          PACKAGE_DIR=$(echo "$TAG" | cut -d'/' -f2)
+          PACKAGE_DIR="packages/$(echo "$TAG" | cut -d'/' -f2)"
           VERSION=$(echo "$TAG" | cut -d'/' -f3)
           VERSION_STR=${VERSION#v}
           if [[ "$VERSION_STR" =~ -(alpha|beta|rc) ]]; then
             PRERELEASE=true
-            PR_LABEL=${BASH_REMATCH[1]}
           else
             PRERELEASE=false
-            PR_LABEL=""
           fi
           echo "TAG=${TAG}" >> $GITHUB_ENV
           echo "PACKAGE_DIR=${PACKAGE_DIR}" >> $GITHUB_ENV
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
           echo "VERSION_STR=${VERSION_STR}" >> $GITHUB_ENV
           echo "PRERELEASE=${PRERELEASE}" >> $GITHUB_ENV
-          echo "PR_LABEL=${PR_LABEL}" >> $GITHUB_ENV
 
       - name: Setup Node (OIDC for npm)
         uses: actions/setup-node@v6
@@ -56,7 +53,7 @@ jobs:
           npm run build
           VER=${VERSION#v}
           if [[ "$VER" =~ -(alpha|beta|rc) ]]; then
-            NPM_TAG=${BASH_REMATCH[1]}
+            NPM_TAG=prerelease
           else
             NPM_TAG=latest
           fi
@@ -73,3 +70,57 @@ jobs:
           prerelease: ${{ env.PRERELEASE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  build_docs:
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+        - name: Checkout Repository including Tags
+          uses: actions/checkout@v6
+
+        - name: Install Rust toolchain
+          shell: bash
+          run: |
+            rustup toolchain install ${{ env.RUST_VERSION }} --no-self-update
+            rustup default ${{ env.RUST_VERSION }}
+
+        - name: Install Rust toolchain 
+          run: rustup target add wasm32-wasip1 wasm32-unknown-unknown --toolchain ${{ env.RUST_VERSION }}
+
+        - name: Install Node.js
+          uses: actions/setup-node@v6
+          with:
+            node-version: ${{ env.NODE_VERSION }}   
+        - name: Install npm dependencies
+          run: | 
+            # Install dependecies for generating docs
+            npm install
+            # Install dependecies for all the packages
+            for d in packages/*; do
+              echo "Building $d"
+              cd $d
+              # Legacy peer deps will allow us to ignore the unmet peer dependency warning for build-tools, which is not needed for building the packages themselves.
+              npm install --legacy-peer-deps
+              npm run build
+              cd -
+            done
+        - name: Generate Spin JS SDK Docs 
+          run: npm run docs
+        - name: Upload Spin JS SDK Docs as Artifact
+          id: docs_deployment
+          uses: actions/upload-pages-artifact@v5
+          with:
+            path: docs/
+  deploy_docs:
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.docs_deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build_docs
+    steps:
+      - name: Deploy to GitHub Pages
+        id: docs_deployment
+        uses: actions/deploy-pages@v5
