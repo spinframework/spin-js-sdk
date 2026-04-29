@@ -19,6 +19,6 @@
   },
   "dependencies": {
     "@spinframework/build-tools": "file:../../../packages/build-tools",
-    "@spinframework/wasi-http-proxy": "file:../../../packages/http-trigger"
+    "@spinframework/wasi-http-proxy": "file:../../../packages/wasi-http-proxy"
   }
 }

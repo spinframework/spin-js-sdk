@@ -30,4 +30,14 @@
       }
     ]
   }
+,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spinframework/spin-js-sdk.git",
+    "directory": "packages/spin-kv"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
 }
