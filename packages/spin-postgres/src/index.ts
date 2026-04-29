@@ -243,16 +243,20 @@ function convertRdbmsToWitTypes(
 ): SpinPostgresV3ParameterValue[] {
   let sanitized: SpinPostgresV3ParameterValue[] = [];
   for (let k of parameters) {
+    if (k === null) {
+      sanitized.push({ tag: 'db-null' });
+      continue;
+    }
+    if (k instanceof Uint8Array) {
+      sanitized.push({ tag: 'binary', val: k });
+      continue;
+    }
     if (typeof k === 'object') {
       sanitized.push(k as SpinPostgresV3ParameterValue);
       continue;
     }
     if (typeof k === 'string') {
       sanitized.push({ tag: 'str', val: k });
-      continue;
-    }
-    if (typeof k === null) {
-      sanitized.push({ tag: 'db-null' });
       continue;
     }
     if (typeof k === 'boolean') {
@@ -267,10 +271,6 @@ function convertRdbmsToWitTypes(
       isFloat(k)
         ? sanitized.push({ tag: 'floating64', val: k })
         : sanitized.push({ tag: 'int32', val: k });
-      continue;
-    }
-    if ((k as any) instanceof Uint8Array) {
-      sanitized.push({ tag: 'binary', val: k });
       continue;
     }
   }
