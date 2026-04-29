@@ -1,0 +1,75 @@
+name: Publish packages to npm
+
+on:
+  push:
+    tags:
+      - 'package/*/v*.*.*'
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish package from tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Parse tag for package and version
+        id: parse_tag
+        run: |
+          echo "Ref: $GITHUB_REF"
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "Tag: $TAG"
+          PACKAGE_DIR=$(echo "$TAG" | cut -d'/' -f2)
+          VERSION=$(echo "$TAG" | cut -d'/' -f3)
+          VERSION_STR=${VERSION#v}
+          if [[ "$VERSION_STR" =~ -(alpha|beta|rc) ]]; then
+            PRERELEASE=true
+            PR_LABEL=${BASH_REMATCH[1]}
+          else
+            PRERELEASE=false
+            PR_LABEL=""
+          fi
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+          echo "PACKAGE_DIR=${PACKAGE_DIR}" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "VERSION_STR=${VERSION_STR}" >> $GITHUB_ENV
+          echo "PRERELEASE=${PRERELEASE}" >> $GITHUB_ENV
+          echo "PR_LABEL=${PR_LABEL}" >> $GITHUB_ENV
+
+      - name: Setup Node (OIDC for npm)
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish package
+        run: |
+          echo "Publishing $PACKAGE_DIR version $VERSION"
+          cd packages/$PACKAGE_DIR
+          npm install --legacy-peer-deps
+          npm run build
+          VER=${VERSION#v}
+          if [[ "$VER" =~ -(alpha|beta|rc) ]]; then
+            NPM_TAG=${BASH_REMATCH[1]}
+          else
+            NPM_TAG=latest
+          fi
+          echo "Using npm tag: $NPM_TAG"
+          npm publish --access public --provenance --tag "$NPM_TAG"
+
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: ${{ env.PACKAGE_DIR }}-${{ env.VERSION }}
+          body: "Release ${{ env.VERSION }} for ${{ env.PACKAGE_DIR }} published to npm."
+          draft: false
+          prerelease: ${{ env.PRERELEASE }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

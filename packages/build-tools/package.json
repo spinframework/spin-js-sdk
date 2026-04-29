@@ -45,4 +45,14 @@
     "dist",
     "wit"
   ]
+,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spinframework/spin-js-sdk.git",
+    "directory": "packages/build-tools"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
 }
