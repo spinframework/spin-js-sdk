@@ -47,6 +47,14 @@ jobs:
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install rust targets (for build tools package)
+        if: env.PACKAGE_DIR == 'build-tools'
+        shell: bash
+        run: |
+          rustup toolchain install ${{ env.RUST_VERSION }} --no-self-update
+          rustup default ${{ env.RUST_VERSION }}
+          rustup target add wasm32-wasip1 wasm32-unknown-unknown --toolchain ${{ env.RUST_VERSION }}
 
       - name: Publish package
         run: |
