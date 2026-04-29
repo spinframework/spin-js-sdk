@@ -5,6 +5,9 @@ on:
     tags:
       - 'package/*/v*.*.*'
 
+env:
+  RUST_VERSION: 1.94
+
 permissions:
   contents: write
   id-token: write
