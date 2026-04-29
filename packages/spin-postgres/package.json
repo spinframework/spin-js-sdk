@@ -1,12 +1,12 @@
 {
   "name": "@spinframework/spin-postgres",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc && cp -r types/* dist/ && cp -r src/types dist/"
+    "build": "tsc && cp -r types/* dist/"
   },
   "keywords": [],
   "author": "",
@@ -25,8 +25,8 @@
     "witDependencies": [
       {
         "witPath": "./wit",
-        "package": "fermyon:spin@2.0.0",
-        "world": "spin-postgres"
+        "package": "spin:postgres@3.0.0",
+        "world": "spin-postgres3"
       }
     ]
   }

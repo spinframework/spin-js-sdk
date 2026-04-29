@@ -1,4 +1,4 @@
-package fermyon:spin@2.0.0;
+package spin:postgres@3.0.0;
 
 interface postgres {
   /// Errors related to interacting with a database.
@@ -17,14 +17,14 @@ interface postgres {
       int16,
       int32,
       int64,
-      uint8,
-      uint16,
-      uint32,
-      uint64,
       floating32,
       floating64,
       str,
       binary,
+      date,
+      time,
+      datetime,
+      timestamp,
       other,
   }
 
@@ -35,14 +35,17 @@ interface postgres {
       int16(s16),
       int32(s32),
       int64(s64),
-      uint8(u8),
-      uint16(u16),
-      uint32(u32),
-      uint64(u64),
       floating32(f32),
       floating64(f64),
       str(string),
       binary(list<u8>),
+      date(tuple<s32, u8, u8>), // (year, month, day)
+      time(tuple<u8, u8, u8, u32>), // (hour, minute, second, nanosecond)
+      /// Date-time types are always treated as UTC (without timezone info).
+      /// The instant is represented as a (year, month, day, hour, minute, second, nanosecond) tuple.
+      datetime(tuple<s32, u8, u8, u8, u8, u8, u32>),
+      /// Unix timestamp (seconds since epoch)
+      timestamp(s64),
       db-null,
       unsupported,
   }
@@ -54,14 +57,17 @@ interface postgres {
       int16(s16),
       int32(s32),
       int64(s64),
-      uint8(u8),
-      uint16(u16),
-      uint32(u32),
-      uint64(u64),
       floating32(f32),
       floating64(f64),
       str(string),
       binary(list<u8>),
+      date(tuple<s32, u8, u8>), // (year, month, day)
+      time(tuple<u8, u8, u8, u32>), // (hour, minute, second, nanosecond)
+      /// Date-time types are always treated as UTC (without timezone info).
+      /// The instant is represented as a (year, month, day, hour, minute, second, nanosecond) tuple.
+      datetime(tuple<s32, u8, u8, u8, u8, u8, u32>),
+      /// Unix timestamp (seconds since epoch)
+      timestamp(s64),
       db-null,
   }
 
@@ -80,7 +86,6 @@ interface postgres {
       rows: list<row>,
   }
 
-
   /// A connection to a postgres database.
   resource connection {
     /// Open a connection to the Postgres instance at `address`.
@@ -94,6 +99,6 @@ interface postgres {
   }
 }
 
-world spin-postgres {
+world spin-postgres3 {
   import postgres;
 }
