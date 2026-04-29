@@ -25,7 +25,7 @@ jobs:
           echo "Ref: $GITHUB_REF"
           TAG=${GITHUB_REF#refs/tags/}
           echo "Tag: $TAG"
-          PACKAGE_DIR="packages/$(echo "$TAG" | cut -d'/' -f2)"
+          PACKAGE_DIR="$(echo "$TAG" | cut -d'/' -f2)"
           VERSION=$(echo "$TAG" | cut -d'/' -f3)
           VERSION_STR=${VERSION#v}
           if [[ "$VERSION_STR" =~ -(alpha|beta|rc) ]]; then
