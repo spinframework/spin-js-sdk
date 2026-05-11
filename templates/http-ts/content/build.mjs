@@ -1,6 +1,8 @@
 // build.mjs
 import { build } from 'esbuild';
 import path from 'path';
+// The @spinframework/build-tools gets installed as a peer dependency by the the other @spinframework packages
+// so we can safely import it here even if it isn't listed in the package.json.
 import { SpinEsbuildPlugin } from "@spinframework/build-tools/plugins/esbuild/index.js";
 import fs from 'fs';
 

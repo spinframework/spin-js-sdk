@@ -24,7 +24,6 @@
     {% when "itty" %}
     "itty-router": "^5.0.18",
     {%- endcase %}
-    "@spinframework/build-tools": "^1.0.4",
-    "@spinframework/wasi-http-proxy": "^1.0.0"
+    "@spinframework/wasi-http-proxy": "^2.0.0"
   }
 }
