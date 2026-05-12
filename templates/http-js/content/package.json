@@ -4,8 +4,9 @@
   "description": "{{project-description}}",
   "main": "index.js",
   "scripts": {
-    "build": "node build.mjs && mkdirp dist && j2w -i build/bundle.js --initLocation http://{{project-name | kebab_case}}.localhost -o dist/{{ project-name | kebab_case }}.wasm",
-    "build:debug": "node build.mjs && mkdirp dist && j2w -d -i build/bundle.js --initLocation http://{{project-name | kebab_case}}.localhost -o dist/{{ project-name | kebab_case }}.wasm",
+    "build": "npm run generate-dependency-types && node build.mjs && mkdirp dist && j2w -i build/bundle.js --initLocation http://{{project-name | kebab_case}}.localhost -o dist/{{ project-name | kebab_case }}.wasm",
+    "build:debug": "npm run generate-dependency-types && node build.mjs && mkdirp dist && j2w -d -i build/bundle.js --initLocation http://{{project-name | kebab_case}}.localhost -o dist/{{ project-name | kebab_case }}.wasm",
+    "generate-dependency-types": "node -e \"if (!require('fs').existsSync('spin-dependencies.wit')) process.exit(1)\" && jco guest-types spin-dependencies.wit -n root || node -e \"process.exit(0)\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,7 +14,8 @@
   "license": "ISC",
   "devDependencies": {
     "mkdirp": "^3.0.1",
-    "esbuild": "^0.25.8"
+    "esbuild": "^0.25.8",
+    "@bytecodealliance/jco": "^1.17.6"
   },
   "dependencies": {
     {%- case http-router -%}
