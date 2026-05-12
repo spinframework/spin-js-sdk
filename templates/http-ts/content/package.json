@@ -4,8 +4,8 @@
   "description": "{{project-description}}",
   "main": "index.js",
   "scripts": {
-    "build": "node build.mjs && mkdirp dist && j2w -i build/bundle.js --initLocation http://{{project-name | kebab_case}}.localhost -o dist/{{ project-name | kebab_case }}.wasm",
-    "build:debug": "node build.mjs && mkdirp dist && j2w -d -i build/bundle.js --initLocation http://{{project-name | kebab_case}}.localhost -o dist/{{ project-name | kebab_case }}.wasm",
+    "build": "node build.mjs",
+    "build:debug": "node build.mjs --debug",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,7 +15,8 @@
     "mkdirp": "^3.0.1",
     "ts-loader": "^9.4.1",
     "typescript": "^4.8.4",
-    "esbuild": "^0.25.8"
+    "esbuild": "^0.25.8",
+    "@bytecodealliance/jco": "^1.17.6"
   },
   "dependencies": {
     {%- case http-router -%}
