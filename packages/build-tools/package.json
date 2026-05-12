@@ -11,6 +11,10 @@
   "bin": {
     "j2w": "dist/index.js"
   },
+  "exports": {
+    "./plugins/esbuild": "./dist/plugins/esbuild.js",
+    "./plugins/esbuild/index.js": "./dist/plugins/esbuild.js"
+  },
   "keywords": [],
   "author": "",
   "license": "Apache-2.0 WITH LLVM-exception",
