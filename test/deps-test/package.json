@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build-dependency-component": "node build-dependency-component.mjs",
     "build": "node build.mjs",
     "build:debug": "node build.mjs --debug",
     "test": "echo \"Error: no test specified\" && exit 1"

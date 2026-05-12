@@ -13,7 +13,8 @@
   },
   "exports": {
     "./plugins/esbuild": "./dist/plugins/esbuild.js",
-    "./plugins/esbuild/index.js": "./dist/plugins/esbuild.js"
+    "./plugins/esbuild/index.js": "./dist/plugins/esbuild.js",
+    "./plugins/webpack/index.js": "./plugins/webpack/index.js"
   },
   "keywords": [],
   "author": "",
