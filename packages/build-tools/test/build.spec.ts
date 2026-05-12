@@ -48,6 +48,7 @@ describe('ShouldComponentize', () => {
       '1.0.0',
       '',
       'wit-hash',
+      new Set(),
     );
     expect(result).to.be.true;
   });
@@ -63,7 +64,7 @@ describe('ShouldComponentize', () => {
       await fs.promises.readFile(srcPath),
     );
     const buildDataPath = `${srcPath}.buildData.json`;
-    await saveBuildData(buildDataPath, checksum, '1.0.0', '', 'wit-hash');
+    await saveBuildData(buildDataPath, checksum, '1.0.0', '', 'wit-hash', new Set());
 
     // Output file doesn't exist
     const outputPath = path.join(tmpDir, 'missing-output.wasm');
@@ -74,6 +75,7 @@ describe('ShouldComponentize', () => {
       '1.0.0',
       '',
       'wit-hash',
+      new Set(),
     );
     expect(result).to.be.true;
   });
@@ -90,7 +92,7 @@ describe('ShouldComponentize', () => {
       await fs.promises.readFile(srcPath),
     );
     const buildDataPath = `${srcPath}.buildData.json`;
-    await saveBuildData(buildDataPath, checksum, '1.0.0', '--debug', 'wit-xyz');
+    await saveBuildData(buildDataPath, checksum, '1.0.0', '--debug', 'wit-xyz', new Set());
 
     const result = await ShouldComponentize(
       srcPath,
@@ -98,6 +100,7 @@ describe('ShouldComponentize', () => {
       '1.0.0',
       '--debug',
       'wit-xyz',
+      new Set(),
     );
     expect(result).to.be.false;
   });
@@ -120,6 +123,7 @@ describe('ShouldComponentize', () => {
       '1.0.0',
       '',
       'wit-hash',
+      new Set(),
     );
 
     // Now change the source
@@ -131,6 +135,7 @@ describe('ShouldComponentize', () => {
       '1.0.0',
       '',
       'wit-hash',
+      new Set(),
     );
     expect(result).to.be.true;
   });
@@ -147,7 +152,7 @@ describe('ShouldComponentize', () => {
       await fs.promises.readFile(srcPath),
     );
     const buildDataPath = `${srcPath}.buildData.json`;
-    await saveBuildData(buildDataPath, checksum, '1.0.0', '', 'wit-hash');
+    await saveBuildData(buildDataPath, checksum, '1.0.0', '', 'wit-hash', new Set());
 
     const result = await ShouldComponentize(
       srcPath,
@@ -155,6 +160,7 @@ describe('ShouldComponentize', () => {
       '2.0.0', // different version
       '',
       'wit-hash',
+      new Set(),
     );
     expect(result).to.be.true;
   });
@@ -171,7 +177,7 @@ describe('ShouldComponentize', () => {
       await fs.promises.readFile(srcPath),
     );
     const buildDataPath = `${srcPath}.buildData.json`;
-    await saveBuildData(buildDataPath, checksum, '1.0.0', '', 'wit-hash');
+    await saveBuildData(buildDataPath, checksum, '1.0.0', '', 'wit-hash', new Set());
 
     const result = await ShouldComponentize(
       srcPath,
@@ -179,6 +185,7 @@ describe('ShouldComponentize', () => {
       '1.0.0',
       '--enable-script-debugging', // different args
       'wit-hash',
+      new Set(),
     );
     expect(result).to.be.true;
   });
@@ -195,7 +202,7 @@ describe('ShouldComponentize', () => {
       await fs.promises.readFile(srcPath),
     );
     const buildDataPath = `${srcPath}.buildData.json`;
-    await saveBuildData(buildDataPath, checksum, '1.0.0', '', 'old-wit-hash');
+    await saveBuildData(buildDataPath, checksum, '1.0.0', '', 'old-wit-hash', new Set());
 
     const result = await ShouldComponentize(
       srcPath,
@@ -203,6 +210,7 @@ describe('ShouldComponentize', () => {
       '1.0.0',
       '',
       'new-wit-hash', // different wit hash
+      new Set(),
     );
     expect(result).to.be.true;
   });

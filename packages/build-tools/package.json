@@ -1,6 +1,6 @@
 {
   "name": "@spinframework/build-tools",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,11 @@
   },
   "bin": {
     "j2w": "dist/index.js"
+  },
+  "exports": {
+    "./plugins/esbuild": "./dist/plugins/esbuild.js",
+    "./plugins/esbuild/index.js": "./dist/plugins/esbuild.js",
+    "./plugins/webpack/index.js": "./plugins/webpack/index.js"
   },
   "keywords": [],
   "author": "",
