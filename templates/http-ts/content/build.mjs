@@ -20,6 +20,7 @@ await build({
     plugins: [await SpinEsbuildPlugin({
         componentize: {
             debug,
+            output: './dist/{{project-name | kebab_case}}.wasm',
             initLocation: 'http://test-deps.localhost',
         }
     })],
