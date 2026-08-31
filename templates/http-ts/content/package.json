@@ -4,8 +4,8 @@
   "description": "{{project-description}}",
   "main": "index.js",
   "scripts": {
-    "build": "node build.mjs",
-    "build:debug": "node build.mjs --debug",
+    "build": "tsc --noEmit && node build.mjs",
+    "build:debug": "tsc --noEmit && node build.mjs --debug",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,7 +14,7 @@
   "devDependencies": {
     "mkdirp": "^3.0.1",
     "ts-loader": "^9.4.1",
-    "typescript": "^4.8.4",
+    "typescript": "^7.0.2",
     "esbuild": "^0.25.8",
     "@bytecodealliance/jco": "^1.17.6"
   },

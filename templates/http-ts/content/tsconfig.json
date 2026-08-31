@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "rootDir": ".",
         "outDir": "./dist/",
         "noImplicitAny": true,
         "module": "es6",
@@ -10,10 +11,11 @@
             "ES2020",
             "WebWorker"
         ],
+        "types": [],
         "allowJs": true,
         "strict": true,
         "noImplicitReturns": true,
-        "moduleResolution": "node"
+        "moduleResolution": "bundler"
     },
     "include": [
         "src/**/*",
