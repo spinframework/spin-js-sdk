@@ -21,7 +21,7 @@
   "dependencies": {
     {%- case http-router -%}
     {% when "hono" %}
-    "hono": "^4.7.4",
+    "hono": "^4.13.8",
     {% when "itty" %}
     "itty-router": "^5.0.18",
     {%- endcase %}
