@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@ampproject/remapping": "^2.3.0",
-    "@bytecodealliance/componentize-js": "^0.20.0",
+    "@bytecodealliance/componentize-js": "^0.21.0",
     "@bytecodealliance/jco": "^1.10.2",
     "acorn-walk": "^8.3.4",
     "acron": "^1.0.5",
