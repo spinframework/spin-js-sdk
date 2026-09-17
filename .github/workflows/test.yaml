@@ -50,6 +50,22 @@ jobs:
           cd test
           ./test.sh
 
+  audit_deps:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Audit dependencies
+        shell: bash
+        run: |
+          for package_dir in packages/*/; do
+            (
+               cd "$package_dir"
+               npm audit
+             )
+           done
+    
   test_template:
     runs-on: ${{ matrix.os }}
     strategy:
