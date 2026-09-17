@@ -21,7 +21,7 @@
     {% when "hono" %}
     "hono": "^4.13.8",
     {% when "itty" %}
-    "itty-router": "^5.0.18",
+    "itty-router": "^5.0.24",
     {%- endcase %}
     "@spinframework/wasi-http-proxy": "^2.0.0"
   }

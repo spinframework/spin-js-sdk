@@ -13,7 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "mkdirp": "^3.0.1",
-    "ts-loader": "^9.4.1",
+    "ts-loader": "^9.6.2",
     "typescript": "^7.0.2",
     "esbuild": "^0.25.8",
     "@bytecodealliance/jco": "^1.17.6"
@@ -23,7 +23,7 @@
     {% when "hono" %}
     "hono": "^4.13.8",
     {% when "itty" %}
-    "itty-router": "^5.0.18",
+    "itty-router": "^5.0.24",
     {%- endcase %}
     "@spinframework/wasi-http-proxy": "^2.0.0"
   }
