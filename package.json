@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/spinframework/spin-js-sdk#readme",
   "devDependencies": {
-    "typedoc": "^0.28.2",
-    "typedoc-plugin-missing-exports": "^4.0.0"
+    "typedoc": "^0.28.20",
+    "typedoc-plugin-missing-exports": "^4.1.4"
   }
 }

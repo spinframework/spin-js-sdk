@@ -36,7 +36,7 @@
   "dependencies": {
     "@ampproject/remapping": "^2.3.0",
     "@bytecodealliance/componentize-js": "^0.20.0",
-    "@bytecodealliance/jco": "^1.10.2",
+    "@bytecodealliance/jco": "^1.34.0",
     "acorn-walk": "^8.3.4",
     "acron": "^1.0.5",
     "magic-string": "^0.30.17",
@@ -49,8 +49,7 @@
     "plugins",
     "dist",
     "wit"
-  ]
-,
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/spinframework/spin-js-sdk.git",
