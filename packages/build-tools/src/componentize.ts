@@ -10,7 +10,7 @@ import {
 } from './utils.js';
 import { getBuildDataPath, ShouldComponentize } from './build.js';
 import { readFile, writeFile } from 'node:fs/promises';
-import { mergeWit } from '../lib/wit_tools.js';
+import { mergeWit } from './witTools.js';
 //@ts-ignore
 import { precompile } from "./precompile.js"
 import path from 'node:path';

@@ -13,7 +13,7 @@ class SpinSdkPlugin {
   }
 
   static async init() {
-    const { getWitImports } = await import('../../lib/wit_tools.js');
+    const { getWitImports } = await import('../../dist/witTools.js');
     let plugin = new SpinSdkPlugin();
 
     // Get the list of wit dependencies from other packages as defined in the package.json.
