@@ -9,17 +9,13 @@ jobs:
   test_http_template:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         router: ['hono', 'itty', 'none']
 
     steps:
       - uses: actions/checkout@v7
-
-      - name: Use Node.js 22
-        uses: actions/setup-node@v7
-        with:
-          node-version: 22
 
       - name: Setup `spin`
         uses: fermyon/actions/spin/setup@v1
@@ -47,17 +43,13 @@ jobs:
   test_redis_template:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         template: [redis-js, redis-ts]
 
     steps:
       - uses: actions/checkout@v7
-
-      - name: Use Node.js 22
-        uses: actions/setup-node@v7
-        with:
-          node-version: 22
 
       - name: Setup `spin`
         uses: fermyon/actions/spin/setup@v1

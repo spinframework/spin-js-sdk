@@ -37,7 +37,7 @@
     "@ampproject/remapping": "^2.3.0",
     "@bytecodealliance/componentize-js": "^0.23.0",
     "@bytecodealliance/jco": "^1.36.1",
-    "@bytecodealliance/preview2-shim": "^0.27.1",
+    "@bytecodealliance/preview2-shim": "^0.28.0",
     "acorn-walk": "^8.3.4",
     "acron": "^1.0.5",
     "magic-string": "^0.30.17",
