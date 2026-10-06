@@ -48,6 +48,34 @@ describe('WIT filesystem access', () => {
       fs.rmSync(witDirectory, { recursive: true, force: true });
     }
   });
+
+  it('reads WIT paths from separate virtual guest directories', () => {
+    const firstWitDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'spin-wit-'));
+    const secondWitDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'spin-wit-'));
+    fs.writeFileSync(
+      path.join(firstWitDirectory, 'world.wit'),
+      'package test:first@1.0.0; world first-world {}',
+    );
+    fs.writeFileSync(
+      path.join(secondWitDirectory, 'world.wit'),
+      'package test:second@1.0.0; world second-world {}',
+    );
+
+    try {
+      expect(
+        getWitImports(
+          [firstWitDirectory, secondWitDirectory],
+          [
+            { packageName: 'test:first@1.0.0', worldName: 'first-world' },
+            { packageName: 'test:second@1.0.0', worldName: 'second-world' },
+          ],
+        ),
+      ).to.deep.equal([]);
+    } finally {
+      fs.rmSync(firstWitDirectory, { recursive: true, force: true });
+      fs.rmSync(secondWitDirectory, { recursive: true, force: true });
+    }
+  });
 });
 
 describe('readPackageJson', () => {

@@ -1,4 +1,42 @@
+#!/usr/bin/env bash
+
 set -euo pipefail
+
+spin_pid=""
+
+start_spin() {
+  spin up &
+  spin_pid=$!
+}
+
+stop_spin() {
+  if [[ -n "$spin_pid" ]]; then
+    kill "$spin_pid" 2>/dev/null || true
+    wait "$spin_pid" 2>/dev/null || true
+    spin_pid=""
+  fi
+}
+
+wait_for_http() {
+  local url=$1
+  local deadline=$((SECONDS + 60))
+  local status
+
+  while true; do
+    status=$(curl --silent --output /dev/null --write-out '%{http_code}' "$url" || true)
+    if [[ "$status" == "200" ]]; then
+      return
+    fi
+    if (( SECONDS >= deadline )); then
+      echo "Spin app did not return HTTP 200 in 60 seconds"
+      return 1
+    fi
+    echo "Current status: $status, waiting..."
+    sleep 2
+  done
+}
+
+trap stop_spin EXIT
 
 # Build the npm package
 cd ..
@@ -24,11 +62,11 @@ echo "built the test app successfully"
 
 # Start the spin app in the background
 echo "Starting Spin app"
-spin up &
+start_spin
 
 # wait for app to be up and running
 echo "Waiting for Spin app to be ready"
-timeout 60s bash -c 'until curl --silent -f http://localhost:3000/health > /dev/null; do sleep 2; done'
+wait_for_http http://localhost:3000/health
 
 # start the test
 echo "Starting test\n"
@@ -37,7 +75,7 @@ echo "\n\nTest completed"
 
 # kill the spin app
 echo "Stopping Spin"
-killall spin
+stop_spin
 
 
 if [ "$isFailed" = true ] ; then
@@ -52,42 +90,26 @@ cd ..
 
 cd test-empty-precompile
 spin build
-spin up &
+start_spin
 echo "Teting app with no regex to precompile"
 
-if ! timeout 60s bash -c '
-  until status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/health) && [ "$status" -eq 200 ]; do
-    echo "Current status: $status, waiting..."
-    sleep 2
-  done
-'; then
-  echo "Spin app did not return HTTP 200 in 60 seconds"
-  exit 1
-fi
+wait_for_http http://localhost:3000/health
 
-killall spin
+stop_spin
 
 # Test the AOT compilation
 
 cd ../aot-test
 spin build
-spin up &
+start_spin
 echo "Testing app with AOT compilation"
-if ! timeout 60s bash -c '
-  until status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/.well-known/spin/health) && [ "$status" -eq 200 ]; do
-    echo "Current status: $status, waiting..."
-    sleep 2
-  done
-'; then
-  echo "Spin app did not return HTTP 200 in 60 seconds"
-  exit 1
-fi
+wait_for_http http://localhost:3000/.well-known/spin/health
 
 # test the fibonacci function for 32
 response=$(curl -s http://localhost:3000/fibonacci/32) 
 echo "Fibonacci(32) = $response"
 
-killall spin
+stop_spin
 
 
 # Test the component dependencies
@@ -95,17 +117,9 @@ cd ../deps-test
 npm install
 npm run build-dependency-component
 spin build
-spin up &
+start_spin
 echo "Testing component dependencies"
-if ! timeout 60s bash -c '
-  until status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/.well-known/spin/health) && [ "$status" -eq 200 ]; do
-    echo "Current status: $status, waiting..."
-    sleep 2
-  done
-'; then
-  echo "Spin app did not return HTTP 200 in 60 seconds"
-  exit 1
-fi
+wait_for_http http://localhost:3000/.well-known/spin/health
 response=$(curl -s http://localhost:3000/)
 echo "Response from component with dependencies: $response"
-killall spin
+stop_spin

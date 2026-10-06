@@ -42,12 +42,6 @@ jobs:
           echo "VERSION_STR=${VERSION_STR}" >> $GITHUB_ENV
           echo "PRERELEASE=${PRERELEASE}" >> $GITHUB_ENV
 
-      - name: Setup Node (OIDC for npm)
-        uses: actions/setup-node@v7
-        with:
-          node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
-      
       - name: Install rust targets (for build tools package)
         if: env.PACKAGE_DIR == 'build-tools'
         shell: bash
@@ -98,10 +92,6 @@ jobs:
         - name: Install Rust toolchain 
           run: rustup target add wasm32-wasip1 wasm32-unknown-unknown --toolchain ${{ env.RUST_VERSION }}
 
-        - name: Install Node.js
-          uses: actions/setup-node@v7
-          with:
-            node-version: ${{ env.NODE_VERSION }}   
         - name: Install npm dependencies
           run: | 
             # Install dependencies for generating docs
