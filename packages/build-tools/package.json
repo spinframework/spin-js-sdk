@@ -1,6 +1,6 @@
 {
   "name": "@spinframework/build-tools",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -36,7 +36,8 @@
   "dependencies": {
     "@ampproject/remapping": "^2.3.0",
     "@bytecodealliance/componentize-js": "^0.23.0",
-    "@bytecodealliance/jco": "^1.17.9",
+    "@bytecodealliance/jco": "^1.36.1",
+    "@bytecodealliance/preview2-shim": "^0.27.1",
     "acorn-walk": "^8.3.4",
     "acron": "^1.0.5",
     "magic-string": "^0.30.17",

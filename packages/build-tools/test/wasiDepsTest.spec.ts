@@ -1,12 +1,54 @@
 import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import {
   getPackagesWithWasiDeps,
   processWasiDeps,
   readPackageJson,
   resolveDependencyPath,
 } from '../dist/wasiDepsParser.js';
+import { getWitImports } from '../dist/witTools.js';
 import { expect } from 'chai';
 import sinon from 'sinon';
+
+describe('WIT filesystem access', () => {
+  it('reads a WIT directory through the JCO filesystem shim', () => {
+    const witDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'spin-wit-'));
+    fs.writeFileSync(
+      path.join(witDirectory, 'world.wit'),
+      'package test:component@1.0.0; world test-world {}',
+    );
+
+    try {
+      expect(
+        getWitImports([witDirectory], [
+          { packageName: 'test:component@1.0.0', worldName: 'test-world' },
+        ]),
+      ).to.deep.equal([]);
+    } finally {
+      fs.rmSync(witDirectory, { recursive: true, force: true });
+    }
+  });
+
+  it('reads a standalone WIT file through the JCO filesystem shim', () => {
+    const witDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'spin-wit-'));
+    const witPath = path.join(witDirectory, 'world.wit');
+    fs.writeFileSync(
+      witPath,
+      'package test:file@1.0.0; world test-world {}',
+    );
+
+    try {
+      expect(
+        getWitImports([witPath], [
+          { packageName: 'test:file@1.0.0', worldName: 'test-world' },
+        ]),
+      ).to.deep.equal([]);
+    } finally {
+      fs.rmSync(witDirectory, { recursive: true, force: true });
+    }
+  });
+});
 
 describe('readPackageJson', () => {
   let existsSyncStub, readFileSyncStub;

@@ -10,7 +10,7 @@ build:
 	cargo build --release --target $(CARGO_BUILD_TARGET)
 	mkdir -p $(OUTPUT_DIR)
 	npx @bytecodealliance/jco new $(WASM_FILE) -o $(OUTPUT_WASM) --wasi-reactor
-	npx @bytecodealliance/jco transpile -q --name wit_tools $(OUTPUT_WASM) -o $(LIB_DIR) -- -O1
+	npx @bytecodealliance/jco transpile -q --name wit_tools $(OUTPUT_WASM) -o $(LIB_DIR) -I sync -- -O1
 
 clean:
 	cargo clean

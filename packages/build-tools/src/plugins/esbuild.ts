@@ -24,7 +24,7 @@ export interface SpinEsbuildPluginOptions {
  *   // Componentizes the bundle into a .wasm file after build
  */
 export async function SpinEsbuildPlugin(options: SpinEsbuildPluginOptions = {}) {
-  const { getWitImports } = await import('../../lib/wit_tools.js');
+  const { getWitImports } = await import('../witTools.js');
 
   // Get WIT imports from dependencies
   const wasiDeps = getPackagesWithWasiDeps(process.cwd(), new Set(), true);

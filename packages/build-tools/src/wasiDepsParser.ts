@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { TargetWorld } from '../lib/wit_tools.js';
+import { TargetWorld } from './witTools.js';
 import path from 'path';
 import { resolve } from 'node:path';
 import { platform } from 'node:process';
