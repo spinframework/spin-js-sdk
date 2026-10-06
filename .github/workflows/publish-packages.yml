@@ -22,6 +22,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node (OIDC for npm)
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
       - name: Parse tag for package and version
         id: parse_tag
         run: |
