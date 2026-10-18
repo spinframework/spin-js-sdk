@@ -1,4 +1,4 @@
-import { RedisHandler } from "@fermyon/spin-sdk";
+import { RedisHandler } from "@spinframework/spin-trigger-redis";
 
 const decoder = new TextDecoder();
 

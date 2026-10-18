@@ -1,6 +1,16 @@
 name: Test Templates
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'templates/**'
+      - '.github/workflows/test-templates.yaml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'templates/**'
+      - '.github/workflows/test-templates.yaml'
   schedule:
     - cron: '0 */12 * * *'
   workflow_dispatch:
@@ -60,12 +70,12 @@ jobs:
         run: spin templates install --dir .
 
       - name: Create new project
-        run: spin new -t ${{ matrix.template }} -a test-project
+        run: spin new -t ${{ matrix.template }} --value redis-channel=test-channel -a test-project
 
       - name: Add new component to project
         run: |
           cd test-project
-          spin add -t ${{ matrix.template }} -a new-component
+          spin add -t ${{ matrix.template }} --value redis-channel=new-channel -a new-component
           cd new-component
           npm install
 
